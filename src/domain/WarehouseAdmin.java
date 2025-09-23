@@ -15,6 +15,6 @@ public class WarehouseAdmin {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private EntityStatus status;
-    private String wIdx;
-    private String taIdx;
+    private int taIdx;
+    private int wIdx;
 }
