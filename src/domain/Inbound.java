@@ -13,5 +13,5 @@ public class Inbound {
     private Timestamp inRequestDate;
     private int uIdx;
     private Timestamp inboundDate;
-    private String wIdx;
+    private int wIdx;
 }
