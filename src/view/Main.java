@@ -2,7 +2,6 @@ package view;
 
 import controller.InOutboundController;
 import controller.InboundControllerImpl;
-import controller.OutboundControllerImpl;
 
 // 기능 작동 확인용 Main
 public class Main {
@@ -12,7 +11,8 @@ public class Main {
 //        OutboundControllerImpl outcontrol = OutboundControllerImpl.getInstance();
 
         InOutboundController inoutcontrol = InboundControllerImpl.getInstance();
-        inoutcontrol.showMenu();
+        // 관리자 : 1, 일반회원 : 2
+        inoutcontrol.showMenu(1);
 
     }
 }

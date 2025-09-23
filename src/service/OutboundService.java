@@ -1,6 +1,8 @@
 package service;
 
-public class OutboundService {
+import dao.OutboundDAO;
+
+public class OutboundService implements InOutboundService {
 
     // 싱글턴 패턴 세팅
     private static OutboundService outboundService;
@@ -13,4 +15,30 @@ public class OutboundService {
         return outboundService;
     }
 
+    private OutboundDAO outboundDao = OutboundDAO.getInstance();
+
+    @Override
+    public int approveRequest() {
+        return 0;
+    }
+
+    @Override
+    public int addRequest() {
+        return 0;
+    }
+
+    @Override
+    public int updateRequest() {
+        return 0;
+    }
+
+    @Override
+    public int cancelRequest() {
+        return 0;
+    }
+
+    @Override
+    public void getBoundInfo() {
+
+    }
 }

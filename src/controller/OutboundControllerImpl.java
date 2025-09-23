@@ -1,6 +1,6 @@
 package controller;
 
-import dao.OutboundDao;
+import service.OutboundService;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -26,15 +26,15 @@ public class OutboundControllerImpl implements InOutboundController{
         return outboundControllerImpl;
     }
 
-    private OutboundDao outboundDao;
+    private OutboundService outboundService = OutboundService.getInstance();
 
     @Override
-    public void showMenu() {
+    public void showMenu(int authNum) {
 
     }
 
     @Override
-    public int selectMenu(int menuNum) {
+    public int selectMenu(int authNum, int menuNum) {
         return 0;
     }
 
