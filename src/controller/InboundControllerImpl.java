@@ -78,6 +78,7 @@ public class InboundControllerImpl implements InOutboundController{
                 int status = 0;
                 if(authNum == 1) {
                     System.out.println("1. 입고 요청 승인");
+                    // 미승인된 입고요청 목록 출력
 
 
                     status = inboundService.approveRequest();
