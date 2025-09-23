@@ -8,10 +8,8 @@ import java.sql.Timestamp;
 public class CheckLog {
     private int clIdx;
     private String pIdx;
-    private String wIdx;
-    private String wName;
+    private int wIdx;
     private int wsIdx;
-    private String wsName;
     private Timestamp createdAt;
     private EntityStatus clstatus;
     private EntityStatus clCorrect;
