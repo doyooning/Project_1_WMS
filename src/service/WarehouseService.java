@@ -62,4 +62,12 @@ public class WarehouseService {
 
         return addrWarehouseList;
     }
+
+    public List<Warehouse> getTypeWarehouse(int wtIdx){
+        List<Warehouse> typeWarehouseList = warehouseDao.getTypeWarehouse(wtIdx);
+
+        if(typeWarehouseList == null || typeWarehouseList.isEmpty()) return null;
+
+        return typeWarehouseList;
+    }
 }

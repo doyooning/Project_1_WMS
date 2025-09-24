@@ -3,9 +3,7 @@ package controller;
 import domain.Warehouse;
 import service.WarehouseService;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -206,21 +204,7 @@ public class WarehouseController {
         List<Warehouse> warehouseList = warehouseService.getWarehouseList();
 
         //목록이 많은 경우 한번에 20개까지만 보기
-        int page = 2, index = 0;
-        while(index < warehouseList.size()){
-            if(index != 0 && index%20==0){
-                boolean result = showPageOfList(page);
-                if(!result) break;
-                System.out.println("------------------------------------------------------------");
-                page++;
-            }
-            String format = String.format("%-8s%-7s%-7s%-11s%-10s",
-                    warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getDoName(),
-                    warehouseList.get(index).getWtName(),sdf.format(warehouseList.get(index).getCreatedAt()));
-            System.out.println(format);
-            index++;
-        }
-        System.out.println();
+        printList(warehouseList, 1);
     }
 
     private void showWIdxWarehouseList(){
@@ -228,7 +212,7 @@ public class WarehouseController {
         System.out.println(
                 """
                 ============================================================
-                =======================창고명별 창고 조회======================
+                ======================창고번호별 창고 조회======================
                 """
         );
         Warehouse temp;
@@ -287,26 +271,14 @@ public class WarehouseController {
         if(menuNum == -1) return;
         List<Warehouse> warehouseList = warehouseService.getAddressWarehouse(menuNum);
 
+        if(warehouseList == null || warehouseList.isEmpty()) {} //예외처리
+
         String menu = String.format("%-8s%-7s%-7s%-7s%-17s", "창고번호", "창고이름", "창고임대료", "창고별재고", "상세주소");
         System.out.println(menu);
         System.out.println("------------------------------------------------------------");
 
         //너무 길면 페이지 단위로 출력하기
-        int page = 2, index = 0;
-        while(index < warehouseList.size()){
-            if(index != 0 && index%20==0){
-                boolean result = showPageOfList(page);
-                if(!result) break;
-                System.out.println("------------------------------------------------------------");
-                page++;
-            }
-            String format = String.format("%-8s%-7s%-7d%-7d%-17s",
-                    warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getWRent(),
-                    warehouseList.get(index).getWStock(),trimToLen(warehouseList.get(index).getWAddr(), 17));
-            System.out.println(format);
-            index++;
-        }
-        System.out.println();
+        printList(warehouseList, 3);
     }
 
     private int getAddrNum(){
@@ -334,6 +306,82 @@ public class WarehouseController {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    private void showTypeWarehouseList() {
+        //총관리자, 창고관리자
+        System.out.println(
+                """
+                ============================================================
+                ======================창고종류별 창고 조회======================
+                """
+        );
+        int result = getWarehouseType();
+        if(result == -1) return;
+        List<Warehouse> warehouseList = warehouseService.getTypeWarehouse(result);
+
+        if(warehouseList == null || warehouseList.isEmpty()) {} //예외 처리
+
+        String menu = String.format("%-8s%-8s%-8s%-8s%-9s", "창고번호", "창고이름", "창고임대료", "창고별재고", "도주소");
+        System.out.println(menu);
+        System.out.println("------------------------------------------------------------");
+
+        //페이지 단위로 출력하기
+        printList(warehouseList, 4);
+    }
+
+    private int getWarehouseType(){
+        String addrMenu =
+                """
+                                         [창고 종류]
+                     ##################################################
+                            1. 보관형창고            2. 마이크로풀필먼트
+                     ##################################################
+                """;
+        System.out.println(addrMenu);
+        System.out.println("조회할 창고 종류를 선택해주세요.");
+
+        while(true){
+            System.out.print("> ");
+            try{
+                String input = reader.readLine();
+
+                if(input.trim().toLowerCase().equals("exit")) return -1;
+
+                if(!input.trim().matches("[1-2]")) System.out.println("1-2까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요.");
+                else return Integer.parseInt(input.trim());
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void printList(List<Warehouse> warehouseList, int num){//num=1이면 전체창고조회, num=3이면 소재지별 창고조회, num=4이면 창고종류별 창고조회
+        int page = 2, index = 0;
+        while(index < warehouseList.size()){
+            if(index != 0 && index%20==0){
+                boolean result = showPageOfList(page);
+                if(!result) break;
+                System.out.println("------------------------------------------------------------");
+                page++;
+            }
+            String format = null;
+            switch(num){
+                case 1 -> format = String.format("%-8s%-7s%-7s%-11s%-10s",
+                        warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getDoName(),
+                        warehouseList.get(index).getWtName(),sdf.format(warehouseList.get(index).getCreatedAt())); //전체 창고현황 출력
+                case 3 -> format = String.format("%-8s%-7s%-7d%-7d%-17s",
+                        warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getWRent(),
+                        warehouseList.get(index).getWStock(),trimToLen(warehouseList.get(index).getWAddr(), 17));
+                case 4 -> format = String.format("%-8s%-8s%-8d%-8d%-9s",
+                        warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getWRent(),
+                        warehouseList.get(index).getWStock(), warehouseList.get(index).getDoName()
+                        );
+            }
+            System.out.println(format);
+            index++;
+        }
+        System.out.println();
     }
 
     private boolean showPageOfList(int page){
