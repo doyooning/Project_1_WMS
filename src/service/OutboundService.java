@@ -23,11 +23,19 @@ public class OutboundService implements InOutboundService {
     }
 
     public int addRequest(int warehouseId, String dueDate) {
-        return 0;
+        int status = outboundDao.addOutboundData(warehouseId, dueDate);
+        if (status <= 0) {
+            return -1;
+        }
+        return status;
     }
 
     public int addRequest(String productId, int productQuantity) {
-        return 0;
+        int status = outboundDao.addOutboundItemData(productId, productQuantity);
+        if (status <= 0) {
+            return -1;
+        }
+        return status;
     }
 
     @Override
