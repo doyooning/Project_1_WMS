@@ -42,6 +42,17 @@ public class InboundDAO implements InOutboundDAO {
         return 1;
     }
 
+    // Inbound 테이블에 정보 수정
+    public int updateInboundItemData(String productId, int productQuantity) {
+
+        return 1;
+    }
+
+    public int updateInboundData(String productId, int productQuantity) {
+
+        return 1;
+    }
+
     // 요청 불러오기
     @Override
     public void getRequestList() {

@@ -39,8 +39,13 @@ public class InboundService implements InOutboundService{
         return status;
     }
 
-    @Override
-    public int updateRequest() {
+    public int updateRequest(int warehouseId, String dueDate) {
+
+        return 0;
+    }
+
+    public int updateRequest(String productId, int productQuantity) {
+
         return 0;
     }
 
