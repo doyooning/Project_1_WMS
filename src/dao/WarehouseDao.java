@@ -37,4 +37,15 @@ public class WarehouseDao {
     public int getWtIdx(String wtName){
 
     }
+
+    public Warehouse getWarehouse(String wUniqueNum) {
+        Warehouse warehouse = new Warehouse();
+
+        return warehouse;
+    }
+
+    public int checkWarehouseExist(String wUniqueNum){
+
+        return 1;
+    }
 }

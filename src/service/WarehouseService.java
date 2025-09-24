@@ -46,4 +46,12 @@ public class WarehouseService {
         if(result) return true;
         return false;
     }
+
+    public Warehouse getWarehouse(String wUniqueNum) {
+        int check = warehouseDao.checkWarehouseExist(wUniqueNum); // count 이용해서 해당 창고 존재하는지 확인
+        if(check == 0) return null;
+
+        Warehouse warehouse = warehouseDao.getWarehouse(wUniqueNum);
+        return warehouse;
+    }
 }

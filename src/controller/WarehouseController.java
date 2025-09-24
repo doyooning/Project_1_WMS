@@ -143,8 +143,8 @@ public class WarehouseController {
                         조회할 창고 유형을 선택해주세요.
                         [창고 유형]
                         1. 전체 현황 리스트 조회
-                        2. 소재지별 조회
-                        3. 고유 번호별 조회
+                        2. 창고 고유 번호별 조회
+                        3. 소재지별 조회
                         4. 창고 종류별 조회
                         ------------------------------------------------------------
                         """
@@ -211,6 +211,7 @@ public class WarehouseController {
             if(index != 0 && index%20==0){
                 boolean result = showPageOfList(page);
                 if(!result) break;
+                System.out.println();
                 page++;
             }
             String format = String.format("%-8s%-7s%-7s%-11s%-10s",
@@ -219,8 +220,59 @@ public class WarehouseController {
             System.out.println(format);
             index++;
         }
+        System.out.println();
     }
 
+    private void showWIdxWarehouseList(){
+        //총관리자와 창고관리자만 조회 가능
+        System.out.println(
+                """
+                ============================================================
+                =======================창고명별 창고 조회======================
+                """
+        );
+        Warehouse temp;
+        while(true){
+            String wUniqueNum = getWarehouseIdx();
+            if(wUniqueNum == null) {System.out.println("창고 고유 번호 양식에 맞지 않습니다. 창고 고유 번호를 다시 입력해주세요.\n");}
+            else if(wUniqueNum.equals("exit")) return;
+            else {
+                temp = warehouseService.getWarehouse(wUniqueNum);
+                if(temp == null) {
+                    System.out.println("해당 창고가 존재하지 않습니다. 창고 고유 번호를 다시 입력해주세요.\n");
+                }else break;
+            }
+        }
+
+        System.out.println("------------------------------------------------------------");
+
+        String format = String.format(
+                """
+                창고 번호| %s
+                창고 이름| %s
+                창고 임대료| %d
+                창고별 재고| %d
+                최대수용용량| %d
+                창고 타입| %s
+                도주소| %s
+                """, temp.getWIdx(), temp.getWName(), temp.getWRent(), temp.getWStock(), temp.getWMaxAmount(), temp.getWtName(), temp.getDoName());
+        System.out.println(format+"\n");
+    }
+
+    private String getWarehouseIdx(){
+        System.out.println("조회할 창고 고유 번호를 입력해주세요. (창고고유번호는 ware로 시작합니다)");
+        System.out.print("> ");
+        try{
+            String wUniqueNum = reader.readLine();
+
+            if(wUniqueNum.trim().toLowerCase().equals("exit")) return "exit";
+            else if(!wUniqueNum.trim().toLowerCase().startsWith("ware")) return null;
+            return wUniqueNum.trim();
+
+        }catch(IOException e){
+            throw new RuntimeException(e);
+        }
+    }
 
 
     private boolean showPageOfList(int page){
