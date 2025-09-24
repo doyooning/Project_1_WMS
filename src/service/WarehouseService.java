@@ -54,4 +54,12 @@ public class WarehouseService {
         Warehouse warehouse = warehouseDao.getWarehouse(wUniqueNum);
         return warehouse;
     }
+
+    public List<Warehouse> getAddressWarehouse(int doIdx){
+        List<Warehouse> addrWarehouseList = warehouseDao.getAddressWarehouse(doIdx);
+
+        if(addrWarehouseList == null || addrWarehouseList.isEmpty()) return null;
+
+        return addrWarehouseList;
+    }
 }

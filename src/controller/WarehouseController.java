@@ -211,7 +211,7 @@ public class WarehouseController {
             if(index != 0 && index%20==0){
                 boolean result = showPageOfList(page);
                 if(!result) break;
-                System.out.println();
+                System.out.println("------------------------------------------------------------");
                 page++;
             }
             String format = String.format("%-8s%-7s%-7s%-11s%-10s",
@@ -274,6 +274,67 @@ public class WarehouseController {
         }
     }
 
+    private void showAddrWarehouseList() {
+        //총관리자, 창고관리자
+        System.out.println(
+                """
+                ============================================================
+                =======================소재지별 창고 조회======================
+                """
+        );
+
+        int menuNum = getAddrNum();
+        if(menuNum == -1) return;
+        List<Warehouse> warehouseList = warehouseService.getAddressWarehouse(menuNum);
+
+        String menu = String.format("%-8s%-7s%-7s%-7s%-17s", "창고번호", "창고이름", "창고임대료", "창고별재고", "상세주소");
+        System.out.println(menu);
+        System.out.println("------------------------------------------------------------");
+
+        //너무 길면 페이지 단위로 출력하기
+        int page = 2, index = 0;
+        while(index < warehouseList.size()){
+            if(index != 0 && index%20==0){
+                boolean result = showPageOfList(page);
+                if(!result) break;
+                System.out.println("------------------------------------------------------------");
+                page++;
+            }
+            String format = String.format("%-8s%-7s%-7d%-7d%-17s",
+                    warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getWRent(),
+                    warehouseList.get(index).getWStock(),trimToLen(warehouseList.get(index).getWAddr(), 17));
+            System.out.println(format);
+            index++;
+        }
+        System.out.println();
+    }
+
+    private int getAddrNum(){
+        String addrMenu =
+                """
+                                         [소재지 종류]
+                     ##################################################
+                               1.서울특별시  2.경기도   3.강원도
+                               4.충청북도   5.충청남도  6.경상북도
+                               7.경상남도   8.전라북도  9.전라남도
+                     ##################################################
+                """;
+        System.out.println(addrMenu);
+        System.out.println("조회할 소재지를 선택해주세요.");
+
+        while(true){
+            System.out.print("> ");
+            try{
+                String input = reader.readLine();
+                if(input.trim().toLowerCase().equals("exit")) return -1;
+
+                if(!input.trim().matches("[1-9]")) System.out.println("1-9까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요.");
+                else return Integer.parseInt(input.trim());
+            }catch(IOException e){
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     private boolean showPageOfList(int page){
         System.out.printf("%d번째 페이지로 넘기시겠습니까? [Y|N]", page);
