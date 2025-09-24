@@ -12,4 +12,5 @@ public interface FinanceService {
     List<Warehouse> getWarehouseList();
 
     boolean addExpense(Expense expense);
+    boolean modifyExpense(Expense expense);
 }

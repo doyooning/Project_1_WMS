@@ -21,4 +21,6 @@ public interface FinanceController {
     List<Warehouse> getWarehouseList();
 
     Boolean addExpense(Expense expense);
+
+    Boolean modifyExpense(Expense expense);
 }
