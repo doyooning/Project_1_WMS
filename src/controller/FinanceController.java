@@ -4,22 +4,13 @@ package controller;
 import java.util.Map;
 
 public interface FinanceController {
-    // 재무 관리 메인 페이지
+    // 재무 관리 메인 페이지, 진입점
     void showFinanceMenu();
-    void showTotalAdminMenu();
-    void showWhAdminMenu();
-    void showUserMenu();
 
-    void selectTotalAdminMenu();
-    void selectWhAdminMenu();
-    void selectUserMenu();
-
+    // 재무 리스트 조회
     void getAllFinanceList();
-    String getFinanceDate();
-    String getFinanceType();
-
-    void printFinanceList(Map<String, Object> result, String date, String type);
     void getWhFinanceList();
-    int getFinanceWIdx();
+
+    // 창고 리스트 조회
     void getWarehouseList();
 }
