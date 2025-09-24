@@ -66,8 +66,71 @@ public class WarehouseController {
         }
     }
 
-    private void getWarehouse() {
+    private void showWarehouseAddition(){
+        //총관리자만 가능
+        System.out.println(
+                """
+                        ============================================================
+                        ===========================창고 등록==========================
+                        """
+        );
+        Warehouse newWarehouse = getWarehouse();
+        if(newWarehouse == null) return;
+        boolean result = warehouseService.addWarehouse(newWarehouse);
+        if(result) System.out.println("창고 등록에 성공하였습니다.");
+        else System.out.println("창고 등록에 실패하였습니다.");
+    }
+
+    private Warehouse getWarehouse() {
         //  총관리자만 가능
+        try {
+            System.out.print("창고번호: ");
+            String wIdx = reader.readLine();
+            System.out.print("창고이름: ");
+            String wName = reader.readLine();
+            System.out.print("창고 상세 주소: ");
+            String wAddr = reader.readLine();
+            System.out.print("창고 종류: ");
+            String wtName = reader.readLine();
+
+            if(!wtName.trim().matches("보관형\\s*창고|마이크로\\s*풀필먼트")){
+                System.out.println("창고타입은 보관형창고와 마이크로풀필먼트만 존재합니다. 창고 등록에 실패하였습니다.");
+                return null;
+            }
+
+            System.out.print("최대 수용 용량: "); // 박스단위: 보관형은 800-1000, 마이크로풀필먼트 80-100
+            String wMaxAmount = reader.readLine();
+
+            if(!wMaxAmount.trim().matches("\\d+")){
+                System.out.println("최대 수용 용량은 숫자만 입력 가능합니다. 창고 등록에 실패하였습니다.");
+                return null;
+            }
+
+            //나머지 예외처리는 service에서 할 예정
+            Warehouse temp = new Warehouse();
+            temp.setWIdx(wIdx);
+            temp.setWName(wName);
+            temp.setWAddr(wAddr);
+            temp.setWtName(wtName.trim().replaceAll("\\s", ""));
+
+            if (wtName.equals("보관형창고")) {
+                if (Integer.parseInt(wMaxAmount) < 800 || Integer.parseInt(wMaxAmount) > 1000) {
+                    System.out.println("보관형 창고의 최대 수용 용량은 800~1000 박스여야 합니다. 창고 등록에 실패하였습니다.");
+                    return null;
+                }
+            } else if (wtName.equals("마이크로풀필먼트")) {
+                if (Integer.parseInt(wMaxAmount) < 80 || Integer.parseInt(wMaxAmount) > 100) {
+                    System.out.println("마이크로풀필먼트의 최대 수용 용량은 80~100 박스여야 합니다. 창고 등록에 실패하였습니다.");
+                    return null;
+                }
+            }
+
+            temp.setWMaxAmount(Integer.parseInt(wMaxAmount));
+            return temp;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -157,6 +220,8 @@ public class WarehouseController {
             index++;
         }
     }
+
+
 
     private boolean showPageOfList(int page){
         System.out.printf("%d번째 페이지로 넘기시겠습니까? [Y|N]", page);
