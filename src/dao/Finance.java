@@ -17,4 +17,5 @@ public interface Finance {
     Map<String, Long> getYearlyExpenseList(int wIdx, String date);
 
     List<Warehouse> getWarehouseList();
+    int addExpense(Expense expense);
 }

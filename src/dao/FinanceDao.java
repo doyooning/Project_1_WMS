@@ -7,8 +7,8 @@ import domain.Warehouse;
 import util.DBUtil;
 
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
-import java.util.Date;
 
 public class FinanceDao implements Finance {
 
@@ -20,28 +20,31 @@ public class FinanceDao implements Finance {
         return instance;
     }
 
-    private Connection conn;   /** 데이터베이스 연결 객체 */
-    private PreparedStatement pstmt;  /** SQL 문 실행을 위한 PreparedStatement 객체 */
-    private Statement stmt; /** SQL 문 실행을 위한 Statement 객체 */
-    private ResultSet rs; /** SQL 쿼리 결과를 저장하는 ResultSet 객체 */
+    private Connection conn;
+    private PreparedStatement pstmt;
+    private Statement stmt;
+    private ResultSet rs;
+    private CallableStatement cstmt; // 변경 1: CallableStatement 멤버 변수 추가
 
     private void disConnect() {
-        if (rs != null) try {rs.close();} catch (SQLException e) {}
-        if (stmt != null) try {stmt.close();} catch (SQLException e) {}
-        if (pstmt != null) try {pstmt.close();} catch (SQLException e) {}
-        if (conn != null) try {conn.close();} catch (SQLException e) {}
+        if (rs != null) try {rs.close();} catch (SQLException e) { e.printStackTrace(); }
+        if (stmt != null) try {stmt.close();} catch (SQLException e) { e.printStackTrace(); }
+        if (pstmt != null) try {pstmt.close();} catch (SQLException e) { e.printStackTrace(); }
+        if (cstmt != null) try {cstmt.close();} catch (SQLException e) { e.printStackTrace(); } // 변경 2: cstmt 자원 해제 추가
+        if (conn != null) try {conn.close();} catch (SQLException e) { e.printStackTrace(); }
     }
+
     @Override
     public List<Expense> getMontlyExpenseList(int wIdx, String date) {
         try {
             conn = DBUtil.getConnection();
-            String sql = "call getMontlyExpenseList(?, ?)";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, wIdx);
-            pstmt.setString(2, date);
+            String sql = "{call getMontlyExpenseList(?, ?)}"; // 변경 3: 표준 JDBC 호출 구문으로 변경
+            cstmt = conn.prepareCall(sql);                   // 변경 4: prepareCall() 사용
+            cstmt.setInt(1, wIdx);
+            cstmt.setString(2, date);
 
             List<Expense> list = new ArrayList<>();
-            rs = pstmt.executeQuery();
+            rs = cstmt.executeQuery();                       // 변경 5: cstmt로 실행
 
             while (rs.next()) {
                 Expense expense = new Expense();
@@ -52,9 +55,9 @@ public class FinanceDao implements Finance {
                 expense.setEDate(rs.getDate("eDate"));
                 expense.setCreatedAt(rs.getTimestamp("createdAt"));
                 expense.setUpdatedAt(rs.getTimestamp("updatedAt"));
-                String statusStr = rs.getString("status"); // DB에서 ENUM 문자열 가져오기
-                EntityStatus status = EntityStatus.valueOf(statusStr); // 문자열 → Enum
-                expense.setStatus(status); // 객체에 설정
+                String statusStr = rs.getString("status");
+                EntityStatus status = EntityStatus.valueOf(statusStr);
+                expense.setStatus(status);
                 list.add(expense);
             }
             return list;
@@ -66,17 +69,19 @@ public class FinanceDao implements Finance {
         }
         return null;
     }
+
     @Override
     public List<Sales> getMontlySalesList(int wIdx, String date) {
+        // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "call getMontlySalesList(?, ?)";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, wIdx);
-            pstmt.setString(2, date);
+            String sql = "{call getMontlySalesList(?, ?)}";
+            cstmt = conn.prepareCall(sql);
+            cstmt.setInt(1, wIdx);
+            cstmt.setString(2, date);
 
             List<Sales> list = new ArrayList<>();
-            rs = pstmt.executeQuery();
+            rs = cstmt.executeQuery();
 
             while (rs.next()) {
                 Sales sales = new Sales();
@@ -95,17 +100,19 @@ public class FinanceDao implements Finance {
         }
         return null;
     }
+
     @Override
     public Integer getMontlySalesTotal(int wIdx, String date) {
+        // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "call getMontlySalesTotal(?, ?)";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, wIdx);
-            pstmt.setString(2, date);
+            String sql = "{call getMontlySalesTotal(?, ?)}";
+            cstmt = conn.prepareCall(sql);
+            cstmt.setInt(1, wIdx);
+            cstmt.setString(2, date);
 
             int result = 0;
-            rs = pstmt.executeQuery();
+            rs = cstmt.executeQuery();
 
             if (rs.next()) {
                 result = rs.getInt(1);
@@ -119,17 +126,19 @@ public class FinanceDao implements Finance {
         }
         return 0;
     }
+
     @Override
     public Integer getMontlyExpenseTotal(int wIdx, String date) {
+        // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "call getMontlyExpenseTotal(?, ?)";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, wIdx);
-            pstmt.setString(2, date);
+            String sql = "{call getMontlyExpenseTotal(?, ?)}";
+            cstmt = conn.prepareCall(sql);
+            cstmt.setInt(1, wIdx);
+            cstmt.setString(2, date);
 
             int result = 0;
-            rs = pstmt.executeQuery();
+            rs = cstmt.executeQuery();
 
             if (rs.next()) {
                 result = rs.getInt(1);
@@ -143,22 +152,23 @@ public class FinanceDao implements Finance {
         }
         return 0;
     }
+
     @Override
     public Map<String, Long> getYearlySalesList(int wIdx, String date) {
         Map<String, Long> list = new LinkedHashMap<>();
-
+        // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "CALL getYearlySalesList(?, ?)";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, wIdx);
-            pstmt.setString(2, date);
+            String sql = "{call getYearlySalesList(?, ?)}";
+            cstmt = conn.prepareCall(sql);
+            cstmt.setInt(1, wIdx);
+            cstmt.setString(2, date);
 
-            rs = pstmt.executeQuery();
+            rs = cstmt.executeQuery();
 
             while (rs.next()) {
-                String month = rs.getString("month"); // 예: "2025-01"
-                long amount = rs.getLong("amount");   // 해당 월의 매출 합계
+                String month = rs.getString("month");
+                long amount = rs.getLong("amount");
                 list.put(month, amount);
             }
 
@@ -170,22 +180,23 @@ public class FinanceDao implements Finance {
 
         return list;
     }
+
     @Override
     public Map<String, Long> getYearlyExpenseList(int wIdx, String date) {
         Map<String, Long> list = new LinkedHashMap<>();
-
+        // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "CALL getYearlyExpenseList(?, ?)";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, wIdx);
-            pstmt.setString(2, date);
+            String sql = "{call getYearlyExpenseList(?, ?)}";
+            cstmt = conn.prepareCall(sql);
+            cstmt.setInt(1, wIdx);
+            cstmt.setString(2, date);
 
-            rs = pstmt.executeQuery();
+            rs = cstmt.executeQuery();
 
             while (rs.next()) {
-                String month = rs.getString("month"); // 예: "2025-01"
-                long amount = rs.getLong("amount");   // 해당 월의 지출 합계
+                String month = rs.getString("month");
+                long amount = rs.getLong("amount");
                 list.put(month, amount);
             }
 
@@ -200,12 +211,13 @@ public class FinanceDao implements Finance {
 
     @Override
     public List<Warehouse> getWarehouseList() {
+        // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "CALL getWarehouseList()";
-            pstmt = conn.prepareStatement(sql);
+            String sql = "{call getWarehouseList()}";
+            cstmt = conn.prepareCall(sql);
 
-            rs = pstmt.executeQuery();
+            rs = cstmt.executeQuery();
 
             List<Warehouse> list = new ArrayList<>();
             while (rs.next()) {
@@ -217,16 +229,14 @@ public class FinanceDao implements Finance {
                 warehouse.setWMaxAmount(rs.getInt("wMaxAmount"));
                 warehouse.setCreatedAt(rs.getTimestamp("createdAt"));
                 warehouse.setUpdatedAt(rs.getTimestamp("updatedAt"));
-                String statusStr = rs.getString("wStatus"); // DB에서 ENUM 문자열 가져오기
-                EntityStatus status = EntityStatus.valueOf(statusStr); // 문자열 → Enum
+                String statusStr = rs.getString("wStatus");
+                EntityStatus status = EntityStatus.valueOf(statusStr);
                 warehouse.setWStatus(status);
                 warehouse.setWStock(rs.getInt("wStock"));
                 warehouse.setDoIdx(rs.getInt("doIdx"));
                 warehouse.setDoName(rs.getString("doName"));
                 warehouse.setWtIdx(rs.getInt("wtIdx"));
-                warehouse.setWUniqueNum(rs.getString("wtUniqueNum"));
-
-                // 객체에 설정
+                // warehouse.setWUniqueNum(rs.getString("wtUniqueNum")); // 원본 코드에 주석처리 되어있어 유지
                 list.add(warehouse);
             }
             return list;
@@ -238,5 +248,25 @@ public class FinanceDao implements Finance {
         return null;
     }
 
+    @Override
+    public int addExpense(Expense expense) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call addExpense(?, ?, ?, ?)}";
+            cstmt = conn.prepareCall(sql);
 
+            cstmt.setInt(1, expense.getWIdx());
+            cstmt.setString(2, expense.getEType());
+            cstmt.setLong(3, expense.getEAmount());
+            cstmt.setDate(4, (Date)expense.getEDate());
+
+            return cstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
 }
