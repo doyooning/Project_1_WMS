@@ -1,7 +1,9 @@
 package dao;
 
 import domain.Inbound;
+import util.DBUtil;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,15 +33,52 @@ public class InboundDAO implements InOutboundDAO {
     // Inbound 테이블에 정보 등록
     public int addInboundData(int warehouseId, String dueDate) {
         // 프로시저
-        System.out.println(warehouseId + " " + dueDate);
-        return 1;
+        String sql = "{call createRequest(?, ?, ?)}";
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setDate(1, Date.valueOf(dueDate));
+            call.setInt(2, warehouseId);
+            call.registerOutParameter(3, Types.INTEGER);
+
+            // 실행
+            call.execute();
+
+            // 리턴
+            int rtn = call.getInt(3);
+            return rtn;
+
+        } catch (SQLException e) {
+            return -1;
+        }
+
     }
 
     // InboundItem 테이블에 정보 등록
     public int addInboundItemData(String productId, int productQuantity) {
         //프로시저
-        System.out.println(productId + " " + productQuantity);
-        return 1;
+        String sql = "{call createRequestProduct(?, ?, ?)}";
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setString(1, productId);
+            call.setInt(2, productQuantity);
+            call.registerOutParameter(3, Types.INTEGER);
+
+            // 실행
+            call.execute();
+
+            // 리턴
+            int rtn = call.getInt(3);
+            return rtn;
+
+        } catch (SQLException e) {
+            return -1;
+        }
     }
 
     // 요청 불러오기

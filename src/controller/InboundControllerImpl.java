@@ -66,16 +66,24 @@ public class InboundControllerImpl implements InOutboundController{
             int menuNum = Integer.parseInt(br.readLine());
             selectMenu(authNum, menuNum);
 
-        } catch (IOException e) {
-            System.out.println("IOException");
-            showMenu(authNum);
-
-        } catch (NumberFormatException e) {
-            System.out.println("NumberFormatException");
+        } catch (IOException | NumberFormatException e) {
+            System.out.print(
+                    """
+                    ============================================================
+                    [오류] 유효하지 않은 입력입니다. 다시 입력해 주십시오.
+                    """
+            );
             showMenu(authNum);
 
         } catch (Exception e) {
+            System.out.print(
+                    """
+                    ============================================================
+                    [오류] 예기치 못한 오류가 발생하였습니다. 다시 입력해 주십시오.
+                    """
+            );
             e.printStackTrace();
+            showMenu(authNum);
         }
     }
 
@@ -96,9 +104,17 @@ public class InboundControllerImpl implements InOutboundController{
 
                 }
                 if (status == -1) {
-                    System.out.println("오류 발생");
+                    System.out.println(".");
+                    System.out.println(".");
+                    System.out.println(".");
                 } else {
-                    System.out.println("실행 성공");
+                    System.out.printf(
+                            """
+                            ============================================================
+                            입고 요청이 등록되었습니다. 회원님의 요청 번호는 [%d] 입니다.
+                            ============================================================
+                            """, status
+                    );
                 }
             }
             case 2 -> {
@@ -119,7 +135,7 @@ public class InboundControllerImpl implements InOutboundController{
                 if (status == -1) {
                     System.out.println("오류 발생");
                 } else {
-                    System.out.println("실행 섣공");
+                    System.out.println("실행 성공");
                 }
 
             }
@@ -167,6 +183,7 @@ public class InboundControllerImpl implements InOutboundController{
     // 입고 요청 정보를 서비스에 보내기
     // 창고번호 int, 입고기한 date -> 물품번호 , 물품개수
     public int getInputRequestData() {
+        int rtn = 0;
         try {
             System.out.print(
                     """
@@ -242,6 +259,7 @@ public class InboundControllerImpl implements InOutboundController{
                 );
                 String selectYn = br.readLine();
                 if (selectYn.charAt(0) == 'Q' || selectYn.charAt(0) == 'q') {
+                    rtn = requestStatus;
                     break;
                 }
             }
@@ -259,6 +277,6 @@ public class InboundControllerImpl implements InOutboundController{
             e.printStackTrace();
             getInputRequestData();
         }
-        return 0;
+        return rtn;
     }
 }
