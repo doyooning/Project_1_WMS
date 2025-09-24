@@ -8,6 +8,6 @@ public class InboundItem {
     private int inRequestIdx;
     private String wIdx;
     private String swIdx;
-    private int pIdx;
+    private String pIdx;
     private int pQuantity;
 }

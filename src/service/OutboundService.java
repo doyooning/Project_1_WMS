@@ -22,8 +22,11 @@ public class OutboundService implements InOutboundService {
         return 0;
     }
 
-    @Override
-    public int addRequest() {
+    public int addRequest(int warehouseId, String dueDate) {
+        return 0;
+    }
+
+    public int addRequest(String productId, int productQuantity) {
         return 0;
     }
 

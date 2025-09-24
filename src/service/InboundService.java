@@ -23,9 +23,20 @@ public class InboundService implements InOutboundService{
         return 0;
     }
 
-    @Override
-    public int addRequest() {
-        return 0;
+    public int addRequest(int warehouseId, String dueDate) {
+        int status = inboundDao.addInboundData(warehouseId, dueDate);
+        if (status <= 0) {
+            return -1;
+        }
+        return status;
+    }
+
+    public int addRequest(String productId, int productQuantity) {
+        int status = inboundDao.addInboundItemData(productId, productQuantity);
+        if (status <= 0) {
+            return -1;
+        }
+        return status;
     }
 
     @Override

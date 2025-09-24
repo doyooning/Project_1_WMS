@@ -3,7 +3,7 @@ package service;
 public interface InOutboundService {
 
     // 요청 등록(일반회원만)
-    int addRequest();
+    int addRequest(int num, String str);
 
     // 요청 승인(관리자만)
     int approveRequest();

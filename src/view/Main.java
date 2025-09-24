@@ -12,7 +12,7 @@ public class Main {
 
         InOutboundController inoutcontrol = InboundControllerImpl.getInstance();
         // 관리자 : 1, 일반회원 : 2
-        inoutcontrol.showMenu(1);
+        inoutcontrol.showMenu(2);
 
     }
 }
