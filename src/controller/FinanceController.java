@@ -1,6 +1,9 @@
 
 package controller;
 
+import domain.Warehouse;
+
+import java.util.List;
 import java.util.Map;
 
 public interface FinanceController {
@@ -10,4 +13,9 @@ public interface FinanceController {
     // 전체 재무 리스트 조회
     Map<String, Object> getFinanceList(String type, String date);
 
+    //창고 재무 리스트 조회
+    Map<String, Object> getWhFinanceList(int wIdx, String type, String date);
+
+    //창고 목록 조회
+    List<Warehouse> getWarehouseList();
 }
