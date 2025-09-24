@@ -39,7 +39,7 @@ public class OutboundService implements InOutboundService {
     }
 
     @Override
-    public int updateRequest(int num, String str) {
+    public int updateRequest(int Id, int num, String str) {
         return 0;
     }
 

@@ -39,13 +39,19 @@ public class InboundService implements InOutboundService{
         return status;
     }
 
-    public int updateRequest(int warehouseId, String dueDate) {
-
+    public int updateRequest(int requestId, int warehouseId, String dueDate) {
+        int status = inboundDao.updateInboundData(requestId, warehouseId, dueDate);
+        if (status <= 0) {
+            return -1;
+        }
         return 0;
     }
 
-    public int updateRequest(String productId, int productQuantity) {
-
+    public int updateItem(int requestId, int itemId, String productId, int productQuantity) {
+        int status = inboundDao.updateInboundItemData(requestId, itemId, productId, productQuantity);
+        if (status <= 0) {
+            return -1;
+        }
         return 0;
     }
 

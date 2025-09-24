@@ -9,7 +9,7 @@ public interface InOutboundService {
     int approveRequest();
 
     // 요청 수정
-    int updateRequest(int num, String str);
+    int updateRequest(int Id, int num, String str);
 
     // 요청 취소
     int cancelRequest();
