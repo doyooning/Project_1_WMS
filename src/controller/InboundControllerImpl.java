@@ -13,6 +13,7 @@ import java.util.Date;
 /*
 * 메뉴 첫 접근
 * : BoardController/showBoardMenu(), selectBoardMenu()
+* -> 유저번호(uIdx)를 파라미터로 넘겨야 요청 등록에 사용 가능
 * [입고 관리]
 * */
 
