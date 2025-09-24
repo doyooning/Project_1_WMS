@@ -33,7 +33,7 @@ public class InboundDAO implements InOutboundDAO {
     // Inbound 테이블에 정보 등록
     public int addInboundData(int warehouseId, String dueDate) {
         // 프로시저
-        String sql = "{call createRequest(?, ?, ?)}";
+        String sql = "{call createInRequest(?, ?, ?)}";
 
         try(Connection conn = DBUtil.getConnection();
             CallableStatement call =  conn.prepareCall(sql)
@@ -59,7 +59,7 @@ public class InboundDAO implements InOutboundDAO {
     // InboundItem 테이블에 정보 등록
     public int addInboundItemData(String productId, int productQuantity) {
         //프로시저
-        String sql = "{call createRequestProduct(?, ?, ?)}";
+        String sql = "{call createInRequestProduct(?, ?, ?)}";
 
         try(Connection conn = DBUtil.getConnection();
             CallableStatement call =  conn.prepareCall(sql)
