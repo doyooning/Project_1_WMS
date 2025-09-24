@@ -48,4 +48,8 @@ public class WarehouseDao {
 
         return 1;
     }
+
+    public List<Warehouse> getAddressWarehouse(int doIdx){
+        conn = DBUtil.getConnection();
+    }
 }
