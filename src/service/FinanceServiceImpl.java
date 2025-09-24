@@ -4,6 +4,7 @@ import controller.FinanceControllerImpl;
 import dao.FinanceDao;
 import domain.Expense;
 import domain.Sales;
+import domain.Warehouse;
 
 import java.util.*;
 
@@ -71,6 +72,11 @@ public class FinanceServiceImpl implements FinanceService {
         );
     }
 
+    @Override
+    public List<Warehouse> getWarehouseList() {
+        return financeDao.getWarehouseList();
+    }
+
     private Map<String, Object> buildMonthlySummary(Map<String, Long> salesMap, Map<String, Long> expenseMap, String date) {
         Map<String, Map<String, Long>> monthlySummary = new LinkedHashMap<>();
         long totalSales = 0;
@@ -99,6 +105,7 @@ public class FinanceServiceImpl implements FinanceService {
                 "netAmount", totalSales - totalExpense
         );
     }
+
 
 
 }
