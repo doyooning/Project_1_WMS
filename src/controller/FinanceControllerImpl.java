@@ -25,7 +25,9 @@ public class FinanceControllerImpl implements FinanceController {
 
     // 싱글톤 패턴 적용
     private static FinanceControllerImpl instance;
-    private FinanceControllerImpl() {}
+    private FinanceControllerImpl() {
+        this.finance = FinanceServiceImpl.getInstance();
+    }
     public static FinanceControllerImpl getInstance() {
         if (instance == null) instance = new FinanceControllerImpl();
         return instance;
@@ -34,7 +36,6 @@ public class FinanceControllerImpl implements FinanceController {
     //메인 화면 출력 메서드, 권한에 따라 다른 메서드로 화면 출력
     @Override
     public void showFinanceMenu() {
-        finance = FinanceServiceImpl.getInstance();
         while(loop) {
             switch (authority) {
                 case 1:
@@ -56,18 +57,18 @@ public class FinanceControllerImpl implements FinanceController {
     }
 
     // 권한별 메인화면
-    public void showTotalAdminMenu(){
+    private void showTotalAdminMenu(){
         // 관리자 화면
-        System.out.println("""
+        System.out.print("""
                             ============================================================
                                                       재무관리
                             ============================================================
                              1.전체 재무 조회 | 2.창고별 재무 조회 | 3.메인 메뉴 | 4.로그아웃
                             >  """);
     }
-    public void showWhAdminMenu(){
+    private void showWhAdminMenu(){
         //창고 관리자 화면
-        System.out.println("""
+        System.out.print("""
                             ============================================================
                                                       재무관리
                             ============================================================
@@ -76,9 +77,9 @@ public class FinanceControllerImpl implements FinanceController {
                             ============================================================
                             >  """);
     }
-    public void showUserMenu(){
+    private void showUserMenu(){
         //일반회원 화면
-        System.out.println("""
+        System.out.print("""
                            ============================================================
                                                      재무관리
                            ============================================================
@@ -87,21 +88,20 @@ public class FinanceControllerImpl implements FinanceController {
     }
 
     //권한별 메뉴선택 및 메서드 호출
-    public void selectTotalAdminMenu(){
+    private void selectTotalAdminMenu(){
         try {
-            int num = Integer.parseInt(input.readLine().trim());
+            String num = input.readLine().trim();
             switch (num) {
-                case 0 -> getAllFinanceList();
-                case 1 -> System.out.println("창고별 재무 조회");
-                case 2 -> loop = false;
-                case 3 -> {
+                case "1" -> handleGetAllFinance();
+                case "2" -> handleGetWhFinance();
+                case "3" -> loop = false;
+                case "4" -> {
                     System.out.println("logout");
                     loop = false;
                 }
+                default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NumberFormatException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -109,20 +109,19 @@ public class FinanceControllerImpl implements FinanceController {
     }
     public void selectWhAdminMenu(){
         try {
-            int num = Integer.parseInt(input.readLine().trim());
+            String num = input.readLine().trim();
             switch (num) {
-                case 1 -> System.out.println("창고별 재무조회");
-                case 2 -> System.out.println("지출 관리");
-                case 3 -> System.out.println("구독 승인");
-                case 4 -> loop = false;
-                case 5 -> {
+                case "1" -> handleGetWhFinance();
+                case "2" -> System.out.println("지출 관리");
+                case "3" -> System.out.println("구독 승인");
+                case "4" -> loop = false;
+                case "5" -> {
                     System.out.println("logout");
                     loop = false;
                 }
+                default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NumberFormatException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -130,38 +129,44 @@ public class FinanceControllerImpl implements FinanceController {
     }
     public void selectUserMenu(){
         try {
-            int num = Integer.parseInt(input.readLine().trim());
+            String num = input.readLine().trim();
             switch (num) {
-                case 1 -> System.out.println("구독 관리");
-                case 2 -> loop = false;
-                case 3 -> {
+                case "1" -> System.out.println("구독 관리");
+                case "2" -> loop = false;
+                case "3" -> {
                     System.out.println("logout");
                     loop = false;
                 }
+                default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NumberFormatException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public void getAllFinanceList() {
-        //wIdx 0으로 설정 -> 전체 조회
-        int wIdx = 0;
-
-        //타입 입력
+    private void handleGetAllFinance() {
         String type = getFinanceType();
-
-        //날짜 입력
         String date = getFinanceDate();
+        // API 메서드 호출
+        Map<String, Object> result = getFinanceList(type, date);
+        // 결과 출력
+        printFinanceList(result, date, type);
+    }
 
-        //service 호출
-        Map<String, Object> result = finance.getFinanceList(wIdx, type, date);
+    private void handleGetWhFinance() {
 
+    }
+
+    @Override
+    public Map<String, Object> getFinanceList(String type, String date) {
+        // service 호출 후 결과 바로 반환 (입력/출력 로직 제거)
+        return finance.getFinanceList(0, type, date);
+    }
+
+
+    private void printFinanceList(Map<String, Object> result, String date, String type) {
         boolean isYear = date.length() == 4;
 
         System.out.println("\n📊 [" + date + (isYear ? "년" : "월") + " " + type + " 정산 내역]");
@@ -288,11 +293,9 @@ public class FinanceControllerImpl implements FinanceController {
                 }
             }
         }
-
-
     }
 
-    public String getFinanceDate(){
+    private String getFinanceDate(){
         while(true) {
             String num = inputNum("""
                     ============================================================
@@ -320,7 +323,7 @@ public class FinanceControllerImpl implements FinanceController {
             }
         }
     }
-    public String getFinanceType(){
+    private String getFinanceType(){
         while(true) {
             //메뉴 번호 입력
             String num = inputNum("""
@@ -344,7 +347,7 @@ public class FinanceControllerImpl implements FinanceController {
         }
     }
 
-    public String inputNum(String msg){
+    private String inputNum(String msg){
         System.out.print(msg);
         try {
             return input.readLine();
