@@ -269,4 +269,27 @@ public class FinanceDao implements Finance {
         }
         return 0;
     }
+
+    @Override
+    public int modifyExpense(Expense expense) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call modifyExpense(?, ?, ?, ?, ?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, expense.getEIdx());
+            cstmt.setInt(2, expense.getWIdx());
+            cstmt.setString(3, expense.getEType());
+            cstmt.setLong(4, expense.getEAmount());
+            cstmt.setDate(5, (Date)expense.getEDate());
+
+            return cstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
 }
