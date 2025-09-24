@@ -107,7 +107,7 @@ public class FinanceControllerImpl implements FinanceController {
             throw new RuntimeException(e);
         }
     }
-    public void selectWhAdminMenu(){
+    private void selectWhAdminMenu(){
         try {
             String num = input.readLine().trim();
             switch (num) {
@@ -127,7 +127,7 @@ public class FinanceControllerImpl implements FinanceController {
             throw new RuntimeException(e);
         }
     }
-    public void selectUserMenu(){
+    private void selectUserMenu(){
         try {
             String num = input.readLine().trim();
             switch (num) {
