@@ -154,9 +154,23 @@ public class FinanceControllerImpl implements FinanceController {
         // 결과 출력
         printFinanceList(result, date, type);
     }
-
     private void handleGetWhFinance() {
+        int wIdx;
+        if(whAdmin == null) {
+            // API를 통해 창고 리스트를 받아와서 출력
+            List<Warehouse> warehouses = getWarehouseList();
+            printWarehouseList(warehouses);
+            wIdx = getFinanceWIdx();
+        } else {
+            wIdx = whAdmin.getWIdx();
+        }
 
+        String type = getFinanceType();
+        String date = getFinanceDate();
+        // API 메서드 호출
+        Map<String, Object> result = getWhFinanceList(wIdx, type, date);
+        // 결과 출력
+        printFinanceList(result, date, type);
     }
 
     @Override
@@ -165,6 +179,17 @@ public class FinanceControllerImpl implements FinanceController {
         return finance.getFinanceList(0, type, date);
     }
 
+    @Override
+    public Map<String, Object> getWhFinanceList(int wIdx, String type, String date) {
+        // service 호출 후 결과 바로 반환 (입력/출력 로직 제거)
+        return finance.getFinanceList(wIdx, type, date);
+    }
+
+    @Override
+    public List<Warehouse> getWarehouseList() {
+        // service 호출 후 결과 바로 반환 (출력 로직 제거)
+        return finance.getWarehouseList();
+    }
 
     private void printFinanceList(Map<String, Object> result, String date, String type) {
         boolean isYear = date.length() == 4;
@@ -294,6 +319,15 @@ public class FinanceControllerImpl implements FinanceController {
             }
         }
     }
+    private void printWarehouseList(List<Warehouse> warehouses) {
+        System.out.println("[창고 목록]");
+        System.out.printf(" %5s | %10s | %10s \n", "창고번호", "최대수용용량", "창고별재고");
+        System.out.println("-".repeat(60));
+        for (Warehouse w : warehouses) {
+            System.out.printf(" %5s | %10,d | %10,d \n", w.getWIdx(), w.getWMaxAmount(), w.getWStock());
+        }
+        System.out.println("-".repeat(60));
+    }
 
     private String getFinanceDate(){
         while(true) {
@@ -343,6 +377,19 @@ public class FinanceControllerImpl implements FinanceController {
                     return "Expense";
                 }
                 default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        }
+    }
+    private int getFinanceWIdx() {
+        while(true) {
+            try {
+                int wIdx = Integer.parseInt(inputNum("창고입력번호> "));
+                System.out.println("=".repeat(60));
+                return wIdx;
+            } catch (NumberFormatException e) {
+                throw new RuntimeException(e);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }
