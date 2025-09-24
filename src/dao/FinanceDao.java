@@ -3,6 +3,7 @@ package dao;
 import domain.EntityStatus;
 import domain.Expense;
 import domain.Sales;
+import domain.Warehouse;
 import util.DBUtil;
 
 import java.sql.*;
@@ -19,14 +20,10 @@ public class FinanceDao implements Finance {
         return instance;
     }
 
-    /** 데이터베이스 연결 객체 */
-    private Connection conn;
-    /** SQL 문 실행을 위한 PreparedStatement 객체 */
-    private PreparedStatement pstmt;
-    /** SQL 문 실행을 위한 Statement 객체 */
-    private Statement stmt;
-    /** SQL 쿼리 결과를 저장하는 ResultSet 객체 */
-    private ResultSet rs;
+    private Connection conn;   /** 데이터베이스 연결 객체 */
+    private PreparedStatement pstmt;  /** SQL 문 실행을 위한 PreparedStatement 객체 */
+    private Statement stmt; /** SQL 문 실행을 위한 Statement 객체 */
+    private ResultSet rs; /** SQL 쿼리 결과를 저장하는 ResultSet 객체 */
 
     private void disConnect() {
         if (rs != null) try {rs.close();} catch (SQLException e) {}
@@ -34,7 +31,6 @@ public class FinanceDao implements Finance {
         if (pstmt != null) try {pstmt.close();} catch (SQLException e) {}
         if (conn != null) try {conn.close();} catch (SQLException e) {}
     }
-
     @Override
     public List<Expense> getMontlyExpenseList(int wIdx, String date) {
         try {
@@ -70,7 +66,6 @@ public class FinanceDao implements Finance {
         }
         return null;
     }
-
     @Override
     public List<Sales> getMontlySalesList(int wIdx, String date) {
         try {
@@ -100,7 +95,7 @@ public class FinanceDao implements Finance {
         }
         return null;
     }
-
+    @Override
     public Integer getMontlySalesTotal(int wIdx, String date) {
         try {
             conn = DBUtil.getConnection();
@@ -124,7 +119,7 @@ public class FinanceDao implements Finance {
         }
         return 0;
     }
-
+    @Override
     public Integer getMontlyExpenseTotal(int wIdx, String date) {
         try {
             conn = DBUtil.getConnection();
@@ -148,8 +143,7 @@ public class FinanceDao implements Finance {
         }
         return 0;
     }
-
-
+    @Override
     public Map<String, Long> getYearlySalesList(int wIdx, String date) {
         Map<String, Long> list = new LinkedHashMap<>();
 
@@ -176,8 +170,7 @@ public class FinanceDao implements Finance {
 
         return list;
     }
-
-
+    @Override
     public Map<String, Long> getYearlyExpenseList(int wIdx, String date) {
         Map<String, Long> list = new LinkedHashMap<>();
 
@@ -204,4 +197,46 @@ public class FinanceDao implements Finance {
 
         return list;
     }
+
+    @Override
+    public List<Warehouse> getWarehouseList() {
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "CALL getWarehouseList()";
+            pstmt = conn.prepareStatement(sql);
+
+            rs = pstmt.executeQuery();
+
+            List<Warehouse> list = new ArrayList<>();
+            while (rs.next()) {
+                Warehouse warehouse = new Warehouse();
+                warehouse.setWIdx(rs.getInt("wIdx"));
+                warehouse.setWName(rs.getString("wName"));
+                warehouse.setWAddr(rs.getString("wAddr"));
+                warehouse.setWRent(rs.getInt("wRent"));
+                warehouse.setWMaxAmount(rs.getInt("wMaxAmount"));
+                warehouse.setCreatedAt(rs.getTimestamp("createdAt"));
+                warehouse.setUpdatedAt(rs.getTimestamp("updatedAt"));
+                String statusStr = rs.getString("wStatus"); // DB에서 ENUM 문자열 가져오기
+                EntityStatus status = EntityStatus.valueOf(statusStr); // 문자열 → Enum
+                warehouse.setWStatus(status);
+                warehouse.setWStock(rs.getInt("wStock"));
+                warehouse.setDoIdx(rs.getInt("doIdx"));
+                warehouse.setDoName(rs.getString("doName"));
+                warehouse.setWtIdx(rs.getInt("wtIdx"));
+                warehouse.setWUniqueNum(rs.getString("wtUniqueNum"));
+
+                // 객체에 설정
+                list.add(warehouse);
+            }
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return null;
+    }
+
+
 }
