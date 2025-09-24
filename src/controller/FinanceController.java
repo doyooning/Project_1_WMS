@@ -7,10 +7,7 @@ public interface FinanceController {
     // 재무 관리 메인 페이지, 진입점
     void showFinanceMenu();
 
-    // 재무 리스트 조회
-    void getAllFinanceList();
-    void getWhFinanceList();
+    // 전체 재무 리스트 조회
+    Map<String, Object> getFinanceList(String type, String date);
 
-    // 창고 리스트 조회
-    void getWarehouseList();
 }

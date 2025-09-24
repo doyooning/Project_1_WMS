@@ -25,7 +25,9 @@ public class FinanceControllerImpl implements FinanceController {
 
     // 싱글톤 패턴 적용
     private static FinanceControllerImpl instance;
-    private FinanceControllerImpl() {}
+    private FinanceControllerImpl() {
+        this.finance = FinanceServiceImpl.getInstance();
+    }
     public static FinanceControllerImpl getInstance() {
         if (instance == null) instance = new FinanceControllerImpl();
         return instance;
@@ -34,7 +36,6 @@ public class FinanceControllerImpl implements FinanceController {
     //메인 화면 출력 메서드, 권한에 따라 다른 메서드로 화면 출력
     @Override
     public void showFinanceMenu() {
-        finance = FinanceServiceImpl.getInstance();
         while(loop) {
             switch (authority) {
                 case 1:
@@ -71,8 +72,8 @@ public class FinanceControllerImpl implements FinanceController {
                             ============================================================
                                                       재무관리
                             ============================================================
-                              1.재무 조회 | 2.지출 관리 | 3.구독승인 관리 | 4.메인 메뉴 |
-                              5.로그아웃
+                              1.재무 조회 | 2.지출 관리 | 2.구독승인 관리 | 3.메인 메뉴 |
+                              4.로그아웃
                             ============================================================
                             >  """);
     }
@@ -89,19 +90,18 @@ public class FinanceControllerImpl implements FinanceController {
     //권한별 메뉴선택 및 메서드 호출
     private void selectTotalAdminMenu(){
         try {
-            int num = Integer.parseInt(input.readLine().trim());
+            String num = input.readLine().trim();
             switch (num) {
-                case 0 -> getAllFinanceList();
-                case 1 -> getWarehouseList();
-                case 2 -> loop = false;
-                case 3 -> {
+                case "1" -> handleGetAllFinance();
+                case "2" -> handleGetWhFinance();
+                case "3" -> loop = false;
+                case "4" -> {
                     System.out.println("logout");
                     loop = false;
                 }
+                default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NumberFormatException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -109,20 +109,19 @@ public class FinanceControllerImpl implements FinanceController {
     }
     private void selectWhAdminMenu(){
         try {
-            int num = Integer.parseInt(input.readLine().trim());
+            String num = input.readLine().trim();
             switch (num) {
-                case 1 -> getWhFinanceList();
-                case 2 -> showExpenseMenu();
-                case 3 -> System.out.println("구독 승인");
-                case 4 -> loop = false;
-                case 5 -> {
+                case "1" -> handleGetWhFinance();
+                case "2" -> System.out.println("지출 관리");
+                case "3" -> System.out.println("구독 승인");
+                case "4" -> loop = false;
+                case "5" -> {
                     System.out.println("logout");
                     loop = false;
                 }
+                default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NumberFormatException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -130,154 +129,44 @@ public class FinanceControllerImpl implements FinanceController {
     }
     private void selectUserMenu(){
         try {
-            int num = Integer.parseInt(input.readLine().trim());
+            String num = input.readLine().trim();
             switch (num) {
-                case 1 -> System.out.println("구독 관리");
-                case 2 -> loop = false;
-                case 3 -> {
+                case "1" -> System.out.println("구독 관리");
+                case "2" -> loop = false;
+                case "3" -> {
                     System.out.println("logout");
                     loop = false;
                 }
+                default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NumberFormatException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public void getAllFinanceList() {
-        //wIdx 0으로 설정 -> 전체 조회
-        int wIdx = 0;
-
-        //타입 입력
+    private void handleGetAllFinance() {
         String type = getFinanceType();
-
-        //날짜 입력
         String date = getFinanceDate();
-
-        //service 호출
-        Map<String, Object> result = finance.getFinanceList(wIdx, type, date);
-
-        //리스트 출력
-        printFinanceList(result, date, type);
-    }
-    @Override
-    public void getWhFinanceList() {
-        int wIdx = 0;
-        if(whAdmin == null) {
-            //Warehouse 리스트 조회
-            getWarehouseList();
-
-            //wIdx 입력
-            wIdx = getFinanceWIdx();
-        } else{
-            wIdx = whAdmin.getWIdx();
-        }
-
-        //타입 입력
-        String type = getFinanceType();
-
-        //날짜 입력
-        String date = getFinanceDate();
-
-        //service 호출
-        Map<String, Object> result = finance.getFinanceList(wIdx, type, date);
-
-        //리스트 출력
+        // API 메서드 호출
+        Map<String, Object> result = getFinanceList(type, date);
+        // 결과 출력
         printFinanceList(result, date, type);
     }
 
-    private String getFinanceDate(){
-        while(true) {
-            String num = inputNum("""
-                    ============================================================
-                                    1. 월 단위  |  2. 연 단위
-                    ============================================================
-                    >  """);
+    private void handleGetWhFinance() {
 
-            //반환할 날짜 변수
-            String date;
-
-            String year;
-            String month;
-            switch (num) {
-                    case "1": //월별정산 선택 시
-                        year = inputNum("년도>  ");
-                        month = inputNum("월>  ");
-                        date = year + "-" + month;
-                        return date;
-                    case "2": //연도별 정산 선택 시
-                        year = inputNum("년도>  ");
-                        date = year;
-                        return date;
-                    default:
-                        System.out.println("번호를 잘못 입력했습니다.");
-            }
-        }
-    }
-    private String getFinanceType(){
-        while(true) {
-            //메뉴 번호 입력
-            String num = inputNum("""
-                ============================================================
-                    1.내역 조회 | 2.매출 조회 | 3.지출 조회  
-                ============================================================
-                >  """);
-
-            switch (num) {
-                case "1" -> {
-                    return "All";
-                }
-                case "2" -> {
-                    return "Sales";
-                }
-                case "3" -> {
-                    return "Expense";
-                }
-                default -> System.out.println("번호를 잘못 입력했습니다.");
-            }
-        }
-    }
-    private int getFinanceWIdx() {
-        while(true) {
-            try {
-                int wIdx = Integer.parseInt(inputNum("창고입력번호>  "));
-                System.out.println("=".repeat(60));
-                return wIdx;
-            } catch (NumberFormatException e) {
-                throw new RuntimeException(e);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
-    private String inputNum(String msg){
-        System.out.print(msg);
-        try {
-            return input.readLine();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    public Map<String, Object> getFinanceList(String type, String date) {
+        // service 호출 후 결과 바로 반환 (입력/출력 로직 제거)
+        return finance.getFinanceList(0, type, date);
     }
 
-    public void getWarehouseList(){
-        List<Warehouse> result = finance.getWarehouseList();
-        System.out.println("[창고 목록]");
-        System.out.printf(" %5s | %10s | %10s \n", "창고번호", "최대수용용량", "창고별재고");
-        System.out.println("-".repeat(60));
-        for (Warehouse w : result) {
-            System.out.printf(" %5s | %10,d | %10,d \n", w.getWIdx(), w.getWMaxAmount(), w.getWStock());
-        }
-        System.out.println("-".repeat(60));
-    }
+
     private void printFinanceList(Map<String, Object> result, String date, String type) {
-
-
         boolean isYear = date.length() == 4;
 
         System.out.println("\n📊 [" + date + (isYear ? "년" : "월") + " " + type + " 정산 내역]");
@@ -406,61 +295,65 @@ public class FinanceControllerImpl implements FinanceController {
         }
     }
 
-    private void showExpenseMenu(){
-        System.out.print("""
-                ============================================================
-                1. 지출 내역 등록  |   2. 지출 내역 수정   |  3. 지출 내역 삭제
-                ============================================================
-                >  """);
-        selectExpenseMenu();
-    }
-    private void selectExpenseMenu(){
-        try {
-            int num = Integer.parseInt(input.readLine().trim());
+    private String getFinanceDate(){
+        while(true) {
+            String num = inputNum("""
+                    ============================================================
+                                    1. 월 단위  |  2. 연 단위
+                    ============================================================
+                    >  """);
+
+            //반환할 날짜 변수
+            String date;
+
+            String year;
+            String month;
             switch (num) {
-                case 1 -> addExpense();
-                case 2 -> System.out.println("지출 내역 수정");
-                case 3 -> System.out.println("지출 내역 삭제");
-                default -> System.out.println("번호를 잘못 입력했습니다.");
+                    case "1": //월별정산 선택 시
+                        year = inputNum("년도>  ");
+                        month = inputNum("월>  ");
+                        date = year + "-" + month;
+                        return date;
+                    case "2": //연도별 정산 선택 시
+                        year = inputNum("년도>  ");
+                        date = year;
+                        return date;
+                    default:
+                        System.out.println("번호를 잘못 입력했습니다.");
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NumberFormatException e) {
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
-
-    public void addExpense(){
-        String type = getExpenseType();
-        int amount = getExpenseAmount();
-
-    }
-
-    private String getExpenseType(){
+    private String getFinanceType(){
         while(true) {
             //메뉴 번호 입력
             String num = inputNum("""
                 ============================================================
-                    1.MAINTENANCE  |  2.RENT 
+                    1.내역 조회 | 2.매출 조회 | 3.지출 조회  
                 ============================================================
                 >  """);
 
             switch (num) {
                 case "1" -> {
-                    return "MAINTENANCE";
+                    return "All";
                 }
                 case "2" -> {
-                    return "RENT";
+                    return "Sales";
+                }
+                case "3" -> {
+                    return "Expense";
                 }
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         }
     }
-    private int getExpenseAmount(){
-        System.out.println("=".repeat(60));
-        return Integer.parseInt(inputNum("지출 금액>  "));
+
+    private String inputNum(String msg){
+        System.out.print(msg);
+        try {
+            return input.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
