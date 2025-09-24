@@ -7,6 +7,9 @@ import service.FinanceServiceImpl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -15,9 +18,7 @@ public class FinanceControllerImpl implements FinanceController {
     private WarehouseAdmin whAdmin;
     private TotalAdmin totalAdmin;
     private int authority = 0;
-
     private boolean loop = true;
-
     //Service 객체
     private FinanceServiceImpl finance;
     //사용자 입력
@@ -86,6 +87,14 @@ public class FinanceControllerImpl implements FinanceController {
                                        1.구독 관리  |  2.메인 메뉴  |  3.로그아웃
                            >  """);
     }
+    public void showExpenseMenu(){
+        System.out.print("""
+                ============================================================
+                  1. 지출 내역 등록 | 2. 지출 내역 수정 | 3. 지출 내역 삭제
+                ============================================================
+                >  """);
+        selectExpenseMenu();
+    }
 
     //권한별 메뉴선택 및 메서드 호출
     private void selectTotalAdminMenu(){
@@ -145,6 +154,19 @@ public class FinanceControllerImpl implements FinanceController {
             throw new RuntimeException(e);
         }
     }
+    private void selectExpenseMenu(){
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> handleAddExpense(); // 핸들러 호출
+                case "2" -> System.out.println("지출 내역 수정");
+                case "3" -> System.out.println("지출 내역 삭제");
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private void handleGetAllFinance() {
         String type = getFinanceType();
@@ -172,6 +194,35 @@ public class FinanceControllerImpl implements FinanceController {
         // 결과 출력
         printFinanceList(result, date, type);
     }
+    private void handleAddExpense() {
+        int wIdx;
+        if(whAdmin == null) {
+            System.out.println("권한이 없습니다!");
+            return;
+        } else {
+            wIdx = whAdmin.getWIdx();
+        }
+
+        String type = getExpenseType();
+        long amount = getExpenseAmount();
+        Date date = getExpenseDate();
+
+        Expense expense = new Expense();
+        expense.setWIdx(wIdx);
+        expense.setEType(type);
+        expense.setEAmount(amount);
+        expense.setEDate(date);
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = addExpense(expense);
+            if(result == true) System.out.println("지출 내역이 등록되었습니다.");
+        } catch (Exception e) {
+            System.out.println("지출 내역 등록에 실패했습니다: " + e.getMessage());
+        }
+    }
 
     @Override
     public Map<String, Object> getFinanceList(String type, String date) {
@@ -189,6 +240,13 @@ public class FinanceControllerImpl implements FinanceController {
     public List<Warehouse> getWarehouseList() {
         // service 호출 후 결과 바로 반환 (출력 로직 제거)
         return finance.getWarehouseList();
+    }
+
+    @Override
+    public Boolean addExpense(Expense expense) {
+        // Service를 호출하여 지출 내역을 등록하는 로직 (추후 Service에 구현 필요)
+        // finance.addExpense(wIdx, type, amount, date);
+        return true;
     }
 
     private void printFinanceList(Map<String, Object> result, String date, String type) {
@@ -393,6 +451,67 @@ public class FinanceControllerImpl implements FinanceController {
             }
         }
     }
+    private String getExpenseType(){
+        while(true) {
+            //메뉴 번호 입력
+            String num = inputNum("""
+                    ============================================================
+                       1.MAINTENANCE | 2.RENT
+                    ============================================================
+                    > """);
+            switch (num) {
+                case "1" -> {
+                    return "MAINTENANCE";
+                }
+                case "2" -> {
+                    return "RENT";
+                }
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        }
+    }
+    private long getExpenseAmount(){
+        System.out.println("=".repeat(60));
+        return Long.parseLong(inputNum("지출 금액> "));
+    }
+    private Date getExpenseDate() {
+        while(true) {
+            System.out.println("=".repeat(60));
+            String year = inputNum("지출 년도(YYYY)> ");
+            String month = inputNum("지출 월(MM)> ");
+            String day = inputNum("지출 일(DD)> ");
+            String dateStr = String.format("%s-%s-%s", year, month, day);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+            try {
+                java.util.Date date = format.parse(dateStr);  // java.util.Date
+                return date;
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
+    private Boolean getConfirm(){
+        while(true) {
+            //메뉴 번호 입력
+            String num = inputNum("""
+                    ============================================================
+                      1. 확인  |  2. 취소
+                    ============================================================
+                                      <내역을 등록하겠습니다.>
+                     >  """);
+            switch (num) {
+                case "1" -> {
+                    return true;
+                }
+                case "2" -> {
+                    return false;
+                }
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        }
+    }
 
     private String inputNum(String msg){
         System.out.print(msg);
@@ -402,6 +521,10 @@ public class FinanceControllerImpl implements FinanceController {
             throw new RuntimeException(e);
         }
     }
+
+
+
+
 
 
 }

@@ -1,6 +1,7 @@
 
 package controller;
 
+import domain.Expense;
 import domain.Warehouse;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface FinanceController {
 
     //창고 목록 조회
     List<Warehouse> getWarehouseList();
+
+    Boolean addExpense(Expense expense);
 }

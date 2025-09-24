@@ -14,15 +14,17 @@ public class FinanceServiceImpl implements FinanceService {
 
     // 싱글톤 패턴 적용
     private static FinanceServiceImpl instance;
-    private FinanceServiceImpl() {}
+    private FinanceServiceImpl() {
+        this.financeDao = FinanceDao.getInstance();
+    }
     public static FinanceServiceImpl getInstance() {
         if (instance == null) instance = new FinanceServiceImpl();
         return instance;
     }
 
+
     @Override
     public Map<String, Object> getFinanceList(int wIdx, String type, String date) {
-        financeDao = FinanceDao.getInstance();
         boolean isYear = date.length() == 4;
 
         List<Sales> salesList = new ArrayList<>();
@@ -77,6 +79,13 @@ public class FinanceServiceImpl implements FinanceService {
         return financeDao.getWarehouseList();
     }
 
+    @Override
+    public boolean addExpense(Expense expense) {
+        int result = financeDao.addExpense(expense);
+        if(result > 0) return true;
+        else return false;
+    }
+
     private Map<String, Object> buildMonthlySummary(Map<String, Long> salesMap, Map<String, Long> expenseMap, String date) {
         Map<String, Map<String, Long>> monthlySummary = new LinkedHashMap<>();
         long totalSales = 0;
@@ -105,6 +114,8 @@ public class FinanceServiceImpl implements FinanceService {
                 "netAmount", totalSales - totalExpense
         );
     }
+
+
 
 
 
