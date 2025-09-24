@@ -62,16 +62,24 @@ public class OutboundControllerImpl implements InOutboundController{
             int menuNum = Integer.parseInt(br.readLine());
             selectMenu(authNum, menuNum);
 
-        } catch (IOException e) {
-            System.out.println("IOException");
-            showMenu(authNum);
-
-        } catch (NumberFormatException e) {
-            System.out.println("NumberFormatException");
+        } catch (IOException | NumberFormatException e) {
+            System.out.print(
+                    """
+                    ============================================================
+                    [오류] 유효하지 않은 입력입니다. 다시 입력해 주십시오.
+                    """
+            );
             showMenu(authNum);
 
         } catch (Exception e) {
+            System.out.print(
+                    """
+                    ============================================================
+                    [오류] 예기치 못한 오류가 발생하였습니다. 다시 입력해 주십시오.
+                    """
+            );
             e.printStackTrace();
+            showMenu(authNum);
         }
     }
 
@@ -91,9 +99,17 @@ public class OutboundControllerImpl implements InOutboundController{
 
                 }
                 if (status == -1) {
-                    System.out.println("오류 발생");
+                    System.out.println(".");
+                    System.out.println(".");
+                    System.out.println(".");
                 } else {
-                    System.out.println("실행 성공");
+                    System.out.printf(
+                            """
+                            ============================================================
+                            출고 요청이 등록되었습니다. 회원님의 요청 번호는 [%d] 입니다.
+                            ============================================================
+                            """, status
+                    );
                 }
             }
             case 2 -> {
@@ -160,6 +176,7 @@ public class OutboundControllerImpl implements InOutboundController{
     }
 
     public int getInputRequestData() {
+        int rtn = 0;
         try {
             System.out.println(
                     """
@@ -235,6 +252,7 @@ public class OutboundControllerImpl implements InOutboundController{
                 );
                 String selectYn = br.readLine();
                 if (selectYn.charAt(0) == 'Q' || selectYn.charAt(0) == 'q') {
+                    rtn = requestStatus;
                     break;
                 }
             }
@@ -252,6 +270,6 @@ public class OutboundControllerImpl implements InOutboundController{
             e.printStackTrace();
             getInputRequestData();
         }
-        return 0;
+        return rtn;
     }
 }
