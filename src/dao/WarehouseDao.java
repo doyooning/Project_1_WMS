@@ -7,6 +7,7 @@ import java.sql.*;
 
 public class WarehouseDao {
     private static WarehouseDao warehouseDao;
+    private List<Warehouse> warehouseList;
     private Connection conn;
 
     private WarehouseDao(){}
@@ -16,11 +17,24 @@ public class WarehouseDao {
     }
 
     public List<Warehouse> getWarehouseList() {
-        List<Warehouse> warehouseList = new ArrayList<>();
+        warehouseList = new ArrayList<>();
         conn = DBUtil.getConnection();
         //callable statement
 
         //기능 구현
         return warehouseList;
+    }
+
+    public boolean addWarehouse(Warehouse warehouse) {
+        //임대료는 처음에 null로 넣기
+    }
+
+    public int getDoIdx(String doName){
+        conn = DBUtil.getConnection();
+
+    }
+
+    public int getWtIdx(String wtName){
+
     }
 }
