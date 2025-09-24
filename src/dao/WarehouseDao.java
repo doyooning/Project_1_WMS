@@ -52,4 +52,8 @@ public class WarehouseDao {
     public List<Warehouse> getAddressWarehouse(int doIdx){
         conn = DBUtil.getConnection();
     }
+
+    public List<Warehouse> getTypeWarehouse(int wtIdx){
+        conn = DBUtil.getConnection();
+    }
 }
