@@ -1,6 +1,7 @@
 package controller;
 
 import dao.ApprovalDao;
+import dao.TotalAdminDao;
 import dao.UserDao;
 import dao.WarehouseAdminDao;
 import domain.EntityStatus;
@@ -16,6 +17,7 @@ public class MemberControllerImpl implements MemberController {
     private final UserDao userDao = UserDao.getInstance();
     private final ApprovalDao approvalDao = ApprovalDao.getInstance();
     private final WarehouseAdminDao warehouseAdminDao = WarehouseAdminDao.getInstance();
+    private final TotalAdminDao totalAdminDao = TotalAdminDao.getInstance();
 
     // 싱글톤 패턴 적용
     private static MemberControllerImpl instance;
@@ -94,6 +96,36 @@ public class MemberControllerImpl implements MemberController {
                     // ignore
                 }
             }
+        }
+    }
+
+    @Override
+    public boolean loginUser(String userId, String userPw) {
+        try (Connection connection = DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+            return userDao.existsByCredentials(connection, userId, userPw);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean loginWarehouseAdmin(String adminId, String adminPw) {
+        try (Connection connection = DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+            return warehouseAdminDao.existsByCredentials(connection, adminId, adminPw);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean loginTotalAdmin(String adminId, String adminPw) {
+        try (Connection connection = DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+            return totalAdminDao.existsByCredentials(connection, adminId, adminPw);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
