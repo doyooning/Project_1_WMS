@@ -25,4 +25,5 @@ public interface FinanceController {
     Boolean modifyExpense(Expense expense);
 
     Boolean removeExpense(int eIdx, int wIdx);
+
 }

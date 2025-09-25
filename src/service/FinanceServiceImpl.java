@@ -4,6 +4,7 @@ import controller.FinanceControllerImpl;
 import dao.FinanceDao;
 import domain.Expense;
 import domain.Sales;
+import domain.SubModel;
 import domain.Warehouse;
 
 import java.util.*;
