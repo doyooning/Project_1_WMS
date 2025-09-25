@@ -20,6 +20,7 @@ public interface Finance {
     int removeExpense(int eIdx, int wIdx);
 
     SubModel getUserSubInfo(int uIdx);
+    SubApproval getSubStatus(int uIdx);
     List<SubModel> getSubModelList();
 
     int addSubscription(SubApproval subApproval);

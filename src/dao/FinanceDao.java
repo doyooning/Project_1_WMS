@@ -340,6 +340,33 @@ public class FinanceDao implements Finance {
     }
 
     @Override
+    public SubApproval getSubStatus(int uIdx) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call getSubStatus(?)}";
+            cstmt = conn.prepareCall(sql);
+            cstmt.setInt(1, uIdx);
+
+            rs = cstmt.executeQuery();
+
+            if (rs.next()) {
+                SubApproval subApproval = new SubApproval();
+                subApproval.setSmIdx(rs.getInt("smIdx"));
+                subApproval.setStatus(EntityStatus.valueOf(rs.getString("status")));
+                // warehouse.setWUniqueNum(rs.getString("wtUniqueNum")); // 원본 코드에 주석처리 되어있어 유지
+                return subApproval;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return null;
+    }
+
+    @Override
     public List<SubModel> getSubModelList() {
         // CallableStatement 사용으로 변경
         try {

@@ -18,6 +18,7 @@ public interface FinanceService {
     boolean removeExpense(int eIdx, int wIdx);
 
     SubModel getUserSubInfo(int uIdx);
+    String getSubStatus(int uIdx);
     List<SubModel> getSubModelList();
 
     Boolean addSubscription(SubApproval supApproval);

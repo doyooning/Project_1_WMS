@@ -96,24 +96,27 @@ public class FinanceControllerImpl implements FinanceController {
         selectExpenseMenu();
     }
     private void showUserSubMenu(){
-        SubModel subInfo = getUserSubInfo(user.getUIdx());
+        int uIdx = user.getUIdx();
+        SubModel subInfo = finance.getUserSubInfo(uIdx);
+        String subStatus = finance.getSubStatus(uIdx);
         if(subInfo == null){
-            System.out.print("""
+            System.out.printf("""
                     ============================================================
-                    내 구독 정보 >  없음
+                    내 구독 정보 >  없음 (%s)
                     ============================================================
                        1.구독 신청  |  2.재무관리 메뉴
                     ============================================================
-                    >  """);
+                    >  """, subStatus);
             selectNonSubUserMenu();
         } else{
             System.out.printf("""
                     ============================================================
                     내 구독 정보 > %d | %s | %d | %d
+                                 (%s)
                     ============================================================
                         1.구독 변경  |  2.구독 취소 |  3.재무관리 메뉴
                     ============================================================
-                    >   """, subInfo.getSmIdx(), subInfo.getSmName(), subInfo.getSmPrice(), subInfo.getSmAmount());
+                    >   """, subInfo.getSmIdx(), subInfo.getSmName(), subInfo.getSmPrice(), subInfo.getSmAmount(), subStatus);
             selectSubUserMenu();
         }
     }
@@ -455,11 +458,6 @@ public class FinanceControllerImpl implements FinanceController {
     @Override
     public Boolean removeExpense(int eIdx, int wIdx) {
         return finance.removeExpense(eIdx, wIdx);
-    }
-
-    @Override
-    public SubModel getUserSubInfo(int uIdx) {
-        return finance.getUserSubInfo(uIdx);
     }
 
     @Override
