@@ -423,8 +423,19 @@ public class FinanceControllerImpl implements FinanceController {
 
         int saIdx = getSubApprovalId();
 
-        Map<String, Object> result = getSubApprovalDetail(saIdx);
-        printSubApprovalDetail(result);
+        Map<String, Object> detail = getSubApprovalDetail(saIdx);
+        printSubApprovalDetail(detail);
+
+        boolean tf = getApproved();
+        try {
+            // API 메서드 호출
+            Boolean result = true;
+            if(tf==false) result = rejectSubscription(saIdx);
+            else // result = approveSubscription(saIdx);
+            if(result == true) System.out.println("구독이 취소되었습니다. 종료일 이후 갱신되지 않습니다.");
+        } catch (Exception e) {
+            System.out.println("구독 취소에 실패했습니다: " + e.getMessage());
+        }
     }
 
     @Override
@@ -488,6 +499,11 @@ public class FinanceControllerImpl implements FinanceController {
     @Override
     public Map<String, Object> getSubApprovalDetail(int saIdx) {
         return finance.getSubApprovalDetail(saIdx);
+    }
+
+    @Override
+    public Boolean rejectSubscription(int saIdx) {
+        return finance.rejectSubscription(saIdx);
     }
 
 
@@ -797,6 +813,25 @@ public class FinanceControllerImpl implements FinanceController {
     }
     private int getSubApprovalId(){
         return Integer.parseInt(inputNum("검토할 번호 입력>  "));
+    }
+    private Boolean getApproved(){
+        while(true) {
+            //메뉴 번호 입력
+            String num = inputNum("""
+                    ============================================================
+                      1. 승인  |  2. 거절
+                    ============================================================
+                     >  """);
+            switch (num) {
+                case "1" -> {
+                    return true;
+                }
+                case "2" -> {
+                    return false;
+                }
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        }
     }
 
     private String inputNum(String msg){

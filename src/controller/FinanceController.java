@@ -39,4 +39,6 @@ public interface FinanceController {
     List<SubApproval> getPendingSubApprovalList(int waIdx);
 
     Map<String, Object> getSubApprovalDetail(int saIdx);
+
+    Boolean rejectSubscription(int saIdx);
 }
