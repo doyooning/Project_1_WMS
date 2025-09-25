@@ -75,11 +75,17 @@ public class InboundService implements InOutboundService{
 
     public InboundBillVO showReqBillData(int requestId) {
         InboundBillVO vo = inboundDao.readInReqBillData(requestId);
+        if (vo == null) {
+            System.out.println("vo null");
+        }
         return vo;
     }
 
-    public List<ArrayList> showItemBillData(int requestId) {
-        List<ArrayList> list = inboundDao.readInItemBillData(requestId);
+    public List<List<String>> showItemBillData(int requestId) {
+        List<List<String>> list = inboundDao.readInItemBillData(requestId);
+        if (list == null) {
+            System.out.println("list null");
+        }
         return list;
     }
 

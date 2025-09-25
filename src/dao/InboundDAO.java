@@ -45,11 +45,9 @@ public class InboundDAO implements InOutboundDAO {
 
             // 리턴
             int rtn = call.getInt(3);
-            System.out.println("rtn값  " + rtn);
             return rtn;
 
         } catch (SQLException e) {
-            e.printStackTrace();
             return -1;
         }
 
@@ -164,13 +162,17 @@ public class InboundDAO implements InOutboundDAO {
         ) {
             // 데이터
             call.setInt(1, requestId);
+            call.registerOutParameter(2, Types.INTEGER);
+            call.registerOutParameter(3, Types.TIMESTAMP);
+            call.registerOutParameter(4, Types.INTEGER);
+            call.registerOutParameter(5, Types.VARCHAR);
 
             // 실행
             call.execute();
             InboundBillVO inboundBill = new InboundBillVO();
 
             inboundBill.setInRequestId(call.getInt(2));
-            inboundBill.setInDate(call.getDate(3));
+            inboundBill.setInDate(call.getTimestamp(3));
             inboundBill.setWId(call.getInt(4));
             inboundBill.setUName(call.getString(5));
 
@@ -178,15 +180,15 @@ public class InboundDAO implements InOutboundDAO {
             return inboundBill;
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
 
     // Inbound 요청 + 물품 정보 전부
-    public List<ArrayList> readInItemBillData(int requestId) {
-        String sql = "{call readInItemBillData(?, ?, ?, ?, ?)}";
-        ArrayList<String> itemBill;
-        List<ArrayList> inboundList = new ArrayList<>();
+    public List<List<String>> readInItemBillData(int requestId) {
+        String sql = "{call readInItemBillData(?)}";
+        List<List<String>> inboundList = new ArrayList<>();
 
         try(Connection conn = DBUtil.getConnection();
             CallableStatement call =  conn.prepareCall(sql)
@@ -195,22 +197,25 @@ public class InboundDAO implements InOutboundDAO {
             call.setInt(1, requestId);
 
             // 실행
-            call.execute();
-            ResultSet rs = call.getResultSet();
-
-            while(rs.next()) {
-                itemBill = new ArrayList<>();
-                itemBill.add(rs.getString(2));
-                itemBill.add(rs.getString(3));
-                itemBill.add(rs.getString(4));
-                itemBill.add(rs.getString(5));
-                inboundList.add(itemBill);
+            boolean hasResult = call.execute();
+            if (hasResult) {
+                try (ResultSet rs = call.getResultSet()) {
+                    while (rs.next()) {
+                        List<String> itemBill = new ArrayList<>();
+                        itemBill.add(rs.getString(1)); // inRequestIdx
+                        itemBill.add(rs.getString(2)); // inboundDate
+                        itemBill.add(rs.getString(3)); // wIdx
+                        itemBill.add(rs.getString(4)); // uName
+                        inboundList.add(itemBill);
+                    }
+                }
             }
 
             // 리턴
             return inboundList;
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
