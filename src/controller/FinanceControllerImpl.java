@@ -203,7 +203,17 @@ public class FinanceControllerImpl implements FinanceController {
         }
     }
     private void selectSubUserMenu(){
-
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> System.out.println("구독 변경");
+                case "2" -> System.out.println("구독 취소");
+                case "3" -> System.out.println();
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -341,6 +351,7 @@ public class FinanceControllerImpl implements FinanceController {
             System.out.println("구독 신청에 실패했습니다: " + e.getMessage());
         }
     }
+
 
     @Override
     public Map<String, Object> getFinanceList(String type, String date) {
@@ -651,7 +662,6 @@ public class FinanceControllerImpl implements FinanceController {
                     ============================================================
                       1. 확인  |  2. 취소
                     ============================================================
-                                      <내역을 등록하겠습니다.>
                      >  """);
             switch (num) {
                 case "1" -> {
