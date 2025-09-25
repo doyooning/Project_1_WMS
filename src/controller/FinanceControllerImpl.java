@@ -160,7 +160,7 @@ public class FinanceControllerImpl implements FinanceController {
             switch (num) {
                 case "1" -> handleAddExpense(); // 핸들러 호출
                 case "2" -> handleModifyExpense();
-                case "3" -> System.out.println("지출 내역 삭제");
+                case "3" -> handleRemoveExpense();
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
@@ -254,6 +254,27 @@ public class FinanceControllerImpl implements FinanceController {
             System.out.println("지출 내역 수정에 실패했습니다: " + e.getMessage());
         }
     }
+    private void handleRemoveExpense() {
+        int wIdx;
+        if(whAdmin == null) {
+            System.out.println("권한이 없습니다!");
+            return;
+        } else {
+            wIdx = whAdmin.getWIdx();
+        }
+
+        int eIdx = getExpenseId();
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = removeExpense(eIdx, wIdx);
+            if(result == true) System.out.println("지출 내역이 삭제되었습니다.");
+        } catch (Exception e) {
+            System.out.println("지출 내역 삭제에 실패했습니다: " + e.getMessage());
+        }
+    }
 
     @Override
     public Map<String, Object> getFinanceList(String type, String date) {
@@ -282,6 +303,12 @@ public class FinanceControllerImpl implements FinanceController {
     public Boolean modifyExpense(Expense expense) {
         return finance.modifyExpense(expense);
     }
+
+    @Override
+    public Boolean removeExpense(int eIdx, int wIdx) {
+        return finance.removeExpense(eIdx, wIdx);
+    }
+
 
     private void printFinanceList(Map<String, Object> result, String date, String type) {
         boolean isYear = date.length() == 4;
@@ -420,6 +447,7 @@ public class FinanceControllerImpl implements FinanceController {
         }
         System.out.println("-".repeat(60));
     }
+
 
     private String getFinanceDate(){
         while(true) {
