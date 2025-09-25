@@ -206,19 +206,19 @@ public class MemberControllerImpl implements MemberController {
             // User 테이블에서 검색 및 임시 비밀번호 생성
             String tempUserPw = userDao.resetPasswordById(connection, userId);
             if (tempUserPw != null) {
-                return "일반회원 임시 비밀번호: " + tempUserPw;
+                return "일반회원 \n임시 비밀번호: " + tempUserPw;
             }
             
             // WarehouseAdmin 테이블에서 검색 및 임시 비밀번호 생성
             String tempWarehouseAdminPw = warehouseAdminDao.resetPasswordById(connection, userId);
             if (tempWarehouseAdminPw != null) {
-                return "창고관리자 임시 비밀번호: " + tempWarehouseAdminPw;
+                return "창고관리자 \n임시 비밀번호: " + tempWarehouseAdminPw;
             }
             
             // TotalAdmin 테이블에서 검색 및 임시 비밀번호 생성
             String tempTotalAdminPw = totalAdminDao.resetPasswordById(connection, userId);
             if (tempTotalAdminPw != null) {
-                return "총관리자 임시 비밀번호: " + tempTotalAdminPw;
+                return "총관리자 \n임시 비밀번호: " + tempTotalAdminPw;
             }
             
             return null; // 찾지 못함

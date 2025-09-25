@@ -3,6 +3,9 @@ package view;
 import controller.MemberController;
 import controller.MemberControllerImpl;
 
+import java.text.DateFormat;
+import java.util.Date;
+import util.ErrorHandler;
 import java.util.Scanner;
 
 public class Main {
@@ -10,6 +13,7 @@ public class Main {
     private Scanner scan;
     private String currentUserType; // 현재 로그인한 사용자 유형 저장
     private String currentUserId; // 현재 로그인한 사용자 ID 저장
+    private String currentUserName; // 현재 로그인한 사용자 이름 저장
 
     public Main() {
         memberControl = MemberControllerImpl.getInstance();
@@ -85,7 +89,7 @@ public class Main {
                 memberControl.requestSignup(user, taIdx);
                 System.out.println("회원형가입 신청이 접수되었습니다. (관리자 승인 대기)");
             } catch (RuntimeException e) {
-                System.out.println("회원가입 신청 중 오류가 발생했습니다: " + e.getMessage());
+                ErrorHandler.displayAndLog("회원가입 신청 중 오류가 발생했습니다. 잠시 후 다시 시도하세요.", e);
             }
         } else if ("2".equals(type)) {
             domain.WarehouseAdmin admin = new domain.WarehouseAdmin();
@@ -99,7 +103,7 @@ public class Main {
                 memberControl.requestSignupWarehouse(admin, taIdx);
                 System.out.println("창고관리자 회원가입 신청이 접수되었습니다. (관리자 승인 대기)");
             } catch (RuntimeException e) {
-                System.out.println("회원가입 신청 중 오류가 발생했습니다: " + e.getMessage());
+                ErrorHandler.displayAndLog("회원가입 신청 중 오류가 발생했습니다. 잠시 후 다시 시도하세요.", e);
             }
         }
 //        else if ("3".equals(type)) {
@@ -152,6 +156,22 @@ public class Main {
         if (success) {
             System.out.println("로그인 성공");
             currentUserId = loginId; // 로그인한 사용자 ID 저장
+            
+            // 사용자 이름 가져오기
+            try {
+                Object userInfo = memberControl.getUserInfo(loginId);
+                if (userInfo instanceof domain.User) {
+                    currentUserName = ((domain.User) userInfo).getUName();
+                } else if (userInfo instanceof domain.WarehouseAdmin) {
+                    currentUserName = ((domain.WarehouseAdmin) userInfo).getWaName();
+                } else if (userInfo instanceof domain.TotalAdmin) {
+                    currentUserName = ((domain.TotalAdmin) userInfo).getTaName();
+                }
+            } catch (RuntimeException e) {
+                ErrorHandler.displayAndLog("사용자 정보를 불러오는 중 오류가 발생했습니다. 기본 이름으로 표시합니다.", e);
+                currentUserName = "사용자"; // 기본값
+            }
+            
             // 사용자 유형에 따른 대시보드 표시 및 메뉴 처리
             if ("1".equals(loginType)) {
                 currentUserType = "user";
@@ -193,6 +213,7 @@ public class Main {
                     System.out.println("로그아웃합니다.");
                     currentUserType = null;
                     currentUserId = null;
+                    currentUserName = null;
                     inDashboard = false;
                     break;
                 case "1":
@@ -230,7 +251,10 @@ public class Main {
         System.out.println();
         System.out.println("============================================================");
         System.out.println("WMS 프로젝트_4조");
-        System.out.println("<일반회원화면>                   0. 로그아웃     1. 마이페이지");
+        System.out.println("[ " + currentUserName + " ]님 환영합니다!");
+        System.out.println("============================================================");
+        System.out.println("<일반회원화면>");
+        System.out.println("                                    0. 로그아웃     1. 마이페이지");
         System.out.println("============================================================");
         System.out.println();
         System.out.println("2. 입고관리");
@@ -255,6 +279,7 @@ public class Main {
                     System.out.println("로그아웃합니다.");
                     currentUserType = null;
                     currentUserId = null;
+                    currentUserName = null;
                     inDashboard = false;
                     break;
                 case "1":
@@ -286,7 +311,10 @@ public class Main {
         System.out.println();
         System.out.println("============================================================");
         System.out.println("WMS 프로젝트_4조");
-        System.out.println("<창고관리자화면>                  0. 로그아웃     1. 마이페이지");
+        System.out.println("[ " + currentUserName + " ]님 환영합니다!");
+        System.out.println("============================================================");
+        System.out.println("<창고관리자화면>");
+        System.out.println("                                    0. 로그아웃     1. 마이페이지");
         System.out.println("============================================================");
         System.out.println();
         System.out.println("2. 창고관리");
@@ -309,6 +337,7 @@ public class Main {
                     System.out.println("로그아웃합니다.");
                     currentUserType = null;
                     currentUserId = null;
+                    currentUserName = null;
                     inDashboard = false;
                     break;
                 case "1":
@@ -349,7 +378,10 @@ public class Main {
         System.out.println();
         System.out.println("============================================================");
         System.out.println("WMS 프로젝트_4조");
-        System.out.println("<총관리자 화면>                    0. 로그아웃     1. 마이페이지");
+        System.out.println("[ " + currentUserName + " ]님 환영합니다!");
+        System.out.println("============================================================");
+        System.out.println("<총관리자화면>");
+        System.out.println("                                    0. 로그아웃     1. 마이페이지");
         System.out.println("============================================================");
         System.out.println();
         System.out.println("2. 회원관리");
@@ -382,7 +414,7 @@ public class Main {
                 System.out.println("회원가입 일자: " + user.getCreatedAt());
             }
         } catch (RuntimeException e) {
-            System.out.println("사용자 정보를 불러오는 중 오류가 발생했습니다: " + e.getMessage());
+            ErrorHandler.displayAndLog("사용자 정보를 불러오는 중 오류가 발생했습니다.", e);
         }
         
         System.out.println("============================================================");
@@ -411,13 +443,14 @@ public class Main {
                             System.out.println("회원탈퇴가 완료되었습니다. 자동으로 로그아웃됩니다.");
                             currentUserType = null;
                             currentUserId = null;
+                            currentUserName = null;
                             return true; // 회원탈퇴 완료 시 true 반환
                         } else {
                             System.out.println("비밀번호가 일치하지 않습니다. 탈퇴가 취소되었습니다.");
                             return false;
                         }
                     } catch (RuntimeException e) {
-                        System.out.println("회원탈퇴 중 오류가 발생했습니다: " + e.getMessage());
+                        ErrorHandler.displayAndLog("회원탈퇴 중 오류가 발생했습니다.", e);
                         return false;
                     }
                 } else {
@@ -448,7 +481,7 @@ public class Main {
                 System.out.println("회원가입 일자: " + admin.getCreatedAt());
             }
         } catch (RuntimeException e) {
-            System.out.println("사용자 정보를 불러오는 중 오류가 발생했습니다: " + e.getMessage());
+            ErrorHandler.displayAndLog("사용자 정보를 불러오는 중 오류가 발생했습니다.", e);
         }
         
         System.out.println("============================================================");
@@ -476,13 +509,14 @@ public class Main {
                             System.out.println("회원탈퇴가 완료되었습니다. 자동으로 로그아웃됩니다.");
                             currentUserType = null;
                             currentUserId = null;
+                            currentUserName = null;
                             return true; // 회원탈퇴 완료 시 true 반환
                         } else {
                             System.out.println("비밀번호가 일치하지 않습니다. 탈퇴가 취소되었습니다.");
                             return false;
                         }
                     } catch (RuntimeException e) {
-                        System.out.println("회원탈퇴 중 오류가 발생했습니다: " + e.getMessage());
+                        ErrorHandler.displayAndLog("회원탈퇴 중 오류가 발생했습니다.", e);
                         return false;
                     }
                 } else {
@@ -513,7 +547,7 @@ public class Main {
                 System.out.println("회원가입 일자: " + admin.getCreatedAt());
             }
         } catch (RuntimeException e) {
-            System.out.println("사용자 정보를 불러오는 중 오류가 발생했습니다: " + e.getMessage());
+            ErrorHandler.displayAndLog("사용자 정보를 불러오는 중 오류가 발생했습니다.", e);
         }
         
         System.out.println("============================================================");
@@ -542,13 +576,14 @@ public class Main {
                             System.out.println("회원탈퇴가 완료되었습니다. 자동으로 로그아웃됩니다.");
                             currentUserType = null;
                             currentUserId = null;
+                            currentUserName = null;
                             return true; // 회원탈퇴 완료 시 true 반환
                         } else {
                             System.out.println("비밀번호가 일치하지 않습니다. 탈퇴가 취소되었습니다.");
                             return false;
                         }
                     } catch (RuntimeException e) {
-                        System.out.println("회원탈퇴 중 오류가 발생했습니다: " + e.getMessage());
+                        ErrorHandler.displayAndLog("회원탈퇴 중 오류가 발생했습니다.", e);
                         return false;
                     }
                 } else {
@@ -578,7 +613,7 @@ public class Main {
                 System.out.println("해당 이메일로 등록된 계정을 찾을 수 없습니다.");
             }
         } catch (RuntimeException e) {
-            System.out.println("아이디 찾기 중 오류가 발생했습니다: " + e.getMessage());
+            ErrorHandler.displayAndLog("아이디 찾기 중 오류가 발생했습니다.", e);
         }
         
         System.out.println("메인 화면으로 돌아갑니다.");
@@ -596,15 +631,15 @@ public class Main {
         try {
             String result = memberControl.findPasswordById(userId);
             if (result != null) {
-                System.out.println("찾은 비밀번호: " + result);
+                System.out.println("회원 권한: " + result);
             } else {
                 System.out.println("해당 아이디로 등록된 계정을 찾을 수 없습니다.");
             }
         } catch (RuntimeException e) {
-            System.out.println("비밀번호 찾기 중 오류가 발생했습니다: " + e.getMessage());
+            ErrorHandler.displayAndLog("비밀번호 찾기 중 오류가 발생했습니다.", e);
         }
         
-        System.out.println("메인 화면으로 돌아갑니다.");
+        System.out.println("비밀번호는 마이페이지에서 수정 가능합니다.");
     }
 
     // 내 정보 수정
@@ -645,6 +680,8 @@ public class Main {
             String newName = scan.nextLine().trim();
             if (newName.isEmpty()) {
                 newName = currentName;
+            } else{
+                currentUserName = newName;
             }
             
             System.out.print("새로운 전화번호를 입력하세요 (변경하지 않으려면 엔터): ");
@@ -661,7 +698,7 @@ public class Main {
             }
             
         } catch (RuntimeException e) {
-            System.out.println("정보 수정 중 오류가 발생했습니다: " + e.getMessage());
+            ErrorHandler.displayAndLog("정보 수정 중 오류가 발생했습니다.", e);
         }
         
         System.out.println("마이페이지로 돌아갑니다.");
@@ -698,7 +735,7 @@ public class Main {
                 System.out.println("현재 비밀번호가 일치하지 않거나 변경에 실패했습니다.");
             }
         } catch (RuntimeException e) {
-            System.out.println("비밀번호 변경 중 오류가 발생했습니다: " + e.getMessage());
+            ErrorHandler.displayAndLog("비밀번호 변경 중 오류가 발생했습니다.", e);
         }
         
         System.out.println("마이페이지로 돌아갑니다.");
