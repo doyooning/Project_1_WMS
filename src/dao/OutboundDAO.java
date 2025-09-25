@@ -75,6 +75,57 @@ public class OutboundDAO implements InOutboundDAO {
         }
     }
 
+    // Outbound 테이블 정보 수정
+    public int updateOutboundData(int requestId, int warehouseId, String dueDate) {
+        //프로시저
+        String sql = "{call updateOutRequest(?, ?, ?, ?)}";
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, requestId);
+            call.setDate(2, Date.valueOf(dueDate));
+            call.setInt(3, warehouseId);
+
+            // 실행
+            call.execute();
+
+            // 리턴
+            int rtn = call.getInt(4);
+            return rtn;
+
+        } catch (SQLException e) {
+            return -1;
+        }
+    }
+
+    // OutboundItem 테이블 정보 수정
+    public int updateOutboundItemData(int requestId, int itemId, String productId, int productQuantity) {
+        //프로시저
+        String sql = "{call updateOutRequestProduct(?, ?, ?, ?, ?)}";
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, requestId);
+            call.setInt(2, itemId);
+            call.setString(3, productId);
+            call.setInt(4, productQuantity);
+
+            // 실행
+            call.execute();
+
+            // 리턴
+            int rtn = call.getInt(5);
+            return rtn;
+
+        } catch (SQLException e) {
+            return -1;
+        }
+    }
+
 
     @Override
     public void getRequestList() {

@@ -71,21 +71,11 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException | NumberFormatException e) {
-            System.out.print(
-                    """
-                    ============================================================
-                    [오류] 유효하지 않은 입력입니다. 다시 입력해 주십시오.
-                    """
-            );
+            Errors.INVALID_INPUT_ERROR.getText();
             showMenu(authNum);
 
         } catch (Exception e) {
-            System.out.print(
-                    """
-                    ============================================================
-                    [오류] 예기치 못한 오류가 발생하였습니다. 다시 입력해 주십시오.
-                    """
-            );
+            Errors.UNEXPECTED_ERROR.getText();
             e.printStackTrace();
             showMenu(authNum);
         }
@@ -108,13 +98,8 @@ public class InboundControllerImpl implements InOutboundController{
 
                 }
                 if (status == -1) {
-                    System.out.println(
-                            """
-                            ============================================================
-                            데이터 입력 중 오류가 발생하였습니다.
-                            ============================================================
-                            """
-                    );
+                    Errors.DATA_INPUT_ERROR.getText();
+
                 } else {
                     System.out.printf(
                             """
@@ -131,7 +116,7 @@ public class InboundControllerImpl implements InOutboundController{
                 status = InputRequestData();
 
                 if (status == -1) {
-                    System.out.println("오류 발생");
+                    Errors.DATA_INPUT_ERROR.getText();
                 } else {
                     System.out.println("실행 성공");
                 }
