@@ -117,12 +117,18 @@ public class InboundControllerImpl implements InOutboundController{
             }
             case 3 -> {
                 int status = 0;
-                System.out.println("3. 입고 요청 취소");
-//                inboundService.cancelRequest();
+                // 3. 출고 요청 취소
+                status = cancelRequest();
                 if (status == -1) {
-                    System.out.println("오류 발생");
+                    System.out.println(Errors.DATA_INPUT_ERROR.getText());
                 } else {
-                    System.out.println("실행 성공");
+                    System.out.print(
+                            """
+                            ============================================================
+                            출고 요청 취소가 완료되었습니다.
+                            ============================================================
+                            """
+                    );
                 }
 
             }
@@ -399,6 +405,48 @@ public class InboundControllerImpl implements InOutboundController{
             return -1;
         }
 
+        return rtn;
+    }
+
+    public int cancelRequest() {
+        int rtn = 0;
+        try {
+            System.out.print(
+                    """
+                    ============================================================
+                    취소할 입고요청 번호를 입력해주세요.
+                    요청번호 :\s"""
+            );
+            int requestId = Integer.parseInt(br.readLine());
+
+            // 취소 확인
+            System.out.print(
+                    """
+                    ============================================================
+                    출고 요청을 취소하시겠습니까?
+                    (Y/N 입력) :\s"""
+            );
+            String select = br.readLine().toUpperCase();
+            if (select.charAt(0) == 'N') {
+                System.out.print("""
+                    ============================================================
+                    메뉴 화면으로 이동합니다.
+                    ============================================================
+                    """);
+            } else if (select.charAt(0) == 'Y') {
+                // 요청 정보 전송
+                int requestStatus = inboundService.cancelRequest(requestId);
+                if (requestStatus == -1) {
+                    rtn = -1;
+                }
+            } else {
+                throw new IOException();
+            }
+
+        } catch (IOException e) {
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            return -1;
+        }
         return rtn;
     }
 

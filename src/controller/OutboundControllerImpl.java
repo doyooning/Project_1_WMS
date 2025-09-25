@@ -108,7 +108,7 @@ public class OutboundControllerImpl implements InOutboundController{
             case 3 -> {
                 int status = 0;
                 // 3. 출고 요청 취소
-                cancelRequest();
+                status = cancelRequest();
                 if (status == -1) {
                     System.out.println(Errors.DATA_INPUT_ERROR.getText());
                 } else {
@@ -393,7 +393,8 @@ public class OutboundControllerImpl implements InOutboundController{
             System.out.print(
                     """
                     ============================================================
-                    취소할 입고요청 번호를 입력해주세요 :\s"""
+                    취소할 출고요청 번호를 입력해주세요.
+                    요청번호 :\s"""
             );
             int requestId = Integer.parseInt(br.readLine());
 
