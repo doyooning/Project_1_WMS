@@ -446,12 +446,14 @@ public class FinanceDao implements Finance {
     }
 
     @Override
-    public List<SubApproval> getPendingSubApprovalList() {
+    public List<SubApproval> getPendingSubApprovalList(int waIdx) {
         // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "{call getPendingSubApprovalList()}";
+            String sql = "{call getPendingSubApprovalList(?)}";
             cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, waIdx);
 
             rs = cstmt.executeQuery();
 
@@ -478,11 +480,36 @@ public class FinanceDao implements Finance {
     }
 
     @Override
-    public int getSubApprovalDetail(int saIdx) {
+    public int getAvailableAmount(int saIdx) {
         // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "{call getSubApprovalDetail(?)}";
+            String sql = "{call getAvailableAmount(?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, saIdx);
+
+            rs = cstmt.executeQuery();
+
+            if(rs.next()) {
+                int result = rs.getInt(1);
+
+                return result;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
+
+    @Override
+    public int getRequiredAmount(int saIdx) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call getRequiredAmount(?)}";
             cstmt = conn.prepareCall(sql);
 
             cstmt.setInt(1, saIdx);

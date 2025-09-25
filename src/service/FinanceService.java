@@ -24,7 +24,7 @@ public interface FinanceService {
     Boolean modifySubscription(SubApproval supApproval);
     Boolean cancelSubscription(int uIdx);
 
-    List<SubApproval> getPendingSubApprovalList();
+    List<SubApproval> getPendingSubApprovalList(int waIdx);
 
-    int getSubApprovalDetail(int saIdx);
+    Map<String, Object> getSubApprovalDetail(int saIdx);
 }
