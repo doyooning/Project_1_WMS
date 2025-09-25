@@ -150,13 +150,20 @@ public class FinanceServiceImpl implements FinanceService {
     }
 
     @Override
-    public List<SubApproval> getPendingSubApprovalList() {
-        return financeDao.getPendingSubApprovalList();
+    public List<SubApproval> getPendingSubApprovalList(int waIdx) {
+        return financeDao.getPendingSubApprovalList(waIdx);
     }
 
     @Override
-    public int getSubApprovalDetail(int saIdx) {
-        return financeDao.getSubApprovalDetail(saIdx);
+    public Map<String, Object> getSubApprovalDetail(int saIdx) {
+        int AvailAmount = financeDao.getAvailableAmount(saIdx);
+        int requireAmount = financeDao.getRequiredAmount(saIdx);
+        boolean result = (AvailAmount >= requireAmount);
+        return Map.of(
+                "availableAmount", AvailAmount,
+                "requiredAmount", requireAmount,
+                "result", result
+        );
     }
 
     private Map<String, Object> buildMonthlySummary(Map<String, Long> salesMap, Map<String, Long> expenseMap, String date) {

@@ -412,11 +412,16 @@ public class FinanceControllerImpl implements FinanceController {
         }
     }
     private void handleWhSubscription(){
+        int waIdx = whAdmin.getWaIdx();
+
         //구독 신청 목록 출력
-        List<SubApproval> list = getPendingSubApprovalList();
+        List<SubApproval> list = getPendingSubApprovalList(waIdx);
         printSubApprovalList(list);
 
         int saIdx = getSubApprovalId();
+
+        Map<String, Object> result = getSubApprovalDetail(saIdx);
+        printSubApprovalDetail(result);
     }
 
     @Override
@@ -478,12 +483,12 @@ public class FinanceControllerImpl implements FinanceController {
     }
 
     @Override
-    public List<SubApproval> getPendingSubApprovalList() {
-        return finance.getPendingSubApprovalList();
+    public List<SubApproval> getPendingSubApprovalList(int waIdx) {
+        return finance.getPendingSubApprovalList(waIdx);
     }
 
     @Override
-    public int getSubApprovalDetail(int saIdx) {
+    public Map<String, Object> getSubApprovalDetail(int saIdx) {
         return finance.getSubApprovalDetail(saIdx);
     }
 
@@ -643,6 +648,9 @@ public class FinanceControllerImpl implements FinanceController {
             System.out.printf(" %8d | %8d | %15s \n", s.getSaIdx(), s.getUIdx(), s.getSaDate());
         }
         System.out.println("-".repeat(60));
+    }
+    private void printSubApprovalDetail(Map<String, Object> result){
+        System.out.printf("%,d  |  %,d  |  %s \n", (int)result.get("availableAmount"), (int)result.get("requiredAmount"), String.valueOf(result.get("result")));
     }
 
 
