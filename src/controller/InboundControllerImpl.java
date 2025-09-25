@@ -71,11 +71,11 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException | NumberFormatException e) {
-            Errors.INVALID_INPUT_ERROR.getText();
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
             showMenu(authNum);
 
         } catch (Exception e) {
-            Errors.UNEXPECTED_ERROR.getText();
+            System.out.println(Errors.UNEXPECTED_ERROR.getText());
             e.printStackTrace();
             showMenu(authNum);
         }
@@ -98,7 +98,7 @@ public class InboundControllerImpl implements InOutboundController{
 
                 }
                 if (status == -1) {
-                    Errors.DATA_INPUT_ERROR.getText();
+                    System.out.println(Errors.DATA_INPUT_ERROR.getText());
 
                 } else {
                     System.out.printf(
@@ -165,16 +165,16 @@ public class InboundControllerImpl implements InOutboundController{
             if (status == 1) {
                 showUpdateMenu();
             } else if (status == -1) {
-                Errors.DATA_INPUT_ERROR.getText();
+                System.out.println(Errors.DATA_INPUT_ERROR.getText());
                 showUpdateMenu();
             }
 
         } catch (IOException | NumberFormatException e) {
-            Errors.INVALID_INPUT_ERROR.getText();
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
             showUpdateMenu();
 
         } catch (Exception e) {
-            Errors.UNEXPECTED_ERROR.getText();
+            System.out.println(Errors.UNEXPECTED_ERROR.getText());
             e.printStackTrace();
             showUpdateMenu();
         }
@@ -220,7 +220,7 @@ public class InboundControllerImpl implements InOutboundController{
                 }
             }
         } catch (IOException e) {
-            Errors.INVALID_INPUT_ERROR.getText();
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
         }
         return 1;
     }
@@ -291,6 +291,7 @@ public class InboundControllerImpl implements InOutboundController{
 
                 // 실행 결과 오류 검증
                 if (itemStatus == -1) {
+                    System.out.println("인바운드 컨트롤러 오류 검증");
                     return -1;
                 }
 
@@ -312,7 +313,7 @@ public class InboundControllerImpl implements InOutboundController{
 
         } catch (IOException e) {
             // 입력오류
-            Errors.INVALID_INPUT_ERROR.getText();
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
         } catch (ParseException e) {
             e.printStackTrace();
             InputRequestData();
