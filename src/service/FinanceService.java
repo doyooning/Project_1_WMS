@@ -25,4 +25,6 @@ public interface FinanceService {
     Boolean cancelSubscription(int uIdx);
 
     List<SubApproval> getPendingSubApprovalList();
+
+    int getSubApprovalDetail(int saIdx);
 }
