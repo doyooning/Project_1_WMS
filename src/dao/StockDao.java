@@ -20,4 +20,14 @@ public class StockDao {
         conn = DBUtil.getConnection();
         //query문 작성할 때 바코드번호로 order by
     }
+
+    public List<Stock> getPrimaryCategoryStockList(String cName){
+        conn = DBUtil.getConnection();
+    }
+    public List<Stock> getSecondaryCategoryStockList(String cName){
+        conn = DBUtil.getConnection();
+    }
+    public List<Stock> getTertiaryCategoryStockList(String cName){
+        conn = DBUtil.getConnection();
+    }
 }
