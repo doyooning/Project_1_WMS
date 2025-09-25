@@ -2,6 +2,7 @@
 package controller;
 
 import domain.Expense;
+import domain.SubModel;
 import domain.Warehouse;
 
 import java.util.List;
@@ -26,4 +27,5 @@ public interface FinanceController {
 
     Boolean removeExpense(int eIdx, int wIdx);
 
+    SubModel getUserSubInfo(int uIdx);
 }

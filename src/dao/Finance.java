@@ -21,4 +21,6 @@ public interface Finance {
     int addExpense(Expense expense);
     int modifyExpense(Expense expense);
     int removeExpense(int eIdx, int wIdx);
+
+    SubModel getUserSubInfo(int uIdx);
 }

@@ -310,4 +310,33 @@ public class FinanceDao implements Finance {
         return 0;
     }
 
+    @Override
+    public SubModel getUserSubInfo(int uIdx) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call getUserSubInfo(?)}";
+            cstmt = conn.prepareCall(sql);
+            cstmt.setInt(1, uIdx);
+
+            rs = cstmt.executeQuery();
+
+            if (rs.next()) {
+                SubModel subModel = new SubModel();
+                subModel.setSmIdx(rs.getInt("smIdx"));
+                subModel.setSmName(rs.getString("smName"));
+                subModel.setSmPrice(rs.getLong("smPrice"));
+                subModel.setSmAmount(rs.getInt("smAmount"));
+                // warehouse.setWUniqueNum(rs.getString("wtUniqueNum")); // 원본 코드에 주석처리 되어있어 유지
+                return subModel;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return null;
+    }
+
 }
