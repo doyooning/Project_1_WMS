@@ -95,6 +95,28 @@ public class FinanceControllerImpl implements FinanceController {
                 >  """);
         selectExpenseMenu();
     }
+    private void showUserSubMenu(){
+        SubModel subInfo = getUserSubInfo(user.getUIdx());
+        if(subInfo == null){
+            System.out.print("""
+                    ============================================================
+                    내 구독 정보 >  없음
+                    ============================================================
+                       1.구독 신청  |  2.재무관리 메뉴
+                    ============================================================
+                    >  """);
+            selectNonSubUserMenu();
+        } else{
+            System.out.printf("""
+                    ============================================================
+                    내 구독 정보 > %d | %s | %d | %d
+                    ============================================================
+                        1.구독 변경  |  2.구독 취소 |  3.재무관리 메뉴
+                    ============================================================
+                    >   """, subInfo.getSmIdx(), subInfo.getSmName(), subInfo.getSmPrice(), subInfo.getSmAmount());
+            selectSubUserMenu();
+        }
+    }
 
 
     //권한별 메뉴선택 및 메서드 호출
@@ -167,6 +189,21 @@ public class FinanceControllerImpl implements FinanceController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    private void selectNonSubUserMenu(){
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> handleAddSubscription();
+                case "2" -> System.out.println();
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void selectSubUserMenu(){
+
     }
 
 
@@ -278,7 +315,7 @@ public class FinanceControllerImpl implements FinanceController {
         }
     }
     private void handleAddSubscription() {
-        List<SubModel> subList = finance.getSubModelList();
+        //List<SubModel> subList = finance.getSubModelList();
     }
 
     @Override
@@ -312,6 +349,11 @@ public class FinanceControllerImpl implements FinanceController {
     @Override
     public Boolean removeExpense(int eIdx, int wIdx) {
         return finance.removeExpense(eIdx, wIdx);
+    }
+
+    @Override
+    public SubModel getUserSubInfo(int uIdx) {
+        return finance.getUserSubInfo(uIdx);
     }
 
 

@@ -101,6 +101,11 @@ public class FinanceServiceImpl implements FinanceService {
         else return false;
     }
 
+    @Override
+    public SubModel getUserSubInfo(int uIdx) {
+        return financeDao.getUserSubInfo(uIdx);
+    }
+
     private Map<String, Object> buildMonthlySummary(Map<String, Long> salesMap, Map<String, Long> expenseMap, String date) {
         Map<String, Map<String, Long>> monthlySummary = new LinkedHashMap<>();
         long totalSales = 0;
