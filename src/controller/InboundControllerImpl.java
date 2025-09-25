@@ -163,6 +163,11 @@ public class InboundControllerImpl implements InOutboundController{
             int menuNum = Integer.parseInt(br.readLine());
             status = selectUpdateMenu(menuNum);
             if (status == 1) {
+                System.out.print("""
+            ============================================================
+            수정이 완료되었습니다.
+            ============================================================
+            """);
                 showUpdateMenu();
             } else if (status == -1) {
                 System.out.println(Errors.DATA_INPUT_ERROR.getText());
@@ -188,10 +193,11 @@ public class InboundControllerImpl implements InOutboundController{
                 // 요청 정보 수정
                 case 1 -> {
                     // 요청 번호 입력
-                    System.out.println(
+                    System.out.print(
                             """
                             ============================================================
-                            수정할 입고요청 번호를 입력해주세요 :\s"""
+                            수정할 입고요청 번호를 입력해주세요.
+                            요청번호 :\s"""
                     );
                     int requestId = Integer.parseInt(br.readLine());
                     status = InputRequestDataUpdate(requestId);
@@ -202,10 +208,11 @@ public class InboundControllerImpl implements InOutboundController{
                 // 물품 정보 수정
                 case 2 -> {
                     // 요청 번호 입력
-                    System.out.println(
+                    System.out.print(
                             """
                             ============================================================
-                            수정할 입고요청 번호를 입력해주세요 :\s"""
+                            수정할 입고요청 번호를 입력해주세요.
+                            요청번호 :\s"""
                     );
                     int requestId = Integer.parseInt(br.readLine());
                     status = InputRequestItemUpdate(requestId);
@@ -291,7 +298,6 @@ public class InboundControllerImpl implements InOutboundController{
 
                 // 실행 결과 오류 검증
                 if (itemStatus == -1) {
-                    System.out.println("인바운드 컨트롤러 오류 검증");
                     return -1;
                 }
 
@@ -337,7 +343,7 @@ public class InboundControllerImpl implements InOutboundController{
             System.out.print(
                     """
                     ============================================================
-                    입고위치(8자리 숫자로 입력) :\s"""
+                    입고기한(8자리 숫자로 입력) :\s"""
             );
             String dueDate = br.readLine();
             Date date = informat.parse(dueDate);
@@ -363,7 +369,7 @@ public class InboundControllerImpl implements InOutboundController{
             System.out.print(
                     """
                     ============================================================
-                    물품 순번을 입력해주세요.
+                    수정할 물품 순번을 입력해주세요.
                     순번 :\s"""
             );
             int itemId = Integer.parseInt(br.readLine());
