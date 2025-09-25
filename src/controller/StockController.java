@@ -95,7 +95,10 @@ public class StockController {
 
                switch(input.trim()){
                    case "1" -> showAllStockList();
-                   //메소드 구현하면서 추가
+                   case "2" -> showCategoryStockList(2);
+                   case "3" -> showCategoryStockList(3);
+                   case "4" -> showCategoryStockList(4);
+                   //case 5
                }
                break;
            }catch(IOException e){
@@ -115,8 +118,66 @@ public class StockController {
         );
         List<Stock> stockList = stockService.getAllStockList();
 
+        printList(stockList, 1);
+    }
+
+    private void showCategoryStockList(int num){
+        //총관리자, 창고관리자, 회원, 배송기사 조회 가능
+        String menu = null;
+        switch(num){
+            case 2 -> menu = "대분류";
+            case 3 -> menu = "중분류";
+            case 4 -> menu = "소분류";
+        }
+
+        System.out.printf("""
+                ============================================================
+                =======================%s별 재고 조회=====================
+                """, menu
+        );
+        System.out.printf("조회하실 %s를 입력해주세요.\n", menu);
+        String category = getCategory();
+
+        List<Stock> stockList = stockService.getCategoryStockList(num, category);
+        printList(stockList, num);
+    }
+
+    private String getCategory(){
+        String input;
+        while(true){
+            try{
+                System.out.print("> ");
+                input = reader.readLine();
+
+                if(!input.trim().matches("^[가-힣\\s]+$")){
+                    System.out.println("카테고리 이름 형식에 맞지 않습니다. 다시 입력해주세요.");
+                    continue;
+                }
+                break;
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+        return input;
+    }
+
+    private void printList(List<Stock> stockList, int menu) {
         int page = 2, index = 0;
+
         while(index < stockList.size()){
+            String type = null;
+            String data = null;
+            switch(menu){
+                case 1 -> {
+                    type = "대분류"; data = stockList.get(index).getPCategory();
+                } //전체목록조회
+                case 2 -> {
+                    type = "중분류"; data = stockList.get(index).getSCategory();
+                }//대분류별 재고 조회
+                default -> {
+                    type = "소분류"; data = stockList.get(index).getTCategory();
+                }//이외의 조회
+            }
             String currentPIdx = stockList.get(index).getPIdx();
 
             String menu1 = String.format("%-20s%-20s", "바코드번호", "물품이름");
@@ -124,25 +185,26 @@ public class StockController {
             System.out.println("------------------------------------------------------------");
             System.out.println(String.format("%-20s%-20s", currentPIdx, stockList.get(index).getPName()));
             System.out.println("------------------------------------------------------------");
-            String menu2 = String.format("%-8s%-6s%-6s%-6s%-7s%-10s", "창고번호", "가용재고", "불량재고", "안전재고","대분류","등록일");
+            String menu2 = String.format("%-8s%-6s%-6s%-6s%-7s%-10s", "창고번호", "가용재고", "불량재고", "안전재고",type,"수정일");
             System.out.println(menu2);
             System.out.println("------------------------------------------------------------");
 
             while(stockList.get(index).getPIdx().equals(currentPIdx)){
                 String format = String.format("%-8s%-6d%-6d%-6d%-7s%-10s",
                         stockList.get(index).getWUniqueNum(), stockList.get(index).getSAvail(), stockList.get(index).getSNotAvail(), stockList.get(index).getSSafe(),
-                        stockList.get(index).getPCategory(), sdf.format(stockList.get(index).getUpdatedAt()));
+                        data, sdf.format(stockList.get(index).getUpdatedAt()));
                 System.out.println(format);
 
                 index++;
             }
             boolean result = showPageOfList(page);
             if(!result) return;
+            page++;
         }
     }
 
     private boolean showPageOfList(int page){
-        System.out.printf("%d번째 페이지로 넘기시겠습니까? [Y|N]", page);
+        System.out.printf("%d번째 페이지로 넘기시겠습니까? [Y|N]\n", page);
         try {
             String input = reader.readLine();
 

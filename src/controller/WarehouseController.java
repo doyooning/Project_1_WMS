@@ -386,7 +386,7 @@ public class WarehouseController {
     }
 
     private boolean showPageOfList(int page){
-        System.out.printf("%d번째 페이지로 넘기시겠습니까? [Y|N]", page);
+        System.out.printf("%d번째 페이지로 넘기시겠습니까\n? [Y|N]", page);
         try {
             String input = reader.readLine();
 
