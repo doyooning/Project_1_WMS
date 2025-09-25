@@ -101,14 +101,8 @@ public class OutboundControllerImpl implements InOutboundController{
                 }
             }
             case 2 -> {
-                int status = 0;
-                System.out.println("2. 출고 요청 수정");
-                status = InputRequestData();
-                if (status == -1) {
-                    Errors.DATA_INPUT_ERROR.getText();
-                } else {
-                    System.out.println("실행 성공");
-                }
+                // 2. 출고 요청 수정
+                showUpdateMenu();
 
             }
             case 3 -> {
@@ -189,13 +183,7 @@ public class OutboundControllerImpl implements InOutboundController{
 
             // 실행 결과 오류 검증
             if (requestStatus == -1) {
-                System.out.println(
-                        """
-                        ============================================================
-                        데이터 입력 중 오류가 발생하였습니다. 다시 실행해 주십시오.
-                        ============================================================
-                        """
-                );
+                Errors.DATA_INPUT_ERROR.getText();
                 return -1;
             }
 
@@ -219,13 +207,7 @@ public class OutboundControllerImpl implements InOutboundController{
 
                 // 실행 결과 오류 검증
                 if (itemStatus == -1) {
-                    System.out.println(
-                            """
-                            ============================================================
-                            데이터 입력 중 오류가 발생하였습니다. 다시 실행해 주십시오.
-                            ============================================================
-                            """
-                    );
+                    Errors.DATA_INPUT_ERROR.getText();
                     return -1;
                 }
 
@@ -247,13 +229,7 @@ public class OutboundControllerImpl implements InOutboundController{
 
         } catch (IOException e) {
             // 입력오류
-            System.out.println(
-                    """
-                    ============================================================
-                    해당하는 항목이 없거나, 잘못 입력하셨습니다.
-                    ============================================================
-                    """
-            );
+            Errors.INVALID_INPUT_ERROR.getText();
         } catch (ParseException e) {
             e.printStackTrace();
             InputRequestData();
