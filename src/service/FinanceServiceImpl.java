@@ -177,6 +177,13 @@ public class FinanceServiceImpl implements FinanceService {
         );
     }
 
+    @Override
+    public Boolean rejectSubscription(int saIdx) {
+        int result = financeDao.updateSubscriptionStatus(saIdx, EntityStatus.REJECTED);
+        if(result > 0) return true;
+        else return false;
+    }
+
     private Map<String, Object> buildMonthlySummary(Map<String, Long> salesMap, Map<String, Long> expenseMap, String date) {
         Map<String, Map<String, Long>> monthlySummary = new LinkedHashMap<>();
         long totalSales = 0;
