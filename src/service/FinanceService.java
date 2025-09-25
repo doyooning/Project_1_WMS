@@ -21,4 +21,5 @@ public interface FinanceService {
     List<SubModel> getSubModelList();
 
     Boolean addSubscription(SubApproval supApproval);
+    Boolean modifySubscription(SubApproval supApproval);
 }

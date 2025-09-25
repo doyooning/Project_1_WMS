@@ -115,6 +115,32 @@ public class FinanceServiceImpl implements FinanceService {
         else return false;
     }
 
+    @Override
+    public Boolean modifySubscription(SubApproval subApproval) {
+        SubApproval prevSub = financeDao.getPrevSub(subApproval.getUIdx());
+        if (prevSub != null) {
+            SubApproval newSub = new SubApproval();
+            newSub.setUIdx(subApproval.getUIdx());
+            newSub.setSmIdx(subApproval.getSmIdx());
+
+            // 새 구독 시작일을 현재 구독 종료일 다음 날로 설정
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(prevSub.getSaEndDate());
+            calendar.add(Calendar.DATE, 1);
+            newSub.setSaStartDate(calendar.getTime());
+
+            // 새 구독 종료일 설정 (예: 1개월)
+            calendar.add(Calendar.DATE, 30);
+            newSub.setSaEndDate(calendar.getTime());
+
+            int result = financeDao.addSubscription(newSub);
+            if(result > 0) return true;
+            else return false;
+        }
+        return false;
+    }
+
+
     private Map<String, Object> buildMonthlySummary(Map<String, Long> salesMap, Map<String, Long> expenseMap, String date) {
         Map<String, Map<String, Long>> monthlySummary = new LinkedHashMap<>();
         long totalSales = 0;

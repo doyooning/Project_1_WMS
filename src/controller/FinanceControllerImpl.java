@@ -206,7 +206,7 @@ public class FinanceControllerImpl implements FinanceController {
         try {
             String num = input.readLine().trim();
             switch (num) {
-                case "1" -> System.out.println("구독 변경");
+                case "1" -> handleModifySubscription();
                 case "2" -> System.out.println("구독 취소");
                 case "3" -> System.out.println();
                 default -> System.out.println("번호를 잘못 입력했습니다.");
@@ -351,7 +351,34 @@ public class FinanceControllerImpl implements FinanceController {
             System.out.println("구독 신청에 실패했습니다: " + e.getMessage());
         }
     }
+    private void handleModifySubscription() {
+        int uIdx = user.getUIdx();
 
+        // 구독 모델 출력
+        List<SubModel> subList = getSubModelList();
+        printSubModelList(subList);
+        int smIdx = getSubModelId();
+
+        int wIdx = getWarehouseId();
+
+        String payment = getPayment();
+
+        SubApproval subApproval = new SubApproval();
+        subApproval.setUIdx(uIdx);
+        subApproval.setSmIdx(smIdx);
+        subApproval.setWaIdx(wIdx);
+        subApproval.setSaPayment(payment);
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = modifySubscription(subApproval);
+            if(result == true) System.out.println("구독 변경이 신청되었습니다.");
+        } catch (Exception e) {
+            System.out.println("구독 변경 신청에 실패했습니다: " + e.getMessage());
+        }
+    }
 
     @Override
     public Map<String, Object> getFinanceList(String type, String date) {
@@ -399,6 +426,11 @@ public class FinanceControllerImpl implements FinanceController {
     @Override
     public Boolean addSubscription(SubApproval subApproval) {
         return finance.addSubscription(subApproval);
+    }
+
+    @Override
+    public Boolean modifySubscription(SubApproval subApproval) {
+        return finance.modifySubscription(subApproval);
     }
 
 

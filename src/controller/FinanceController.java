@@ -33,4 +33,6 @@ public interface FinanceController {
     List<SubModel> getSubModelList();
 
     Boolean addSubscription(SubApproval subApproval);
+
+    Boolean modifySubscription(SubApproval subApproval);
 }
