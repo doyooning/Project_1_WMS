@@ -117,6 +117,14 @@ public class FinanceControllerImpl implements FinanceController {
             selectSubUserMenu();
         }
     }
+    private void showWhSubMenu(){
+        System.out.print("""
+                ============================================================
+                  1.구독신청 조회 | 2.재무관리 메뉴
+                ============================================================
+                >  """);
+        selectSubWhMenu();
+    }
 
     //권한별 메뉴선택 및 메서드 호출
     private void selectTotalAdminMenu(){
@@ -144,7 +152,7 @@ public class FinanceControllerImpl implements FinanceController {
             switch (num) {
                 case "1" -> handleGetWhFinance();
                 case "2" -> showExpenseMenu();
-                case "3" -> System.out.println("구독 승인");
+                case "3" -> showWhSubMenu();
                 case "4" -> loop = false;
                 case "5" -> {
                     System.out.println("logout");
@@ -162,7 +170,7 @@ public class FinanceControllerImpl implements FinanceController {
         try {
             String num = input.readLine().trim();
             switch (num) {
-                case "1" -> System.out.println("구독관리");
+                case "1" -> showUserSubMenu();
                 case "2" -> loop = false;
                 case "3" -> {
                     System.out.println("logout");
@@ -208,6 +216,18 @@ public class FinanceControllerImpl implements FinanceController {
                 case "1" -> handleModifySubscription();
                 case "2" -> handleCancelSubscription();
                 case "3" -> System.out.println();
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void selectSubWhMenu(){
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> handleWhSubscription(); // 핸들러 호출
+                case "2" -> System.out.println();
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
@@ -391,6 +411,11 @@ public class FinanceControllerImpl implements FinanceController {
             System.out.println("구독 취소에 실패했습니다: " + e.getMessage());
         }
     }
+    private void handleWhSubscription(){
+        //구독 신청 목록 출력
+        List<SubApproval> list = getPendingSubApprovalList();
+
+    }
 
     @Override
     public Map<String, Object> getFinanceList(String type, String date) {
@@ -448,6 +473,11 @@ public class FinanceControllerImpl implements FinanceController {
     @Override
     public Boolean cancelSubscription(int uIdx) {
         return finance.cancelSubscription(uIdx);
+    }
+
+    @Override
+    public List<SubApproval> getPendingSubApprovalList() {
+        return finance.getPendingSubApprovalList();
     }
 
 

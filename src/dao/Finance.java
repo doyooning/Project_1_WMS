@@ -27,4 +27,6 @@ public interface Finance {
     SubApproval getPrevSub(int uIdx);
 
     int updateSubscriptionStatus(int saIdx, EntityStatus status);
+
+    List<SubApproval> getPendingSubApprovalList();
 }

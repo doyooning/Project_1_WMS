@@ -445,5 +445,37 @@ public class FinanceDao implements Finance {
         return 0;
     }
 
+    @Override
+    public List<SubApproval> getPendingSubApprovalList() {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call getPendingSubApprovalList()}";
+            cstmt = conn.prepareCall(sql);
+
+            rs = cstmt.executeQuery();
+
+            List<SubApproval> list = new ArrayList<>();
+            while (rs.next()) {
+                SubApproval subApproval = new SubApproval();
+                subApproval.setSaIdx(rs.getInt("saIdx"));
+                subApproval.setSmIdx(rs.getInt("smIdx"));
+                subApproval.setUIdx(rs.getInt("uIdx"));
+                subApproval.setWaIdx(rs.getInt("waIdx"));
+                subApproval.setSaDate(rs.getDate("saDate"));
+                subApproval.setSaStartDate(rs.getTimestamp("saStartDate"));
+                subApproval.setSaEndDate(rs.getTimestamp("saEndDate"));
+                subApproval.setSaPayment(rs.getString("saPayment"));
+                list.add(subApproval);
+            }
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return null;
+    }
+
 
 }

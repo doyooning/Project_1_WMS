@@ -37,4 +37,6 @@ public interface FinanceController {
     Boolean modifySubscription(SubApproval subApproval);
 
     Boolean cancelSubscription(int uIdx);
+
+    List<SubApproval> getPendingSubApprovalList();
 }
