@@ -104,6 +104,17 @@ public class FinanceServiceImpl implements FinanceService {
     }
 
     @Override
+    public String getSubStatus(int uIdx) {
+        SubApproval result = financeDao.getSubStatus(uIdx);
+        String status;
+        if(result == null) status = "신청 정보 없음";
+        else {
+            status = result.getSmIdx() + "번 신청 " + result.getStatus().name();
+        }
+        return status;
+    }
+
+    @Override
     public List<SubModel> getSubModelList() {
         return financeDao.getSubModelList();
     }
