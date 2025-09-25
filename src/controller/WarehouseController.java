@@ -51,13 +51,14 @@ public class WarehouseController {
 
                 if (!input.trim().matches("[12]")) {
                     System.out.println("1-2까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요.");
+                    continue;
                 } else if (input.trim().toLowerCase().equals("exit")) return;
 
                 switch (input) {
                     case "1" -> getWarehouse();
                     case "2" -> showWarehouseSearchMenu();
                 }
-
+                break;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -192,7 +193,7 @@ public class WarehouseController {
     private void showAllWarehouseList() {
         //모두가 조회 가능
         System.out.println(
-                """
+                        """
                         ============================================================
                         ======================전체 현황 리스트 조회=====================
                         """
