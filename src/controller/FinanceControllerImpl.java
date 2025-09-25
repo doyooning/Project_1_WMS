@@ -87,7 +87,7 @@ public class FinanceControllerImpl implements FinanceController {
                                        1.구독 관리  |  2.메인 메뉴  |  3.로그아웃
                            >  """);
     }
-    public void showExpenseMenu(){
+    private void showExpenseMenu(){
         System.out.print("""
                 ============================================================
                   1. 지출 내역 등록 | 2. 지출 내역 수정 | 3. 지출 내역 삭제
@@ -95,6 +95,7 @@ public class FinanceControllerImpl implements FinanceController {
                 >  """);
         selectExpenseMenu();
     }
+
 
     //권한별 메뉴선택 및 메서드 호출
     private void selectTotalAdminMenu(){
@@ -121,7 +122,7 @@ public class FinanceControllerImpl implements FinanceController {
             String num = input.readLine().trim();
             switch (num) {
                 case "1" -> handleGetWhFinance();
-                case "2" -> System.out.println("지출 관리");
+                case "2" -> showExpenseMenu();
                 case "3" -> System.out.println("구독 승인");
                 case "4" -> loop = false;
                 case "5" -> {
@@ -140,7 +141,7 @@ public class FinanceControllerImpl implements FinanceController {
         try {
             String num = input.readLine().trim();
             switch (num) {
-                case "1" -> System.out.println("구독 관리");
+                case "1" -> System.out.println("구독관리");
                 case "2" -> loop = false;
                 case "3" -> {
                     System.out.println("logout");
@@ -167,6 +168,7 @@ public class FinanceControllerImpl implements FinanceController {
             throw new RuntimeException(e);
         }
     }
+
 
     private void handleGetAllFinance() {
         String type = getFinanceType();
@@ -274,6 +276,9 @@ public class FinanceControllerImpl implements FinanceController {
         } catch (Exception e) {
             System.out.println("지출 내역 삭제에 실패했습니다: " + e.getMessage());
         }
+    }
+    private void handleAddSubscription() {
+        List<SubModel> subList = finance.getSubModelList();
     }
 
     @Override

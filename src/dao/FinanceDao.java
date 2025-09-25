@@ -1,9 +1,6 @@
 package dao;
 
-import domain.EntityStatus;
-import domain.Expense;
-import domain.Sales;
-import domain.Warehouse;
+import domain.*;
 import util.DBUtil;
 
 import java.sql.*;
@@ -312,4 +309,5 @@ public class FinanceDao implements Finance {
         }
         return 0;
     }
+
 }

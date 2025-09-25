@@ -1,6 +1,7 @@
 package service;
 
 import domain.Expense;
+import domain.SubModel;
 import domain.Warehouse;
 
 import java.util.List;
