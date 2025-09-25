@@ -144,7 +144,7 @@ public class InboundControllerImpl implements InOutboundController{
                 if (status == -1) {
                     System.out.println("오류 발생");
                 } else {
-                    System.out.println("실행 섣공");
+                    System.out.println("실행 성공");
                 }
 
             }
