@@ -63,21 +63,11 @@ public class OutboundControllerImpl implements InOutboundController{
             selectMenu(authNum, menuNum);
 
         } catch (IOException | NumberFormatException e) {
-            System.out.print(
-                    """
-                    ============================================================
-                    [오류] 유효하지 않은 입력입니다. 다시 입력해 주십시오.
-                    """
-            );
+            Errors.INVALID_INPUT_ERROR.getText();
             showMenu(authNum);
 
         } catch (Exception e) {
-            System.out.print(
-                    """
-                    ============================================================
-                    [오류] 예기치 못한 오류가 발생하였습니다. 다시 입력해 주십시오.
-                    """
-            );
+            Errors.UNEXPECTED_ERROR.getText();
             e.printStackTrace();
             showMenu(authNum);
         }
@@ -94,14 +84,12 @@ public class OutboundControllerImpl implements InOutboundController{
                     status = outboundService.approveRequest();
 
                 } else if(authNum == 2) {
-                    System.out.println("1. 출고 요청");
-                    status = getInputRequestData();
+                    // 1. 출고 요청
+                    status = InputRequestData();
 
                 }
                 if (status == -1) {
-                    System.out.println(".");
-                    System.out.println(".");
-                    System.out.println(".");
+                    Errors.DATA_INPUT_ERROR.getText();
                 } else {
                     System.out.printf(
                             """
@@ -115,9 +103,9 @@ public class OutboundControllerImpl implements InOutboundController{
             case 2 -> {
                 int status = 0;
                 System.out.println("2. 출고 요청 수정");
-//                outboundService.updateRequest(, );
+                status = InputRequestData();
                 if (status == -1) {
-                    System.out.println("오류 발생");
+                    Errors.DATA_INPUT_ERROR.getText();
                 } else {
                     System.out.println("실행 성공");
                 }
@@ -175,7 +163,7 @@ public class OutboundControllerImpl implements InOutboundController{
         return 0;
     }
 
-    public int getInputRequestData() {
+    public int InputRequestData() {
         int rtn = 0;
         try {
             System.out.println(
@@ -268,7 +256,7 @@ public class OutboundControllerImpl implements InOutboundController{
             );
         } catch (ParseException e) {
             e.printStackTrace();
-            getInputRequestData();
+            InputRequestData();
         }
         return rtn;
     }
