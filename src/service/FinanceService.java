@@ -13,4 +13,5 @@ public interface FinanceService {
 
     boolean addExpense(Expense expense);
     boolean modifyExpense(Expense expense);
+    boolean removeExpense(int eIdx, int wIdx);
 }

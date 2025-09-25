@@ -292,4 +292,24 @@ public class FinanceDao implements Finance {
         }
         return 0;
     }
+
+    @Override
+    public int removeExpense(int eIdx, int wIdx) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call removeExpense(?, ?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, eIdx);
+            cstmt.setInt(2, wIdx);
+
+            return cstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
 }

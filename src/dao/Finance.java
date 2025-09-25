@@ -19,4 +19,5 @@ public interface Finance {
     List<Warehouse> getWarehouseList();
     int addExpense(Expense expense);
     int modifyExpense(Expense expense);
+    int removeExpense(int eIdx, int wIdx);
 }

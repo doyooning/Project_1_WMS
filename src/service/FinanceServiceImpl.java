@@ -93,6 +93,13 @@ public class FinanceServiceImpl implements FinanceService {
         else return false;
     }
 
+    @Override
+    public boolean removeExpense(int eIdx, int wIdx) {
+        int result = financeDao.removeExpense(eIdx, wIdx);
+        if(result > 0) return true;
+        else return false;
+    }
+
     private Map<String, Object> buildMonthlySummary(Map<String, Long> salesMap, Map<String, Long> expenseMap, String date) {
         Map<String, Map<String, Long>> monthlySummary = new LinkedHashMap<>();
         long totalSales = 0;
