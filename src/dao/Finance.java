@@ -23,4 +23,6 @@ public interface Finance {
     List<SubModel> getSubModelList();
 
     int addSubscription(SubApproval subApproval);
+
+    SubApproval getPrevSub(int uIdx);
 }

@@ -390,5 +390,40 @@ public class FinanceDao implements Finance {
         return 0;
     }
 
+    @Override
+    public SubApproval getPrevSub(int uIdx) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call getPrevSub(?)}";
+            cstmt = conn.prepareCall(sql);
+
+
+            cstmt.setInt(1, uIdx);
+
+            rs = cstmt.executeQuery();
+
+            if(rs.next()) {
+                SubApproval subApproval = new SubApproval();
+
+                subApproval.setSaIdx(rs.getInt("saIdx"));
+                subApproval.setSmIdx(rs.getInt("smIdx"));
+                subApproval.setUIdx(rs.getInt("uIdx"));
+                subApproval.setWaIdx(rs.getInt("waIdx"));
+                subApproval.setSaDate(rs.getDate("saDate"));
+                subApproval.setSaStartDate(rs.getTimestamp("saStartDate"));
+                subApproval.setSaEndDate(rs.getTimestamp("saEndDate"));
+                subApproval.setSaPayment(rs.getString("saPayment"));
+
+                return subApproval;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return null;
+    }
+
 
 }
