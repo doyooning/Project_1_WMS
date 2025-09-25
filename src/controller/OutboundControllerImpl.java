@@ -115,7 +115,7 @@ public class OutboundControllerImpl implements InOutboundController{
             case 2 -> {
                 int status = 0;
                 System.out.println("2. 출고 요청 수정");
-                outboundService.updateRequest();
+//                outboundService.updateRequest(, );
                 if (status == -1) {
                     System.out.println("오류 발생");
                 } else {
