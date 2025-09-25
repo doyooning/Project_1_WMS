@@ -328,7 +328,7 @@ public class OutboundControllerImpl implements InOutboundController{
             System.out.print(
                     """
                     ============================================================
-                    입고위치(8자리 숫자로 입력) :\s"""
+                    입고기한(8자리 숫자로 입력) :\s"""
             );
             String dueDate = br.readLine();
             Date date = informat.parse(dueDate);
@@ -422,7 +422,7 @@ public class OutboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException e) {
-            Errors.INVALID_INPUT_ERROR.getText();
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
             return -1;
         }
         return rtn;

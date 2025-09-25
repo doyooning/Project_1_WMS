@@ -126,9 +126,10 @@ public class OutboundDAO implements InOutboundDAO {
         }
     }
 
+    // Outbound 요청 상태 수정 : 취소됨
     public int cancelOutboundData(int requestId) {
         //프로시저
-        String sql = "{call updateOutRequest(?, ?)}";
+        String sql = "{call updateOutRequestStatus(?, ?)}";
 
         try(Connection conn = DBUtil.getConnection();
             CallableStatement call =  conn.prepareCall(sql)
