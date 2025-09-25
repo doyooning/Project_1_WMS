@@ -8,7 +8,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 
 public class StockController {
-    private StockService stockService;
+    private StockService stockService = StockService.getInstance();
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     /**
@@ -98,7 +98,7 @@ public class StockController {
                    case "2" -> showCategoryStockList(2);
                    case "3" -> showCategoryStockList(3);
                    case "4" -> showCategoryStockList(4);
-                   //case 5
+                   case "5" -> showProductStockList();
                }
                break;
            }catch(IOException e){
@@ -137,6 +137,7 @@ public class StockController {
         );
         System.out.printf("조회하실 %s를 입력해주세요.\n", menu);
         String category = getCategory();
+        if(category.equals("exit")) return;
 
         List<Stock> stockList = stockService.getCategoryStockList(num, category);
         printList(stockList, num);
@@ -152,13 +153,47 @@ public class StockController {
                 if(!input.trim().matches("^[가-힣\\s]+$")){
                     System.out.println("카테고리 이름 형식에 맞지 않습니다. 다시 입력해주세요.");
                     continue;
-                }
+                }else if(input.trim().toLowerCase().equals("exit")) return "exit";
                 break;
             }catch(IOException e){
                 e.printStackTrace();
             }
         }
         return input;
+    }
+
+    private void showProductStockList() {
+        //총관리자, 창고관리자, 회원, 배송기사 조회 가능
+        System.out.println(
+                """
+                ============================================================
+                =====================품목별 재고현황 조회=====================
+                """
+        );
+
+        String pIdx = getPIdx();
+        if(pIdx.equals("exit")) return;
+        List<Stock> stockList = stockService.getProductStockList(pIdx);
+        printList(stockList, 5);
+    }
+
+    private String getPIdx(){
+        System.out.println("조회할 바코드 번호를 입력해주세요.");
+        while(true){
+            try{
+                System.out.print("> ");
+                String input = reader.readLine();
+
+                if(!input.trim().matches("^[1-9][0-9]{12}$")){
+                    System.out.println("바코드 번호 형식에 맞지 않습니다. 다시 입력해주세요.");
+                    continue;
+                }else if(input.trim().toLowerCase().equals("exit")) return "exit";
+
+                return input;
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
     }
 
     private void printList(List<Stock> stockList, int menu) {
@@ -197,6 +232,8 @@ public class StockController {
 
                 index++;
             }
+            if(index == stockList.size()) break; //리스트 끝에 도달하면 페이지 넘기기 출력할 필요없음
+
             boolean result = showPageOfList(page);
             if(!result) return;
             page++;

@@ -35,4 +35,12 @@ public class StockService {
         if(stockList == null || stockList.isEmpty()) {} // 예외처리
         return stockList;
     }
+
+    public List<Stock> getProductStockList(String pIdx){
+        if(stockDao == null) stockDao = StockDao.getInstance();
+
+        List<Stock> stockList = stockDao.getProductStockList(pIdx);
+        if(stockList.isEmpty() || stockList == null) {} //예외처리
+        return stockList;
+    }
 }
