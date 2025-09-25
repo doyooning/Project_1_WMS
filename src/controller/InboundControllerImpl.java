@@ -118,7 +118,7 @@ public class InboundControllerImpl implements InOutboundController{
             case 3 -> {
                 int status = 0;
                 System.out.println("3. 입고 요청 취소");
-                inboundService.cancelRequest();
+//                inboundService.cancelRequest();
                 if (status == -1) {
                     System.out.println("오류 발생");
                 } else {
@@ -303,8 +303,8 @@ public class InboundControllerImpl implements InOutboundController{
                         물품 정보를 추가로 입력하려면 Q를 제외한 아무 키나 입력하십시오.
                         :\s"""
                 );
-                String selectYn = br.readLine();
-                if (selectYn.charAt(0) == 'Q' || selectYn.charAt(0) == 'q') {
+                String select = br.readLine().toUpperCase();
+                if (select.charAt(0) == 'Q') {
                     rtn = requestStatus;
                     break;
                 }
