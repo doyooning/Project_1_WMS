@@ -118,7 +118,6 @@ public class FinanceControllerImpl implements FinanceController {
         }
     }
 
-
     //권한별 메뉴선택 및 메서드 호출
     private void selectTotalAdminMenu(){
         try {
@@ -207,7 +206,7 @@ public class FinanceControllerImpl implements FinanceController {
             String num = input.readLine().trim();
             switch (num) {
                 case "1" -> handleModifySubscription();
-                case "2" -> System.out.println("구독 취소");
+                case "2" -> handleCancelSubscription();
                 case "3" -> System.out.println();
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
@@ -374,9 +373,22 @@ public class FinanceControllerImpl implements FinanceController {
         try {
             // API 메서드 호출
             Boolean result = modifySubscription(subApproval);
-            if(result == true) System.out.println("구독 변경이 신청되었습니다.");
+            if(result == true) System.out.println("구독 변경이 신청되었습니다. 담당자 승인시 종료일 이후 선택하신 모델로 변경됩니다.");
         } catch (Exception e) {
             System.out.println("구독 변경 신청에 실패했습니다: " + e.getMessage());
+        }
+    }
+    private void handleCancelSubscription() {
+        int uIdx = user.getUIdx();
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = cancelSubscription(uIdx);
+            if(result == true) System.out.println("구독이 취소되었습니다. 종료일 이후 갱신되지 않습니다.");
+        } catch (Exception e) {
+            System.out.println("구독 취소에 실패했습니다: " + e.getMessage());
         }
     }
 
@@ -431,6 +443,11 @@ public class FinanceControllerImpl implements FinanceController {
     @Override
     public Boolean modifySubscription(SubApproval subApproval) {
         return finance.modifySubscription(subApproval);
+    }
+
+    @Override
+    public Boolean cancelSubscription(int uIdx) {
+        return finance.cancelSubscription(uIdx);
     }
 
 

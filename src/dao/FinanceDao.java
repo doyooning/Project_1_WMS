@@ -425,5 +425,25 @@ public class FinanceDao implements Finance {
         return null;
     }
 
+    @Override
+    public int updateSubscriptionStatus(int saIdx, EntityStatus status) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call updateSubscriptionStatus(?, ?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, saIdx);
+            cstmt.setString(2, status.name());
+
+            return cstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
+
 
 }

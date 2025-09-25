@@ -25,4 +25,6 @@ public interface Finance {
     int addSubscription(SubApproval subApproval);
 
     SubApproval getPrevSub(int uIdx);
+
+    int updateSubscriptionStatus(int saIdx, EntityStatus status);
 }
