@@ -22,4 +22,5 @@ public interface FinanceService {
 
     Boolean addSubscription(SubApproval supApproval);
     Boolean modifySubscription(SubApproval supApproval);
+    Boolean cancelSubscription(int uIdx);
 }

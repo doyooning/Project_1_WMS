@@ -140,6 +140,15 @@ public class FinanceServiceImpl implements FinanceService {
         return false;
     }
 
+    @Override
+    public Boolean cancelSubscription(int uIdx) {
+        SubApproval prevSub = financeDao.getPrevSub(uIdx);
+        if (prevSub != null) {
+            int result = financeDao.updateSubscriptionStatus(prevSub.getSaIdx(), EntityStatus.CANCELED);
+        }
+        return false;
+    }
+
 
     private Map<String, Object> buildMonthlySummary(Map<String, Long> salesMap, Map<String, Long> expenseMap, String date) {
         Map<String, Map<String, Long>> monthlySummary = new LinkedHashMap<>();

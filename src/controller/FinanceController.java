@@ -35,4 +35,6 @@ public interface FinanceController {
     Boolean addSubscription(SubApproval subApproval);
 
     Boolean modifySubscription(SubApproval subApproval);
+
+    Boolean cancelSubscription(int uIdx);
 }
