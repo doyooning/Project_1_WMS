@@ -57,6 +57,10 @@ public class InboundService implements InOutboundService{
 
     @Override
     public int cancelRequest(int requestId) {
+        int status = inboundDao.cancelInboundData(requestId);
+        if (status <= 0) {
+            return -1;
+        }
         return 0;
     }
 

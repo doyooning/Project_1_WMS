@@ -135,6 +135,29 @@ public class InboundDAO implements InOutboundDAO {
         }
     }
 
+    // Inbound 요청 상태 수정 : 취소됨
+    public int cancelInboundData(int requestId) {
+        //프로시저
+        String sql = "{call updateInRequestStatus(?, ?)}";
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, requestId);
+
+            // 실행
+            call.execute();
+
+            // 리턴
+            int rtn = call.getInt(2);
+            return rtn;
+
+        } catch (SQLException e) {
+            return -1;
+        }
+    }
+
     // 요청 불러오기
     @Override
     public void getRequestList() {
