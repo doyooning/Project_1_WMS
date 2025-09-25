@@ -1,6 +1,7 @@
 package service;
 
 import domain.Expense;
+import domain.SubApproval;
 import domain.SubModel;
 import domain.Warehouse;
 
@@ -18,4 +19,6 @@ public interface FinanceService {
 
     SubModel getUserSubInfo(int uIdx);
     List<SubModel> getSubModelList();
+
+    Boolean addSubscription(SubApproval supApproval);
 }

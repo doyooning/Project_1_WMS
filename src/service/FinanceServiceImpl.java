@@ -2,10 +2,7 @@ package service;
 
 import controller.FinanceControllerImpl;
 import dao.FinanceDao;
-import domain.Expense;
-import domain.Sales;
-import domain.SubModel;
-import domain.Warehouse;
+import domain.*;
 
 import java.util.*;
 
@@ -109,6 +106,13 @@ public class FinanceServiceImpl implements FinanceService {
     @Override
     public List<SubModel> getSubModelList() {
         return financeDao.getSubModelList();
+    }
+
+    @Override
+    public Boolean addSubscription(SubApproval subApproval) {
+        int result = financeDao.addSubscription(subApproval);
+        if(result > 0) return true;
+        else return false;
     }
 
     private Map<String, Object> buildMonthlySummary(Map<String, Long> salesMap, Map<String, Long> expenseMap, String date) {

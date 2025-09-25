@@ -320,6 +320,26 @@ public class FinanceControllerImpl implements FinanceController {
         printSubModelList(subList);
 
         int smIdx = getSubModelId();
+
+        SubApproval subApproval = new SubApproval();
+        subApproval.setUIdx(user.getUIdx());
+        subApproval.setSmIdx(smIdx);
+
+        int wIdx = getWarehouseId();
+        subApproval.setWaIdx(wIdx);
+
+        String payment = getPayment();
+        subApproval.setSaPayment(payment);
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = addSubscription(subApproval);
+            if(result == true) System.out.println("구독이 신청되었습니다.");
+        } catch (Exception e) {
+            System.out.println("구독 신청에 실패했습니다: " + e.getMessage());
+        }
     }
 
     @Override
@@ -364,6 +384,12 @@ public class FinanceControllerImpl implements FinanceController {
     public List<SubModel> getSubModelList() {
         return finance.getSubModelList();
     }
+
+    @Override
+    public Boolean addSubscription(SubApproval subApproval) {
+        return finance.addSubscription(subApproval);
+    }
+
 
     private void printFinanceList(Map<String, Object> result, String date, String type) {
         boolean isYear = date.length() == 4;
@@ -498,7 +524,7 @@ public class FinanceControllerImpl implements FinanceController {
         System.out.printf(" %5s | %10s | %10s \n", "창고번호", "최대수용용량", "창고별재고");
         System.out.println("-".repeat(60));
         for (Warehouse w : warehouses) {
-            System.out.printf(" %5s | %10,d | %10,d \n", w.getWIdx(), w.getWMaxAmount(), w.getWStock());
+            System.out.printf(" %5d | %10,d | %10,d \n", w.getWIdx(), w.getWMaxAmount(), w.getWStock());
         }
         System.out.println("-".repeat(60));
     }
@@ -645,6 +671,17 @@ public class FinanceControllerImpl implements FinanceController {
     private int getSubModelId(){
         System.out.println("=".repeat(60));
         return Integer.parseInt(inputNum("구독할 모델번호>  "));
+    }
+    private int getWarehouseId(){
+        System.out.println("=".repeat(60));
+        List<Warehouse> list = getWarehouseList();
+        printWarehouseList(list);
+
+        return Integer.parseInt(inputNum("창고번호 선택>  "));
+    }
+    private String getPayment(){
+        System.out.println("=".repeat(60));
+        return inputNum("결제방법 입력>  ");
     }
 
     private String inputNum(String msg){

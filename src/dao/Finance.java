@@ -1,9 +1,6 @@
 package dao;
 
-import domain.Expense;
-import domain.Sales;
-import domain.SubModel;
-import domain.Warehouse;
+import domain.*;
 
 import java.util.List;
 import java.util.Map;
@@ -24,4 +21,6 @@ public interface Finance {
 
     SubModel getUserSubInfo(int uIdx);
     List<SubModel> getSubModelList();
+
+    int addSubscription(SubApproval subApproval);
 }
