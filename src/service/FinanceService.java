@@ -30,4 +30,7 @@ public interface FinanceService {
     Map<String, Object> getSubApprovalDetail(int saIdx);
 
     Boolean rejectSubscription(int saIdx);
+    Boolean approveSubscription(int saIdx);
+
+    int getWidxByWaidx(int waIdx);
 }

@@ -555,4 +555,48 @@ public class FinanceDao implements Finance {
         }
         return 0;
     }
+
+    @Override
+    public int approveSubscription(int saIdx) {
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call approveSubscription(?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, saIdx);
+
+            int result = cstmt.executeUpdate();
+
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
+
+    @Override
+    public int getWidxByWaidx(int waIdx) {
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call getWidxByWaidx(?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, waIdx);
+
+            rs = cstmt.executeQuery();
+
+            if(rs.next()) {
+                int result = rs.getInt(1);
+
+                return result;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
 }
