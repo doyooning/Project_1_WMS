@@ -476,6 +476,4 @@ public class FinanceDao implements Finance {
         }
         return null;
     }
-
-
 }
