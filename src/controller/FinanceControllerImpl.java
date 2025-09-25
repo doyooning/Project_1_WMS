@@ -416,6 +416,7 @@ public class FinanceControllerImpl implements FinanceController {
         List<SubApproval> list = getPendingSubApprovalList();
         printSubApprovalList(list);
 
+        int saIdx = getSubApprovalId();
     }
 
     @Override
@@ -480,6 +481,12 @@ public class FinanceControllerImpl implements FinanceController {
     public List<SubApproval> getPendingSubApprovalList() {
         return finance.getPendingSubApprovalList();
     }
+
+    @Override
+    public int getSubApprovalDetail(int saIdx) {
+        return finance.getSubApprovalDetail(saIdx);
+    }
+
 
 
     private void printFinanceList(Map<String, Object> result, String date, String type) {
@@ -781,6 +788,9 @@ public class FinanceControllerImpl implements FinanceController {
     private String getPayment(){
         System.out.println("=".repeat(60));
         return inputNum("결제방법 입력>  ");
+    }
+    private int getSubApprovalId(){
+        return Integer.parseInt(inputNum("검토할 번호 입력>  "));
     }
 
     private String inputNum(String msg){

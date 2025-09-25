@@ -154,6 +154,10 @@ public class FinanceServiceImpl implements FinanceService {
         return financeDao.getPendingSubApprovalList();
     }
 
+    @Override
+    public int getSubApprovalDetail(int saIdx) {
+        return financeDao.getSubApprovalDetail(saIdx);
+    }
 
     private Map<String, Object> buildMonthlySummary(Map<String, Long> salesMap, Map<String, Long> expenseMap, String date) {
         Map<String, Map<String, Long>> monthlySummary = new LinkedHashMap<>();

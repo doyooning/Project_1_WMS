@@ -476,4 +476,29 @@ public class FinanceDao implements Finance {
         }
         return null;
     }
+
+    @Override
+    public int getSubApprovalDetail(int saIdx) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call getSubApprovalDetail(?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, saIdx);
+
+            rs = cstmt.executeQuery();
+
+            if(rs.next()) {
+                int result = rs.getInt(1);
+
+                return result;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
 }
