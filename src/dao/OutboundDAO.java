@@ -161,7 +161,7 @@ public class OutboundDAO implements InOutboundDAO {
     }
 
     @Override
-    public void getRequestItemInfo(int inRequestIdx) {
+    public void getItemsById(int inRequestIdx) {
 
     }
 }

@@ -1,6 +1,10 @@
 package service;
 
+import dao.InboundBillVO;
 import dao.InboundDAO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InboundService implements InOutboundService{
 
@@ -69,7 +73,14 @@ public class InboundService implements InOutboundService{
 
     }
 
-    public void showRequestInfo() {
-
+    public InboundBillVO showReqBillData(int requestId) {
+        InboundBillVO vo = inboundDao.readInReqBillData(requestId);
+        return vo;
     }
+
+    public List<ArrayList> showItemBillData(int requestId) {
+        List<ArrayList> list = inboundDao.readInItemBillData(requestId);
+        return list;
+    }
+
 }

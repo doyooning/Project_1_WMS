@@ -1,5 +1,6 @@
 package controller;
 
+import dao.InboundBillVO;
 import service.InboundService;
 
 import java.io.BufferedReader;
@@ -7,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /*
 * 메뉴 첫 접근
@@ -133,8 +136,22 @@ public class InboundControllerImpl implements InOutboundController{
 
             }
             case 4 -> {
-                System.out.println("4. 입고고지서 출력");
-                inboundService.showRequestInfo();
+                int status = 0;
+                // 4. 입고고지서 출력
+                status = showRequestInfo();
+                if (status == -1) {
+                    System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                } else {
+                    System.out.print(
+                            """
+                            ============================================================
+                            출력이 정상적으로 처리되었습니다.
+                            ============================================================
+                            """
+                    );
+                }
+
+//                inboundService.showRequestInfo();
 
             }
 
@@ -414,6 +431,8 @@ public class InboundControllerImpl implements InOutboundController{
             System.out.print(
                     """
                     ============================================================
+                    ####################### 입고 요청 취소 #######################
+                    ============================================================
                     취소할 입고요청 번호를 입력해주세요.
                     요청번호 :\s"""
             );
@@ -423,7 +442,7 @@ public class InboundControllerImpl implements InOutboundController{
             System.out.print(
                     """
                     ============================================================
-                    출고 요청을 취소하시겠습니까?
+                    입고 요청을 취소하시겠습니까?
                     (Y/N 입력) :\s"""
             );
             String select = br.readLine().toUpperCase();
@@ -448,6 +467,88 @@ public class InboundControllerImpl implements InOutboundController{
             return -1;
         }
         return rtn;
+    }
+
+    public int showRequestInfo() {
+        int rtn = 0;
+        try {
+            System.out.print(
+                    """
+                    ============================================================
+                    ####################### 입고고지서 출력 #######################
+                    ============================================================
+                    출력할 입고요청 번호를 입력해주세요.
+                    요청번호 :\s"""
+            );
+            int requestId = Integer.parseInt(br.readLine());
+
+            // 출력 확인
+            System.out.print(
+                    """
+                    ============================================================
+                    해당 입고요청의 입고고지서를 출력하시겠습니까?
+                    (Y/N 입력) :\s"""
+            );
+            String select = br.readLine().toUpperCase();
+            if (select.charAt(0) == 'N') {
+                System.out.print("""
+                    ============================================================
+                    메뉴 화면으로 이동합니다.
+                    ============================================================
+                    """);
+            } else if (select.charAt(0) == 'Y') {
+                // 요청 정보 전송
+                InboundBillVO vo = inboundService.showReqBillData(requestId);
+                List<ArrayList> list = inboundService.showItemBillData(requestId);
+
+                if ((vo == null) || (list == null)) {
+                    rtn = -1;
+                } else {
+                    printBill(vo, list);
+                    System.out.print("""
+                    ============================================================
+                    아무 키나 누르면 입고 관리 메뉴로 돌아갑니다.
+                    :\s""");
+                    String input = br.readLine();
+
+                }
+            } else {
+                throw new IOException();
+            }
+
+        } catch (IOException e) {
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            return -1;
+        }
+        return rtn;
+    }
+
+    // 입고고지서 양식대로 출력
+    public void printBill(InboundBillVO vo, List<ArrayList> list) {
+
+        System.out.printf(
+                """
+                ============================================================
+                 요청번호 |  입고일자  |  창고위치  |                 |  요청자  |
+                   %8d       %11s       %10d                          %8s
+                
+                """, vo.getInRequestId(), vo.getInDate(), vo.getWId(), vo.getUName()
+        );
+        int totalPrice = 0;
+
+        for (ArrayList item : list) {
+            System.out.printf("""
+                 순번 |             물품이름               |  수량  |   단가   |
+                 %4s                %35s                    %3s     %10s
+                """, item.get(0), item.get(1), item.get(2), item.get(3)
+            );
+            totalPrice += (Integer.parseInt((String) item.get(4)) * Integer.parseInt((String) item.get(5)));
+        }
+
+        System.out.printf("""
+                                                                 | 총 금액  |
+                                                                    %10d
+                """, totalPrice);
     }
 
 }
