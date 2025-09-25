@@ -315,7 +315,11 @@ public class FinanceControllerImpl implements FinanceController {
         }
     }
     private void handleAddSubscription() {
-        //List<SubModel> subList = finance.getSubModelList();
+        // 구독 모델 출력
+        List<SubModel> subList = getSubModelList();
+        printSubModelList(subList);
+
+        int smIdx = getSubModelId();
     }
 
     @Override
@@ -356,6 +360,10 @@ public class FinanceControllerImpl implements FinanceController {
         return finance.getUserSubInfo(uIdx);
     }
 
+    @Override
+    public List<SubModel> getSubModelList() {
+        return finance.getSubModelList();
+    }
 
     private void printFinanceList(Map<String, Object> result, String date, String type) {
         boolean isYear = date.length() == 4;
@@ -494,6 +502,15 @@ public class FinanceControllerImpl implements FinanceController {
         }
         System.out.println("-".repeat(60));
     }
+    private void printSubModelList(List<SubModel> subModels) {
+        System.out.println("[구독모델 목록]");
+        System.out.printf(" %5s | %10s | %10s | %10s \n", "모델번호", "이름", "가격", "창고 용량");
+        System.out.println("-".repeat(60));
+        for (SubModel s : subModels) {
+            System.out.printf(" %5d | %10s | %10,d | %10,d \n", s.getSmIdx(), s.getSmName(), s.getSmPrice(), s.getSmAmount());
+        }
+        System.out.println("-".repeat(60));
+    }
 
 
     private String getFinanceDate(){
@@ -624,6 +641,10 @@ public class FinanceControllerImpl implements FinanceController {
     private int getExpenseId(){
         System.out.println("=".repeat(60));
         return Integer.parseInt(inputNum("수정할 지출번호>  "));
+    }
+    private int getSubModelId(){
+        System.out.println("=".repeat(60));
+        return Integer.parseInt(inputNum("구독할 모델번호>  "));
     }
 
     private String inputNum(String msg){

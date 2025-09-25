@@ -28,4 +28,6 @@ public interface FinanceController {
     Boolean removeExpense(int eIdx, int wIdx);
 
     SubModel getUserSubInfo(int uIdx);
+
+    List<SubModel> getSubModelList();
 }
