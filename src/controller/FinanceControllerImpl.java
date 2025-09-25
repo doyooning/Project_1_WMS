@@ -255,7 +255,7 @@ public class FinanceControllerImpl implements FinanceController {
             printWarehouseList(warehouses);
             wIdx = getFinanceWIdx();
         } else {
-            wIdx = whAdmin.getWIdx();
+            wIdx = finance.getWidxByWaidx(whAdmin.getWaIdx());
         }
 
         String type = getFinanceType();
@@ -271,7 +271,7 @@ public class FinanceControllerImpl implements FinanceController {
             System.out.println("권한이 없습니다!");
             return;
         } else {
-            wIdx = whAdmin.getWIdx();
+            wIdx = finance.getWidxByWaidx(whAdmin.getWaIdx());
         }
 
         String type = getExpenseType();
@@ -300,7 +300,7 @@ public class FinanceControllerImpl implements FinanceController {
             System.out.println("권한이 없습니다!");
             return;
         } else {
-            wIdx = whAdmin.getWIdx();
+            wIdx = finance.getWidxByWaidx(whAdmin.getWaIdx());
         }
 
         int eIdx = getExpenseId();
@@ -331,7 +331,7 @@ public class FinanceControllerImpl implements FinanceController {
             System.out.println("권한이 없습니다!");
             return;
         } else {
-            wIdx = whAdmin.getWIdx();
+            wIdx = finance.getWidxByWaidx(whAdmin.getWaIdx());
         }
 
         int eIdx = getExpenseId();
@@ -431,7 +431,7 @@ public class FinanceControllerImpl implements FinanceController {
             // API 메서드 호출
             Boolean result = true;
             if(tf==false) result = rejectSubscription(saIdx);
-            else // result = approveSubscription(saIdx);
+            else result = approveSubscription(saIdx);
             if(result == true) System.out.println("구독이 취소되었습니다. 종료일 이후 갱신되지 않습니다.");
         } catch (Exception e) {
             System.out.println("구독 취소에 실패했습니다: " + e.getMessage());
@@ -504,6 +504,11 @@ public class FinanceControllerImpl implements FinanceController {
     @Override
     public Boolean rejectSubscription(int saIdx) {
         return finance.rejectSubscription(saIdx);
+    }
+
+    @Override
+    public Boolean approveSubscription(int saIdx) {
+        return finance.approveSubscription(saIdx);
     }
 
 

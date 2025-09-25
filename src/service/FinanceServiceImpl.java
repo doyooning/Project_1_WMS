@@ -184,6 +184,18 @@ public class FinanceServiceImpl implements FinanceService {
         else return false;
     }
 
+    @Override
+    public Boolean approveSubscription(int saIdx) {
+        int result = financeDao.approveSubscription(saIdx);
+        if(result > 0) return true;
+        else return false;
+    }
+
+    @Override
+    public int getWidxByWaidx(int waIdx) {
+        return financeDao.getWidxByWaidx(waIdx);
+    }
+
     private Map<String, Object> buildMonthlySummary(Map<String, Long> salesMap, Map<String, Long> expenseMap, String date) {
         Map<String, Map<String, Long>> monthlySummary = new LinkedHashMap<>();
         long totalSales = 0;

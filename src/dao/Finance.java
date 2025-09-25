@@ -33,4 +33,7 @@ public interface Finance {
 
     int getAvailableAmount(int saIdx);
     int getRequiredAmount(int saIdx);
+    int approveSubscription(int saIdx);
+
+    int getWidxByWaidx(int waIdx);
 }
