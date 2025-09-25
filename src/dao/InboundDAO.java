@@ -21,9 +21,6 @@ public class InboundDAO implements InOutboundDAO {
     }
 
     // statics
-    // 입고요청을 담을 리스트
-    private static List<Inbound> inboundList = new ArrayList<>();
-
 
     // 요청 승인
     public void approveRequest() {
@@ -158,6 +155,67 @@ public class InboundDAO implements InOutboundDAO {
         }
     }
 
+    // Inbound 요청 + 물품 정보 전부
+    public InboundBillVO readInReqBillData(int requestId) {
+        String sql = "{call readInReqBillData(?, ?, ?, ?, ?)}";
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, requestId);
+
+            // 실행
+            call.execute();
+            InboundBillVO inboundBill = new InboundBillVO();
+
+            inboundBill.setInRequestId(call.getInt(2));
+            inboundBill.setInDate(call.getDate(3));
+            inboundBill.setWId(call.getInt(4));
+            inboundBill.setUName(call.getString(5));
+
+            // 리턴
+            return inboundBill;
+
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    // Inbound 요청 + 물품 정보 전부
+    public List<ArrayList> readInItemBillData(int requestId) {
+        String sql = "{call readInItemBillData(?, ?, ?, ?, ?)}";
+        ArrayList<String> itemBill;
+        List<ArrayList> inboundList = new ArrayList<>();
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, requestId);
+
+            // 실행
+            call.execute();
+            ResultSet rs = call.getResultSet();
+
+            while(rs.next()) {
+                itemBill = new ArrayList<>();
+                itemBill.add(rs.getString(2));
+                itemBill.add(rs.getString(3));
+                itemBill.add(rs.getString(4));
+                itemBill.add(rs.getString(5));
+                inboundList.add(itemBill);
+            }
+
+            // 리턴
+            return inboundList;
+
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+
     // 요청 불러오기
     @Override
     public void getRequestList() {
@@ -172,7 +230,7 @@ public class InboundDAO implements InOutboundDAO {
 
     // 요청의 물품 정보를 ID값으로 찾기
     @Override
-    public void getRequestItemInfo(int inRequestIdx) {
+    public void getItemsById(int inRequestIdx) {
 
     }
 
