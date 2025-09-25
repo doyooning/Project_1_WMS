@@ -45,6 +45,95 @@ public class WarehouseAdminDao {
             }
         }
     }
+
+    public void deleteWarehouseAdmin(Connection connection, String adminId) throws SQLException {
+        String sql = "UPDATE WarehouseAdmin SET status = 'DELETED' WHERE waId = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, adminId);
+            ps.executeUpdate();
+        }
+    }
+
+    public String findIdByEmail(Connection connection, String email) throws SQLException {
+        String sql = "SELECT waId FROM WarehouseAdmin WHERE waEmail = ? AND status = 'EXIST' LIMIT 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("waId");
+                }
+                return null;
+            }
+        }
+    }
+
+    public String findPasswordById(Connection connection, String adminId) throws SQLException {
+        String sql = "SELECT waPw FROM WarehouseAdmin WHERE waId = ? AND status = 'EXIST' LIMIT 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, adminId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("waPw");
+                }
+                return null;
+            }
+        }
+    }
+
+    public String resetPasswordById(Connection connection, String adminId) throws SQLException {
+        String tempPassword = util.PasswordUtil.generateTemporaryPassword();
+        String hashedTempPassword = util.PasswordUtil.hash(tempPassword);
+        
+        String sql = "UPDATE WarehouseAdmin SET waPw = ? WHERE waId = ? AND status = 'EXIST'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, hashedTempPassword);
+            ps.setString(2, adminId);
+            int updated = ps.executeUpdate();
+            if (updated > 0) {
+                return tempPassword;
+            }
+            return null;
+        }
+    }
+
+    public WarehouseAdmin getWarehouseAdminInfo(Connection connection, String adminId) throws SQLException {
+        String sql = "SELECT waId, waEmail, waName, waPhone, createdAt FROM WarehouseAdmin WHERE waId = ? AND status = 'EXIST'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, adminId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    WarehouseAdmin admin = new WarehouseAdmin();
+                    admin.setWaId(rs.getString("waId"));
+                    admin.setWaEmail(rs.getString("waEmail"));
+                    admin.setWaName(rs.getString("waName"));
+                    admin.setWaPhone(rs.getString("waPhone"));
+                    admin.setCreatedAt(rs.getTimestamp("createdAt"));
+                    return admin;
+                }
+                return null;
+            }
+        }
+    }
+
+    public boolean updateWarehouseAdminInfo(Connection connection, String adminId, String name, String phone) throws SQLException {
+        String sql = "UPDATE WarehouseAdmin SET waName = ?, waPhone = ? WHERE waId = ? AND status = 'EXIST'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ps.setString(2, phone);
+            ps.setString(3, adminId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateWarehouseAdminPassword(Connection connection, String adminId, String newPassword) throws SQLException {
+        String hashedPassword = util.PasswordUtil.hash(newPassword);
+        String sql = "UPDATE WarehouseAdmin SET waPw = ? WHERE waId = ? AND status = 'EXIST'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, hashedPassword);
+            ps.setString(2, adminId);
+            return ps.executeUpdate() > 0;
+        }
+    }
 }
 
 
