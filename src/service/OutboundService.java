@@ -38,13 +38,28 @@ public class OutboundService implements InOutboundService {
         return status;
     }
 
-    @Override
-    public int updateRequest(int Id, int num, String str) {
+    public int updateRequest(int requestId, int warehouseId, String dueDate) {
+        int status = outboundDao.updateOutboundData(requestId, warehouseId, dueDate);
+        if (status <= 0) {
+            return -1;
+        }
+        return 0;
+    }
+
+    public int updateItem(int requestId, int itemId, String productId, int productQuantity) {
+        int status = outboundDao.updateOutboundItemData(requestId, itemId, productId, productQuantity);
+        if (status <= 0) {
+            return -1;
+        }
         return 0;
     }
 
     @Override
-    public int cancelRequest() {
+    public int cancelRequest(int requestId) {
+        int status = outboundDao.cancelOutboundData(requestId);
+        if (status <= 0) {
+            return -1;
+        }
         return 0;
     }
 

@@ -12,7 +12,7 @@ public interface InOutboundService {
     int updateRequest(int Id, int num, String str);
 
     // 요청 취소
-    int cancelRequest();
+    int cancelRequest(int requestId);
 
     // 현황 조회
     void getBoundInfo();

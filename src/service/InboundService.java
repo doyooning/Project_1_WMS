@@ -56,7 +56,7 @@ public class InboundService implements InOutboundService{
     }
 
     @Override
-    public int cancelRequest() {
+    public int cancelRequest(int requestId) {
         return 0;
     }
 

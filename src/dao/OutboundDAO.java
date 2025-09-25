@@ -126,6 +126,28 @@ public class OutboundDAO implements InOutboundDAO {
         }
     }
 
+    public int cancelOutboundData(int requestId) {
+        //프로시저
+        String sql = "{call updateOutRequest(?, ?)}";
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, requestId);
+
+            // 실행
+            call.execute();
+
+            // 리턴
+            int rtn = call.getInt(2);
+            return rtn;
+
+        } catch (SQLException e) {
+            return -1;
+        }
+    }
+
 
     @Override
     public void getRequestList() {
