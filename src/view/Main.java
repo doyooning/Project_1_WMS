@@ -1,5 +1,7 @@
 package view;
 
+import controller.FinanceController;
+import controller.FinanceControllerImpl;
 import controller.MemberController;
 import controller.MemberControllerImpl;
 
@@ -10,6 +12,7 @@ import java.util.Scanner;
 
 public class Main {
     private MemberController memberControl;
+    private FinanceController financeControl;
     private Scanner scan;
     private String currentUserType; // 현재 로그인한 사용자 유형 저장
     private String currentUserId; // 현재 로그인한 사용자 ID 저장
@@ -17,6 +20,7 @@ public class Main {
 
     public Main() {
         memberControl = MemberControllerImpl.getInstance();
+        financeControl = FinanceControllerImpl.getInstance();
         scan = new Scanner(System.in);
     }
 
