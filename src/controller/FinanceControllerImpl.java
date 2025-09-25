@@ -414,6 +414,7 @@ public class FinanceControllerImpl implements FinanceController {
     private void handleWhSubscription(){
         //구독 신청 목록 출력
         List<SubApproval> list = getPendingSubApprovalList();
+        printSubApprovalList(list);
 
     }
 
@@ -624,6 +625,15 @@ public class FinanceControllerImpl implements FinanceController {
         System.out.println("-".repeat(60));
         for (SubModel s : subModels) {
             System.out.printf(" %5d | %10s | %10,d | %10,d \n", s.getSmIdx(), s.getSmName(), s.getSmPrice(), s.getSmAmount());
+        }
+        System.out.println("-".repeat(60));
+    }
+    private void printSubApprovalList(List<SubApproval> subApprovals) {
+        System.out.println("[구독신청 목록]");
+        System.out.printf(" %8s | %8s | %15s \n", "구독승인번호", "회원번호", "신청일");
+        System.out.println("-".repeat(60));
+        for (SubApproval s : subApprovals) {
+            System.out.printf(" %8d | %8d | %15s \n", s.getSaIdx(), s.getUIdx(), s.getSaDate());
         }
         System.out.println("-".repeat(60));
     }
