@@ -71,11 +71,11 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException | NumberFormatException e) {
-            Errors.INVALID_INPUT_ERROR.getText();
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
             showMenu(authNum);
 
         } catch (Exception e) {
-            Errors.UNEXPECTED_ERROR.getText();
+            System.out.println(Errors.UNEXPECTED_ERROR.getText());
             e.printStackTrace();
             showMenu(authNum);
         }
@@ -98,7 +98,7 @@ public class InboundControllerImpl implements InOutboundController{
 
                 }
                 if (status == -1) {
-                    Errors.DATA_INPUT_ERROR.getText();
+                    System.out.println(Errors.DATA_INPUT_ERROR.getText());
 
                 } else {
                     System.out.printf(
@@ -163,18 +163,23 @@ public class InboundControllerImpl implements InOutboundController{
             int menuNum = Integer.parseInt(br.readLine());
             status = selectUpdateMenu(menuNum);
             if (status == 1) {
+                System.out.print("""
+            ============================================================
+            수정이 완료되었습니다.
+            ============================================================
+            """);
                 showUpdateMenu();
             } else if (status == -1) {
-                Errors.DATA_INPUT_ERROR.getText();
+                System.out.println(Errors.DATA_INPUT_ERROR.getText());
                 showUpdateMenu();
             }
 
         } catch (IOException | NumberFormatException e) {
-            Errors.INVALID_INPUT_ERROR.getText();
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
             showUpdateMenu();
 
         } catch (Exception e) {
-            Errors.UNEXPECTED_ERROR.getText();
+            System.out.println(Errors.UNEXPECTED_ERROR.getText());
             e.printStackTrace();
             showUpdateMenu();
         }
@@ -188,10 +193,11 @@ public class InboundControllerImpl implements InOutboundController{
                 // 요청 정보 수정
                 case 1 -> {
                     // 요청 번호 입력
-                    System.out.println(
+                    System.out.print(
                             """
                             ============================================================
-                            수정할 입고요청 번호를 입력해주세요 :\s"""
+                            수정할 입고요청 번호를 입력해주세요.
+                            요청번호 :\s"""
                     );
                     int requestId = Integer.parseInt(br.readLine());
                     status = InputRequestDataUpdate(requestId);
@@ -202,10 +208,11 @@ public class InboundControllerImpl implements InOutboundController{
                 // 물품 정보 수정
                 case 2 -> {
                     // 요청 번호 입력
-                    System.out.println(
+                    System.out.print(
                             """
                             ============================================================
-                            수정할 입고요청 번호를 입력해주세요 :\s"""
+                            수정할 입고요청 번호를 입력해주세요.
+                            요청번호 :\s"""
                     );
                     int requestId = Integer.parseInt(br.readLine());
                     status = InputRequestItemUpdate(requestId);
@@ -220,7 +227,7 @@ public class InboundControllerImpl implements InOutboundController{
                 }
             }
         } catch (IOException e) {
-            Errors.INVALID_INPUT_ERROR.getText();
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
         }
         return 1;
     }
@@ -312,7 +319,7 @@ public class InboundControllerImpl implements InOutboundController{
 
         } catch (IOException e) {
             // 입력오류
-            Errors.INVALID_INPUT_ERROR.getText();
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
         } catch (ParseException e) {
             e.printStackTrace();
             InputRequestData();
@@ -336,7 +343,7 @@ public class InboundControllerImpl implements InOutboundController{
             System.out.print(
                     """
                     ============================================================
-                    입고위치(8자리 숫자로 입력) :\s"""
+                    입고기한(8자리 숫자로 입력) :\s"""
             );
             String dueDate = br.readLine();
             Date date = informat.parse(dueDate);
@@ -362,7 +369,7 @@ public class InboundControllerImpl implements InOutboundController{
             System.out.print(
                     """
                     ============================================================
-                    물품 순번을 입력해주세요.
+                    수정할 물품 순번을 입력해주세요.
                     순번 :\s"""
             );
             int itemId = Integer.parseInt(br.readLine());

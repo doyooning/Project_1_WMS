@@ -48,9 +48,11 @@ public class InboundDAO implements InOutboundDAO {
 
             // 리턴
             int rtn = call.getInt(3);
+            System.out.println("rtn값  " + rtn);
             return rtn;
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return -1;
         }
 
@@ -62,7 +64,7 @@ public class InboundDAO implements InOutboundDAO {
         String sql = "{call createInRequestProduct(?, ?, ?)}";
 
         try(Connection conn = DBUtil.getConnection();
-            CallableStatement call =  conn.prepareCall(sql)
+            CallableStatement call = conn.prepareCall(sql)
         ) {
             // 데이터
             call.setString(1, productId);
