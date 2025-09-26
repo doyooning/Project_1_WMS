@@ -249,7 +249,7 @@ public class InboundDAO implements InOutboundDAO {
     @Override
     public List<List<String>> getRequestById(int uId) {
 
-        String sql = "{call getRequestByUId(?)}";
+        String sql = "{call getInRequestByUId(?)}";
         List<List<String>> inRequestList = new ArrayList<>();
 
         try(Connection conn = DBUtil.getConnection();
@@ -287,7 +287,7 @@ public class InboundDAO implements InOutboundDAO {
     // 요청의 물품 정보를 ID값으로 찾기
     @Override
     public List<List<String>> getItemsById(int uId) {
-        String sql = "{call getItemsByUId(?)}";
+        String sql = "{call getInItemsByUId(?)}";
         List<List<String>> inRequestItemList = new ArrayList<>();
 
         try(Connection conn = DBUtil.getConnection();

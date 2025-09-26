@@ -77,18 +77,21 @@ public class InboundService implements InOutboundService{
         return list;
     }
 
+    @Override
     public List<List<String>> getBoundItemInfo(int uId) {
         List<List<String>> list = inboundDao.getItemsById(uId);
 
         return list;
     }
 
+    @Override
     public InboundBillVO showReqBillData(int requestId) {
         InboundBillVO vo = inboundDao.readInReqBillData(requestId);
 
         return vo;
     }
 
+    @Override
     public List<List<String>> showItemBillData(int requestId) {
         List<List<String>> list = inboundDao.readInItemBillData(requestId);
 
