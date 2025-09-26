@@ -350,4 +350,40 @@ public class OutboundDAO implements InOutboundDAO {
             return null;
         }
     }
+
+    public List<List<String>> getRequestListByPeriod(Timestamp startDate, Timestamp endDate) {
+        String sql = "{call getOutReqListByPeriod(?, ?)}";
+        List<List<String>> requestList = new ArrayList<>();
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setTimestamp(1, startDate);
+            call.setTimestamp(2, endDate);
+
+            // 실행
+            boolean hasResult = call.execute();
+            if (hasResult) {
+                try (ResultSet rs = call.getResultSet()) {
+                    while (rs.next()) {
+                        List<String> periodReqList = new ArrayList<>();
+                        periodReqList.add(String.valueOf(rs.getInt(1))); // outRequestIdx
+                        periodReqList.add(String.valueOf(rs.getInt(2))); // wIdx
+                        periodReqList.add(rs.getString(3)); // itemInfo(...등 n건)
+                        periodReqList.add(String.valueOf(rs.getTimestamp(4))); // outboundDate
+                        requestList.add(periodReqList);
+                    }
+                }
+            }
+
+            // 리턴
+            return requestList;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

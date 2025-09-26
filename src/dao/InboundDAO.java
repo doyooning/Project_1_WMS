@@ -353,28 +353,39 @@ public class InboundDAO implements InOutboundDAO {
         }
     }
 
+    public List<List<String>> getRequestListByPeriod(Timestamp startDate, Timestamp endDate) {
+        String sql = "{call getInReqListByPeriod(?, ?)}";
+        List<List<String>> requestList = new ArrayList<>();
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setTimestamp(1, startDate);
+            call.setTimestamp(2, endDate);
+
+            // 실행
+            boolean hasResult = call.execute();
+            if (hasResult) {
+                try (ResultSet rs = call.getResultSet()) {
+                    while (rs.next()) {
+                        List<String> periodReqList = new ArrayList<>();
+                        periodReqList.add(String.valueOf(rs.getInt(1))); // inRequestIdx
+                        periodReqList.add(String.valueOf(rs.getInt(2))); // wIdx
+                        periodReqList.add(rs.getString(3)); // itemInfo(...등 n건)
+                        periodReqList.add(String.valueOf(rs.getTimestamp(4))); // inboundDate
+                        requestList.add(periodReqList);
+                    }
+                }
+            }
+
+            // 리턴
+            return requestList;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
 
-//private void dbLoad() {
-//    String sql = "select * from Inbound";
-//
-//    try (Connection conn = DBUtil.getConnection();
-//         PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-//         ResultSet rs = pstmt.executeQuery();
-//    ) {
-//        while (rs.next()) {
-//            Inbound inbound = new Inbound();
-//            inbound.setInRequestIdx(rs.getInt(1));
-//            inbound.setInDueDate(rs.getTimestamp(2));
-//            inbound.setRequestStatus(EntityStatus.valueOf(rs.getString(3)));
-//            inbound.setInRequestDate(rs.getTimestamp(4));
-//            inbound.setUIdx(rs.getInt(5));
-//            inbound.setInboundDate(rs.getTimestamp(6));
-//            inbound.setWIdx(rs.getInt(7));
-//            inboundList.add(inbound);
-//        }
-//
-//    } catch (SQLException e) {
-//        e.printStackTrace();
-//    }
-//}

@@ -3,9 +3,15 @@ package service;
 import dao.OutboundBillVO;
 import dao.OutboundDAO;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class OutboundService implements InOutboundService {
+
+    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     // 싱글턴 패턴 세팅
     private static OutboundService outboundService;
@@ -104,5 +110,22 @@ public class OutboundService implements InOutboundService {
         List<List<String>> list = outboundDao.getPendingRequestList();
 
         return list;
+    }
+
+    public List<List<String>> getRequestListByPeriod(String start, String end) {
+        try {
+            // sql에서 사용 가능한 date타입으로 변환
+            Date startDate = (Date) sdf.parse(start);
+            Date endDate = (Date) sdf.parse(end);
+            Timestamp startTimestamp = new Timestamp(startDate.getTime());
+            Timestamp endTimestamp = new Timestamp(endDate.getTime());
+
+            List<List<String>> list = outboundDao.getRequestListByPeriod(startTimestamp, endTimestamp);
+            return list;
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

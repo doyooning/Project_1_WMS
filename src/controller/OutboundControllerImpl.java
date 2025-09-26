@@ -389,7 +389,31 @@ public class OutboundControllerImpl implements InOutboundController{
                 }
                 // 기간별 출고 현황
                 case 2 -> {
+                    System.out.print(
+                            """
+                            ============================================================
+                                                   [기간별 출고 현황]
+                            ============================================================
+                            시작 날짜를 입력하세요(8자리 숫자로 입력) :\s"""
+                    );
+                    String startDate = br.readLine();
+                    Date date = informat.parse(startDate);
+                    String newStartDate = outformat.format(date);
 
+                    System.out.print(
+                            """
+                            ============================================================
+                            종료 날짜를 입력하세요(8자리 숫자로 입력) :\s"""
+                    );
+                    String endDate = br.readLine();
+                    date = informat.parse(endDate);
+                    String newEndDate = outformat.format(date);
+
+                    List<List<String>> requestList = outboundService.getRequestListByPeriod(newStartDate, newEndDate);
+                    if (requestList == null) {
+                        return -1;
+                    }
+                    printPendingRequest(requestList);
 
                 }
                 case 3 -> {
@@ -768,8 +792,8 @@ public class OutboundControllerImpl implements InOutboundController{
             System.out.printf(
                     """
                     ============================================================
-                    요청번호| 창고 |  요청자  | 물품건수 |  출고기한  |    요청일자    |
-                      %4s    %3s    %6s       %4s       %10s      %15s
+                    요청번호| 창고 |          물품정보          |      출고일자      |
+                      %4s    %3s    %15s     %20s
                     
                     """,  requests.get(0), requests.get(1), requests.get(2),
                     requests.get(3),  requests.get(4), requests.get(5)
