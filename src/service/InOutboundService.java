@@ -1,5 +1,7 @@
 package service;
 
+import java.util.List;
+
 public interface InOutboundService {
 
     // 요청 등록(일반회원만)
@@ -15,6 +17,6 @@ public interface InOutboundService {
     int cancelRequest(int requestId);
 
     // 현황 조회
-    void getBoundInfo();
+    List<List<String>> getBoundInfo(int uId);
 
 }

@@ -2,12 +2,7 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/8e9e28df-7588-48d6-a869-63ea0e4bda07/console_9.sql" dialect="MySQL" />
-    <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/250925inbound3.sql" dialect="MySQL" />
-    <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/250925outbound1.sql" dialect="MySQL" />
-    <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/250926inbound.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/250926inbound1.sql" dialect="MySQL" />
-    <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/250926outbound.sql" dialect="MySQL" />
-    <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/250926outbound1.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/250926outbound2.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/InboundProcedures.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/ProcedureTemplate.sql" dialect="MySQL" />
