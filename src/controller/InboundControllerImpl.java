@@ -90,27 +90,38 @@ public class InboundControllerImpl implements InOutboundController{
             case 1 -> {
                 int status = 0;
                 if(authNum == 1) {
-                    System.out.println("1. 입고 요청 승인");
+                    // 1. 입고 요청 승인
                     // 미승인된 입고요청 목록 출력
 
-                    status = inboundService.approveRequest();
+                    status = approveRequest();
+                    if (status == -1) {
+                        System.out.println(Errors.DATA_INPUT_ERROR.getText());
+
+                    } else {
+                        System.out.printf(
+                                """
+                                ============================================================
+                                요청번호 [%d] 입고 요청 승인이 완료되었습니다.
+                                ============================================================
+                                """, status
+                        );
+                    }
 
                 } else if(authNum == 2) {
                     // 1. 입고 요청
                     status = InputRequestData();
+                    if (status == -1) {
+                        System.out.println(Errors.DATA_INPUT_ERROR.getText());
 
-                }
-                if (status == -1) {
-                    System.out.println(Errors.DATA_INPUT_ERROR.getText());
-
-                } else {
-                    System.out.printf(
-                            """
-                            ============================================================
-                            입고 요청이 등록되었습니다. 회원님의 요청 번호는 [%d] 입니다.
-                            ============================================================
-                            """, status
-                    );
+                    } else {
+                        System.out.printf(
+                                """
+                                ============================================================
+                                입고 요청이 등록되었습니다. 회원님의 요청 번호는 [%d] 입니다.
+                                ============================================================
+                                """, status
+                        );
+                    }
                 }
             }
             case 2 -> {
@@ -547,6 +558,51 @@ public class InboundControllerImpl implements InOutboundController{
                                                                  | 총 금액  |
                                                                     %10d
                 """, totalPrice);
+    }
+
+    public int approveRequest() {
+        int rtn = 0;
+        try {
+            System.out.print(
+                    """
+                    ============================================================
+                    ####################### 입고 요청 승인 #######################
+                    ============================================================
+                    승인할 입고요청 번호를 입력해주세요.
+                    요청번호 :\s"""
+            );
+            int requestId = Integer.parseInt(br.readLine());
+
+            // 승인 확인
+            System.out.print(
+                    """
+                    ============================================================
+                    해당 입고요청을 승인하시겠습니까?
+                    (Y/N 입력) :\s"""
+            );
+            String select = br.readLine().toUpperCase();
+            if (select.charAt(0) == 'N') {
+                System.out.print("""
+                    ============================================================
+                    메뉴 화면으로 이동합니다.
+                    ============================================================
+                    """);
+            } else if (select.charAt(0) == 'Y') {
+                // 승인 정보 전송
+                int approveStatus = inboundService.approveRequest(requestId);
+
+                if (approveStatus == -1) {
+                    System.out.print(Errors.VO_LOAD_ERROR.getText());
+                    rtn = -1;
+                } else {
+                    rtn = approveStatus;
+                }
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return rtn;
     }
 
 }

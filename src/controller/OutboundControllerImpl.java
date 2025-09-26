@@ -1,6 +1,5 @@
 package controller;
 
-import dao.InboundBillVO;
 import dao.OutboundBillVO;
 import service.OutboundService;
 
@@ -84,7 +83,7 @@ public class OutboundControllerImpl implements InOutboundController{
                 if(authNum == 1) {
                     System.out.println("1. 출고 요청 승인");
                     // 미승인된 입고요청 목록 출력
-                    status = outboundService.approveRequest();
+//                    status = outboundService.approveRequest();
 
                 } else if(authNum == 2) {
                     // 1. 출고 요청

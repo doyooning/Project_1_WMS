@@ -6,7 +6,7 @@ public interface InOutboundService {
     int addRequest(int num, String str);
 
     // 요청 승인(관리자만)
-    int approveRequest();
+    int approveRequest(int requestId);
 
     // 요청 수정
     int updateRequest(int Id, int num, String str);

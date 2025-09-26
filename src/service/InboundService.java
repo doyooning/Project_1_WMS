@@ -3,7 +3,6 @@ package service;
 import dao.InboundBillVO;
 import dao.InboundDAO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class InboundService implements InOutboundService{
@@ -22,9 +21,12 @@ public class InboundService implements InOutboundService{
     private InboundDAO inboundDao = InboundDAO.getInboundDao();
 
     @Override
-    public int approveRequest() {
-        inboundDao.approveRequest();
-        return 0;
+    public int approveRequest(int requestId) {
+        int status = inboundDao.approveRequest(requestId);
+        if(status <= 0){
+            return -1;
+        }
+        return status;
     }
 
     public int addRequest(int warehouseId, String dueDate) {
