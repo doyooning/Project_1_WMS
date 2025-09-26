@@ -2,6 +2,7 @@ package dao;
 
 import domain.Announcement;
 import domain.EntityStatus;
+import domain.Expense;
 import util.DBUtil;
 
 import java.sql.*;
@@ -64,4 +65,60 @@ public class BoardDao implements Board {
         }
         return null;
     }
+
+    @Override
+    public int addAnnouncement(Announcement announcement) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call addAnnouncement(?, ?, ?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, announcement.getTaIdx());
+            cstmt.setString(2, announcement.getAnTitle());
+            cstmt.setString(3, announcement.getAnContent());
+
+            return cstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
+
+    @Override
+    public Announcement getAnnouncement(int anIdx) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call getAnnouncementList(?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, anIdx);
+
+            rs = cstmt.executeQuery();
+
+            if (rs.next()) {
+                Announcement announcement = new Announcement();
+
+                announcement.setAnIdx(rs.getInt("anIdx"));
+                announcement.setTaIdx(rs.getInt("taIdx"));
+                announcement.setAnTitle(rs.getString("anTitle"));
+                announcement.setAnContent(rs.getString("anContent"));
+                announcement.setCreatedAt(rs.getTimestamp("createdAt"));
+                announcement.setUpdatedAt(rs.getTimestamp("updatedAt"));
+                announcement.setStatus(EntityStatus.valueOf(rs.getString("status")));
+
+                return announcement;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return null;
+    }
+
+
 }

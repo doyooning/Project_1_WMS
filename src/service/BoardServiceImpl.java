@@ -2,6 +2,7 @@ package service;
 
 import dao.BoardDao;
 import domain.Announcement;
+import domain.Expense;
 
 import java.util.List;
 
@@ -23,5 +24,18 @@ public class BoardServiceImpl implements BoardService {
     public List<Announcement> getAnnouncementList() {
         return boardDao.getAnnouncementList();
     }
+
+    @Override
+    public boolean addAnnouncement(Announcement announcement) {
+        int result = boardDao.addAnnouncement(announcement);
+        if(result > 0) return true;
+        else return false;
+    }
+
+    @Override
+    public Announcement getAnnouncement(int anIdx) {
+        return boardDao.getAnnouncement(anIdx);
+    }
+
 
 }
