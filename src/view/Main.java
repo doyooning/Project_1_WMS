@@ -144,8 +144,34 @@ public class Main {
         boolean success;
         if ("1".equals(loginType)) {
             success = memberControl.loginUser(loginId, loginPw);
+            if (success) {
+                String status = memberControl.getUserApprovalStatus(loginId);
+                if ("PENDING".equals(status)) {
+                    System.out.println("[회원가입 승인 대기중입니다]");
+                    return;
+                } else if ("REJECTED".equals(status)) {
+                    System.out.println("[회원가입 승인 거절되었습니다]");
+                    return;
+                } else if (!"APPROVED".equals(status)) {
+                    System.out.println("[승인 정보가 없습니다]");
+                    return;
+                }
+            }
         } else if ("2".equals(loginType)) {
             success = memberControl.loginWarehouseAdmin(loginId, loginPw);
+            if (success) {
+                String status = memberControl.getWarehouseAdminApprovalStatus(loginId);
+                if ("PENDING".equals(status)) {
+                    System.out.println("[회원가입 승인 대기중입니다]");
+                    return;
+                } else if ("REJECTED".equals(status)) {
+                    System.out.println("[회원가입 승인 거절되었습니다]");
+                    return;
+                } else if (!"APPROVED".equals(status)) {
+                    System.out.println("[승인 정보가 없습니다]");
+                    return;
+                }
+            }
         } else if ("3".equals(loginType)) {
             success = memberControl.loginTotalAdmin(loginId, loginPw);
         } else {

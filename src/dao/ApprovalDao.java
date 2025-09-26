@@ -90,5 +90,55 @@ public class ApprovalDao {
             ps.executeUpdate();
         }
     }
+
+    // Approval 체크: 일반회원 승인 여부 (userId 기반)
+    public boolean isUserApproved(Connection connection, String userId) throws SQLException {
+        String sql = "SELECT 1 FROM Approval a JOIN User u ON a.uIdx = u.uIdx " +
+                "WHERE u.uId = ? AND a.status = 'APPROVED' LIMIT 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    // Approval 체크: 창고관리자 승인 여부 (waId 기반)
+    public boolean isWarehouseAdminApproved(Connection connection, String adminId) throws SQLException {
+        String sql = "SELECT 1 FROM Approval a JOIN WarehouseAdmin w ON a.waIdx = w.waIdx " +
+                "WHERE w.waId = ? AND a.status = 'APPROVED' LIMIT 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, adminId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    // 단일 상태 조회: 일반회원(userId)
+    public String getUserApprovalStatus(Connection connection, String userId) throws SQLException {
+        String sql = "SELECT a.status FROM Approval a JOIN User u ON a.uIdx = u.uIdx " +
+                "WHERE u.uId = ? ORDER BY a.aIdx DESC LIMIT 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getString(1);
+                return null;
+            }
+        }
+    }
+
+    // 단일 상태 조회: 창고관리자(waId)
+    public String getWarehouseAdminApprovalStatus(Connection connection, String adminId) throws SQLException {
+        String sql = "SELECT a.status FROM Approval a JOIN WarehouseAdmin w ON a.waIdx = w.waIdx " +
+                "WHERE w.waId = ? ORDER BY a.aIdx DESC LIMIT 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, adminId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getString(1);
+                return null;
+            }
+        }
+    }
 }
 
