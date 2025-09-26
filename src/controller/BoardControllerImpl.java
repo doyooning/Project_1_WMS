@@ -219,6 +219,7 @@ public class BoardControllerImpl implements BoardController {
         printAnnouncementDetail(announcement);
     }
     private void handleAddAnnouncement() {
+        int taIdx = totalAdmin.getTaIdx();
 
     }
 
@@ -238,12 +239,7 @@ public class BoardControllerImpl implements BoardController {
         System.out.printf(" %10s | %-40s \n", "작성일", announcement.getUpdatedAt());
         System.out.println("-".repeat(60));
         System.out.println(" 내용");
-        String[] parts = announcement.getAnContent().split("\\."); // .은 정규식에서 특수문자라서 \\로 이스케이프 처리
-
-        for (String part : parts) {
-            System.out.println(part);
-        }
-
+        System.out.println( announcement.getAnContent());
     }
 
     private int getAnIdx(){
@@ -259,6 +255,8 @@ public class BoardControllerImpl implements BoardController {
             }
         }
     }
+
+
 //    private String getWriter(){
 //        return inputNum("작성자> ");
 //    }
