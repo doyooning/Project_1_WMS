@@ -10,4 +10,5 @@ public interface Board {
     List<Announcement> getAnnouncementList();
     int addAnnouncement(Announcement announcement);
     Announcement getAnnouncement(int anIdx);
+    int modifyAnnouncement(Announcement announcement);
 }
