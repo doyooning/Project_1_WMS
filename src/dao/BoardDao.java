@@ -92,7 +92,7 @@ public class BoardDao implements Board {
         // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "{call getAnnouncementList(?)}";
+            String sql = "{call getAnnouncement(?)}";
             cstmt = conn.prepareCall(sql);
 
             cstmt.setInt(1, anIdx);
@@ -132,6 +132,25 @@ public class BoardDao implements Board {
             cstmt.setInt(2, announcement.getTaIdx());
             cstmt.setString(3, announcement.getAnTitle());
             cstmt.setString(4, announcement.getAnContent());
+
+            return cstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
+
+    @Override
+    public int removeAnnouncement(int anIdx) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call removeAnnouncement(?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, anIdx);
 
             return cstmt.executeUpdate();
         } catch (SQLException e) {

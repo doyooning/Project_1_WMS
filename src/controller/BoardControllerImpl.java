@@ -235,7 +235,7 @@ public class BoardControllerImpl implements BoardController {
             String num = input.readLine().trim();
             switch (num) {
                 case "1" -> handleModifyAnnouncement();
-                case "2" -> System.out.println("공지사항 삭제");
+                case "2" -> handleRemoveAnnouncement();
                 case "3" -> System.out.println();
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
@@ -262,6 +262,11 @@ public class BoardControllerImpl implements BoardController {
     public Boolean modifyAnnouncement(Announcement announcement) {
         return board.modifyAnnouncement(announcement);
     }
+    @Override
+    public Boolean removeAnnouncement(int anIdx) {
+        return board.removeAnnouncement(anIdx);
+    }
+
 
 
     private void handleGetAnnouncementDetail() {
@@ -271,7 +276,8 @@ public class BoardControllerImpl implements BoardController {
         printAnnouncementDetail(announcement);
 
         // 수정 삭제
-        if(totalAdmin == null) return;
+        if(totalAdmin == null || announcement == null) {
+        }
         else showAnManagementMenu();
     }
     private void handleAddAnnouncement() {
@@ -316,6 +322,22 @@ public class BoardControllerImpl implements BoardController {
             System.out.println("공지사항 수정에 실패했습니다: " + e.getMessage());
         }
     }
+    private void handleRemoveAnnouncement() {
+        int anIdx = getAnIdx();
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = removeAnnouncement(anIdx);
+            if(result == true) System.out.println("공지사항이 삭제되었습니다.");
+        } catch (Exception e) {
+            System.out.println("공지사항 삭제에 실패했습니다: " + e.getMessage());
+        }
+    }
+
+
+
 
     private void printAnnouncementList(List<Announcement> list){
         System.out.println("[공지사항 목록]");
@@ -327,6 +349,10 @@ public class BoardControllerImpl implements BoardController {
         System.out.println("-".repeat(60));
     }
     private void printAnnouncementDetail(Announcement announcement) {
+        if (announcement == null) {
+            System.out.println("해당 공지사항이 존재하지 않습니다.");
+            return;
+        }
         System.out.printf(" %10s | %-40s \n", "제목", announcement.getAnTitle());
         System.out.println("-".repeat(60));
         System.out.printf(" %10s | %-40s \n", "작성자", announcement.getTaIdx());
