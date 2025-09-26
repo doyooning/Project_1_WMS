@@ -202,9 +202,21 @@ public class BoardControllerImpl implements BoardController {
     public List<Announcement> getAnnouncementList() {
         return board.getAnnouncementList();
     }
+    @Override
+    public Boolean addAnnouncement(Announcement announcement) {
+        return board.addAnnouncement(announcement);
+    }
+    @Override
+    public Announcement getAnnouncement(int anIdx) {
+        return board.getAnnouncement(anIdx);
+    }
+
 
     private void handleGetAnnouncementDetail() {
+        int anIdx = getAnIdx();
 
+        Announcement announcement = getAnnouncement(anIdx);
+        printAnnouncementDetail(announcement);
     }
     private void handleAddAnnouncement() {
 
@@ -219,8 +231,34 @@ public class BoardControllerImpl implements BoardController {
         }
         System.out.println("=".repeat(60));
     }
+    private void printAnnouncementDetail(Announcement announcement) {
+        System.out.printf(" %10s | %-40s \n", "제목", announcement.getAnTitle());
+        System.out.println("-".repeat(60));
+        System.out.printf(" %10s | %-40s \n", "작성자", announcement.getTaIdx());
+        System.out.printf(" %10s | %-40s \n", "작성일", announcement.getUpdatedAt());
+        System.out.println("-".repeat(60));
+        System.out.println(" 내용");
+        String[] parts = announcement.getAnContent().split("\\."); // .은 정규식에서 특수문자라서 \\로 이스케이프 처리
 
+        for (String part : parts) {
+            System.out.println(part);
+        }
 
+    }
+
+    private int getAnIdx(){
+        while(true) {
+            try {
+                int anIdx = Integer.parseInt(inputNum("공지사항번호> "));
+                System.out.println("=".repeat(60));
+                return anIdx;
+            } catch (NumberFormatException e) {
+                throw new RuntimeException(e);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 //    private String getWriter(){
 //        return inputNum("작성자> ");
 //    }

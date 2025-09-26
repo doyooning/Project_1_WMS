@@ -1,6 +1,7 @@
 package controller;
 
 import domain.Announcement;
+import domain.Expense;
 
 import java.util.List;
 
@@ -13,4 +14,8 @@ public interface BoardController {
 
     //공지사항 목록 조회
     List<Announcement> getAnnouncementList();
+
+    Announcement getAnnouncement(int anIdx);
+
+    Boolean addAnnouncement(Announcement announcement);
 }
