@@ -11,4 +11,6 @@ public interface Board {
     int addAnnouncement(Announcement announcement);
     Announcement getAnnouncement(int anIdx);
     int modifyAnnouncement(Announcement announcement);
+    int removeAnnouncement(int anIdx);
+
 }

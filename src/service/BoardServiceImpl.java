@@ -44,4 +44,11 @@ public class BoardServiceImpl implements BoardService {
         else return false;
     }
 
+    @Override
+    public boolean removeAnnouncement(int anIdx) {
+        int result = boardDao.removeAnnouncement(anIdx);
+        if(result > 0) return true;
+        else return false;
+    }
+
 }

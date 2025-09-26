@@ -14,4 +14,5 @@ public interface BoardService {
 
     Announcement getAnnouncement(int anIdx);
     boolean modifyAnnouncement(Announcement announcement);
+    boolean removeAnnouncement(int anIdx);
 }
