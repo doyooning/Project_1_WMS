@@ -250,13 +250,74 @@ public class OutboundControllerImpl implements InOutboundController{
     }
 
     @Override
-    public void showInfoMenu(int userNum) {
+    public void showInfoMenu(int uId) {
+        int status = 0;
+        System.out.print(
+                """
+                ============================================================
+                ####################### 출고 현황 조회 #######################
+                ============================================================
+                1. 출고 요청 조회		    2. 요청 상품 리스트	      3. 뒤로가기
+                ============================================================
+                메뉴를 고르세요. :\s"""
+        );
+        try {
+            int menuNum = Integer.parseInt(br.readLine());
+            status = selectInfoMenu(menuNum, uId);
+            if (status == 1) {
+                System.out.println("============================================================");
+                System.out.println(".");
+                System.out.println(".");
+                System.out.println(".");
+                showInfoMenu(uId);
+            } else if (status == -1) {
+                System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                showInfoMenu(uId);
+            }
 
+        } catch (IOException | NumberFormatException e) {
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            showInfoMenu(uId);
+
+        } catch (Exception e) {
+            System.out.println(Errors.UNEXPECTED_ERROR.getText());
+            e.printStackTrace();
+            showInfoMenu(uId);
+        }
     }
 
     @Override
     public int selectInfoMenu(int menuNum, int uId) {
-        return 0;
+        int status = 0;
+        try {
+            switch (menuNum) {
+                // 입고 요청 조회
+                case 1 -> {
+                    List<List<String>> requestList = outboundService.getBoundInfo(uId);
+                    if (requestList == null) {
+                        return -1;
+                    }
+                    printRequestList(requestList);
+
+                }
+                // 요청 상품 리스트
+                case 2 -> {
+                    List<List<String>> requestItemList = outboundService.getBoundItemInfo(uId);
+                    if (requestItemList == null) {
+                        return -1;
+                    }
+                    printRequestItemList(requestItemList);
+
+                }
+                case 3 -> {
+                    // 뒤로가기
+                    return 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
     }
 
     public int InputRequestData(int uId) {
@@ -582,5 +643,36 @@ public class OutboundControllerImpl implements InOutboundController{
             throw new RuntimeException(e);
         }
         return rtn;
+    }
+
+    public void printRequestList(List<List<String>> list) {
+        for (List<String> requests : list) {
+            System.out.printf(
+                    """
+                    ============================================================
+                     요청번호 |  출고기한  | 창고 |      요청일자     |
+                      %4s       %10s     %3s        %15s
+                    
+                                                  |  요청상태  |     출고일자     |
+                                                     %10s          %15s
+                    
+                    """,  requests.get(0), requests.get(1), requests.get(2),
+                    requests.get(3),  requests.get(4), requests.get(5)
+            );
+        }
+    }
+
+    public void printRequestItemList(List<List<String>> list) {
+        for (List<String> items : list) {
+            System.out.printf(
+                    """
+                    ============================================================
+                     요청번호 | 순번 | 물품번호 |      물품명     |  수량  | 창고번호 |
+                      %4s    %4s    %3s        %20s      %4s   %2s
+                    
+                    """,  items.get(0), items.get(1), items.get(2),
+                    items.get(3),  items.get(4), items.get(5)
+            );
+        }
     }
 }

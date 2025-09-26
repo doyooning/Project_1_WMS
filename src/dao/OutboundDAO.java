@@ -244,13 +244,78 @@ public class OutboundDAO implements InOutboundDAO {
     }
 
     @Override
-    public List<List<String>> getRequestById(int num) {
-        List<List<String>> list = new  ArrayList<>();
-        return list;
+    public List<List<String>> getRequestById(int uId) {
+
+        String sql = "{call getOutRequestByUId(?)}";
+        List<List<String>> outRequestList = new ArrayList<>();
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, uId);
+
+            // 실행
+            boolean hasResult = call.execute();
+            if (hasResult) {
+                try (ResultSet rs = call.getResultSet()) {
+                    while (rs.next()) {
+                        List<String> request = new ArrayList<>();
+                        request.add(rs.getString(1)); // outRequestIdx
+                        request.add(rs.getString(2)); // outDueDate
+                        request.add(rs.getString(3)); // wIdx
+                        request.add(rs.getString(4)); // outRequestDate
+                        request.add(rs.getString(5)); // requestStatus
+                        request.add(rs.getString(6)); // outboundDate (null -> '-')
+                        outRequestList.add(request);
+                    }
+                }
+            }
+
+            // 리턴
+            return outRequestList;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
+    // 요청의 물품 정보를 ID값으로 찾기
     @Override
-    public List<List<String>> getItemsById(int inRequestIdx) {
-        return null;
+    public List<List<String>> getItemsById(int uId) {
+        String sql = "{call getOutItemsByUId(?)}";
+        List<List<String>> outRequestItemList = new ArrayList<>();
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, uId);
+
+            // 실행
+            boolean hasResult = call.execute();
+            if (hasResult) {
+                try (ResultSet rs = call.getResultSet()) {
+                    while (rs.next()) {
+                        List<String> item = new ArrayList<>();
+                        item.add(rs.getString(1)); // outRequestIdx
+                        item.add(rs.getString(2)); // outItemIdx
+                        item.add(rs.getString(3)); // pIdx
+                        item.add(rs.getString(4)); // pName
+                        item.add(rs.getString(5)); // pQuantity
+                        item.add(rs.getString(6)); // wIdx
+                        outRequestItemList.add(item);
+                    }
+                }
+            }
+
+            // 리턴
+            return outRequestItemList;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
