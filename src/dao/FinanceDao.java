@@ -35,7 +35,7 @@ public class FinanceDao implements Finance {
     public List<Expense> getMontlyExpenseList(int wIdx, String date) {
         try {
             conn = DBUtil.getConnection();
-            String sql = "{call getMontlyExpenseList(?, ?)}"; // 변경 3: 표준 JDBC 호출 구문으로 변경
+            String sql = "{call getMonthlyExpenseList(?, ?)}"; // 변경 3: 표준 JDBC 호출 구문으로 변경
             cstmt = conn.prepareCall(sql);                   // 변경 4: prepareCall() 사용
             cstmt.setInt(1, wIdx);
             cstmt.setString(2, date);
@@ -72,7 +72,7 @@ public class FinanceDao implements Finance {
         // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "{call getMontlySalesList(?, ?)}";
+            String sql = "{call getMonthlySalesList(?, ?)}";
             cstmt = conn.prepareCall(sql);
             cstmt.setInt(1, wIdx);
             cstmt.setString(2, date);
@@ -103,7 +103,7 @@ public class FinanceDao implements Finance {
         // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "{call getMontlySalesTotal(?, ?)}";
+            String sql = "{call getMonthlySalesTotal(?, ?)}";
             cstmt = conn.prepareCall(sql);
             cstmt.setInt(1, wIdx);
             cstmt.setString(2, date);
@@ -129,7 +129,7 @@ public class FinanceDao implements Finance {
         // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "{call getMontlyExpenseTotal(?, ?)}";
+            String sql = "{call getMonthlyExpenseTotal(?, ?)}";
             cstmt = conn.prepareCall(sql);
             cstmt.setInt(1, wIdx);
             cstmt.setString(2, date);
@@ -231,7 +231,7 @@ public class FinanceDao implements Finance {
                 warehouse.setWStatus(status);
                 warehouse.setWStock(rs.getInt("wStock"));
                 warehouse.setDoIdx(rs.getInt("doIdx"));
-                warehouse.setDoName(rs.getString("doName"));
+                //warehouse.setDoName(rs.getString("doName"));
                 warehouse.setWtIdx(rs.getInt("wtIdx"));
                 // warehouse.setWUniqueNum(rs.getString("wtUniqueNum")); // 원본 코드에 주석처리 되어있어 유지
                 list.add(warehouse);
