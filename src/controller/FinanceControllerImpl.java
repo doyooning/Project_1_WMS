@@ -18,7 +18,7 @@ public class FinanceControllerImpl implements FinanceController {
     private WarehouseAdmin whAdmin;
     private TotalAdmin totalAdmin;
     private int authority = 0;
-    private boolean loop = true;
+    //private boolean loop = true;
     //Service 객체
     private FinanceServiceImpl finance;
     //사용자 입력
@@ -34,22 +34,47 @@ public class FinanceControllerImpl implements FinanceController {
         return instance;
     }
 
+    @Override
+    public void setLoggedInUser(Object user) {
+        if (user instanceof TotalAdmin) {
+            this.totalAdmin = (TotalAdmin) user;
+            this.authority = 1;
+        } else if (user instanceof WarehouseAdmin) {
+            this.whAdmin = (WarehouseAdmin) user;
+            if (this.whAdmin.getWIdx() == 0) {
+                int wIdx = finance.getWidxByWaidx(this.whAdmin.getWaIdx());
+                this.whAdmin.setWIdx(wIdx);
+            }
+            this.authority = 2;
+        } else if (user instanceof User) {
+            this.user = (User) user;
+            this.authority = 3;
+        }
+    }
+
     //메인 화면 출력 메서드, 권한에 따라 다른 메서드로 화면 출력
     @Override
-    public void showFinanceMenu() {
-        while(loop) {
+    public Boolean showFinanceMenu() {
+        while(true) {
+            String choice;
             switch (authority) {
                 case 1:
                     showTotalAdminMenu();
-                    selectTotalAdminMenu();
+                    choice = selectTotalAdminMenu();
+                    if ("mainMenu".equals(choice)) return true;
+                    if ("logout".equals(choice)) return false;
                     break;
                 case 2:
                     showWhAdminMenu();
-                    selectWhAdminMenu();
+                    choice = selectWhAdminMenu();
+                    if ("mainMenu".equals(choice)) return true;
+                    if ("logout".equals(choice)) return false;
                     break;
                 case 3:
                     showUserMenu();
-                    selectUserMenu();
+                    choice = selectUserMenu();
+                    if ("mainMenu".equals(choice)) return true;
+                    if ("logout".equals(choice)) return false;
                     break;
                 default:
                     System.out.println("접속 불가! 권한이 존재하지 않습니다.");
@@ -130,17 +155,16 @@ public class FinanceControllerImpl implements FinanceController {
     }
 
     //권한별 메뉴선택 및 메서드 호출
-    private void selectTotalAdminMenu(){
+    private String selectTotalAdminMenu(){
         try {
             String num = input.readLine().trim();
             switch (num) {
                 case "1" -> handleGetAllFinance();
                 case "2" -> handleGetWhFinance();
-                case "3" -> loop = false;
+                case "3" -> {return "mainMenu";}
                 case "4" -> {
-                    System.out.println("logout");
-                    loop = false;
-                }
+                    System.out.println("Logout");
+                    return "logout";}
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
@@ -148,19 +172,19 @@ public class FinanceControllerImpl implements FinanceController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return "continue";
     }
-    private void selectWhAdminMenu(){
+    private String selectWhAdminMenu(){
         try {
             String num = input.readLine().trim();
             switch (num) {
                 case "1" -> handleGetWhFinance();
                 case "2" -> showExpenseMenu();
                 case "3" -> showWhSubMenu();
-                case "4" -> loop = false;
+                case "4" -> {return "mainMenu";}
                 case "5" -> {
-                    System.out.println("logout");
-                    loop = false;
-                }
+                    System.out.println("Logout");
+                    return "logout";}
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
@@ -168,17 +192,17 @@ public class FinanceControllerImpl implements FinanceController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return "continue";
     }
-    private void selectUserMenu(){
+    private String selectUserMenu(){
         try {
             String num = input.readLine().trim();
             switch (num) {
                 case "1" -> showUserSubMenu();
-                case "2" -> loop = false;
+                case "2" -> {return "mainMenu";}
                 case "3" -> {
-                    System.out.println("logout");
-                    loop = false;
-                }
+                    System.out.println("Logout");
+                    return "logout";}
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
@@ -186,6 +210,7 @@ public class FinanceControllerImpl implements FinanceController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return "continue";
     }
     private void selectExpenseMenu(){
         try {
@@ -432,9 +457,9 @@ public class FinanceControllerImpl implements FinanceController {
             Boolean result = true;
             if(tf==false) result = rejectSubscription(saIdx);
             else result = approveSubscription(saIdx);
-            if(result == true) System.out.println("구독이 취소되었습니다. 종료일 이후 갱신되지 않습니다.");
+            if(result == true) System.out.println("구독 신청이 처리되었습니다.");
         } catch (Exception e) {
-            System.out.println("구독 취소에 실패했습니다: " + e.getMessage());
+            System.out.println("구독 선청 처리에 실패했습니다: " + e.getMessage());
         }
     }
 
