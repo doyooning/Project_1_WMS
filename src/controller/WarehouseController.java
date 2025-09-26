@@ -198,7 +198,7 @@ public class WarehouseController {
                         ======================전체 현황 리스트 조회=====================
                         """
         );
-        String menu = String.format("%-8s%-7s%-7s%-11s%-10s", "창고번호", "창고이름", "창고주소", "창고타입", "등록일");
+        String menu = String.format("%-8s%-10s%-7s%-11s%-10s", "창고번호", "창고이름", "창고주소", "창고타입", "등록일");
         System.out.println(menu);
         System.out.println("------------------------------------------------------------");
 
@@ -274,7 +274,7 @@ public class WarehouseController {
 
         if(warehouseList == null || warehouseList.isEmpty()) {} //예외처리
 
-        String menu = String.format("%-8s%-7s%-7s%-7s%-17s", "창고번호", "창고이름", "창고임대료", "창고별재고", "상세주소");
+        String menu = String.format("%-8s%-10s%-7s%-7s%-17s", "창고번호", "창고이름", "창고임대료", "창고별재고", "상세주소");
         System.out.println(menu);
         System.out.println("------------------------------------------------------------");
 
@@ -323,7 +323,7 @@ public class WarehouseController {
 
         if(warehouseList == null || warehouseList.isEmpty()) {} //예외 처리
 
-        String menu = String.format("%-8s%-8s%-8s%-8s%-9s", "창고번호", "창고이름", "창고임대료", "창고별재고", "도주소");
+        String menu = String.format("%-8s%-10s%-8s%-8s%-9s", "창고번호", "창고이름", "창고임대료", "창고별재고", "도주소");
         System.out.println(menu);
         System.out.println("------------------------------------------------------------");
 
@@ -368,13 +368,13 @@ public class WarehouseController {
             }
             String format = null;
             switch(num){
-                case 1 -> format = String.format("%-8s%-7s%-7s%-11s%-10s",
+                case 1 -> format = String.format("%-8s%-10s%-7s%-11s%-10s",
                         warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getDoName(),
                         warehouseList.get(index).getWtName(),sdf.format(warehouseList.get(index).getCreatedAt())); //전체 창고현황 출력
-                case 3 -> format = String.format("%-8s%-7s%-7d%-7d%-17s",
+                case 3 -> format = String.format("%-8s%-10s%-7d%-7d%-17s",
                         warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getWRent(),
                         warehouseList.get(index).getWStock(),trimToLen(warehouseList.get(index).getWAddr(), 17));
-                case 4 -> format = String.format("%-8s%-8s%-8d%-8d%-9s",
+                case 4 -> format = String.format("%-8s%-10s%-8d%-8d%-9s",
                         warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getWRent(),
                         warehouseList.get(index).getWStock(), warehouseList.get(index).getDoName()
                         );
