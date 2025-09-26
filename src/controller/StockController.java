@@ -246,7 +246,7 @@ public class StockController {
 
                 stockService = StockService.getInstance();
                 switch(input.trim()){
-                    case "1" -> //재고실사 삭제메뉴
+                    case "1" -> showDeleteChecklogMenu();//재고실사 삭제메뉴
                     case "2" -> //재고 실사 조회 메뉴
                 }
 
@@ -260,7 +260,7 @@ public class StockController {
                 stockService = StockService.getInstance();
                 switch(input.trim()){
                     case "1" -> showAddChecklogMenu(); //재고실사등록
-                    case "2" -> //재고실사삭제
+                    case "2" -> showDeleteChecklogMenu();//재고실사삭제
                     case "3" -> //재고실사조회
                     case "4" -> //재고실사수정
                 }
@@ -312,6 +312,48 @@ public class StockController {
                 return input;
             }catch(IOException e){
                 e.printStackTrace();;
+            }
+        }
+    }
+
+    private void showDeleteChecklogMenu(){
+        //총관리자, 창고관리자
+        //창고관리자인 경우, 자신이 관리하는 창고에 대한 재고실사만 지울 수 있음
+
+        System.out.println(
+                """
+                ============================================================
+                ========================재고 실사 삭제========================
+                """
+        );
+        System.out.println("삭제할 재고 실사로그번호를 입력해주세요.");
+        int clIdx = getChecklogIdx();
+        if(clIdx == -1) return; //exit
+
+        int result = stockService.removeCheckLog(clIdx);
+        if(result == -1) {System.out.println("해당 실사로그가 존재하지 않습니다."); return;}
+        else if(result == 0){
+            System.out.println("[오류]: 삭제 도중 오류가 발생했습니다."); return;
+        }
+
+        System.out.println("성공적으로 삭제되었습니다.");
+    }
+
+    private int getChecklogIdx(){
+        //삭제와 수정에서 동시에 쓰이는 메소드
+        while(true){
+            try{
+                System.out.print("> ");
+                String input = reader.readLine();
+
+                if(!input.trim().matches("\\d+")){
+                    System.out.println("실사로그번호는 숫자만 입력 가능합니다. 다시 입력해주세요.");
+                    continue;
+                }else if(input.trim().toLowerCase().equals("exit")) return -1;
+
+                return Integer.parseInt(input);
+            }catch(IOException e){
+                e.printStackTrace();
             }
         }
     }

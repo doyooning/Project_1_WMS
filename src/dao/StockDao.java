@@ -51,4 +51,16 @@ public class StockDao {
     public CheckLog getNewCheckLog(){
         conn = DBUtil.getConnection();
     }
+
+    public int removeCheckLog(int clIdx){
+        conn = DBUtil.getConnection();
+
+        int result = checkCheckLogExist(clIdx);
+        if(result == 0) return -1;
+    }
+
+    private int checkCheckLogExist(int clIdx){
+        return 0;
+
+    }
 }
