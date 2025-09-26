@@ -41,10 +41,6 @@ public class FinanceControllerImpl implements FinanceController {
             this.authority = 1;
         } else if (user instanceof WarehouseAdmin) {
             this.whAdmin = (WarehouseAdmin) user;
-            if (this.whAdmin.getWIdx() == 0) {
-                int wIdx = finance.getWidxByWaidx(this.whAdmin.getWaIdx());
-                this.whAdmin.setWIdx(wIdx);
-            }
             this.authority = 2;
         } else if (user instanceof User) {
             this.user = (User) user;
