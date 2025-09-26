@@ -18,4 +18,5 @@ public interface BoardController {
     Announcement getAnnouncement(int anIdx);
 
     Boolean addAnnouncement(Announcement announcement);
+    Boolean modifyAnnouncement(Announcement announcement);
 }

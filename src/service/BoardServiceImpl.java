@@ -37,5 +37,11 @@ public class BoardServiceImpl implements BoardService {
         return boardDao.getAnnouncement(anIdx);
     }
 
+    @Override
+    public boolean modifyAnnouncement(Announcement announcement) {
+        int result = boardDao.modifyAnnouncement(announcement);
+        if(result > 0) return true;
+        else return false;
+    }
 
 }

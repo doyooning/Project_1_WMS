@@ -88,7 +88,7 @@ public class BoardControllerImpl implements BoardController {
                 ============================================================
                  1. 문의글 조회  |  2. 문의글 작성  |  3. 메인 메뉴
                 ============================================================
-                >   """);
+                >\t""");
     }
     private void showUserMenu() {
         //총관리자, 창고관리자. 일반회원 화면
@@ -98,28 +98,36 @@ public class BoardControllerImpl implements BoardController {
                 ============================================================
                  1. 공지사항  |  2. 문의글  |  3. 메인 메뉴  |  4. 로그아웃
                 ============================================================
-                >  """);
+                >\t""");
     }
     private void showAnnouncementMenu(){
         if(totalAdmin != null){
-            System.out.println("""
-                    ============================================================
-                      1. 공지사항 조회   |   2. 공지사항 작성  |  3. 메인
-                    ============================================================
-                    """);
             List<Announcement> list = getAnnouncementList();
             printAnnouncementList(list);
-            System.out.print(">  ");
+            System.out.print("""
+                    ============================================================
+                      1. 공지사항 상세 조회 | 2. 공지사항 작성 | 3. 고객센터 메뉴
+                    ============================================================
+                    >\t""");
+            selectAnTaMenu();
         } else {
-            System.out.println("""
-                ============================================================
-                 1. 공지사항 조회   |   2. 고객센터 메뉴
-                ============================================================
-                """);
             List<Announcement> list = getAnnouncementList();
             printAnnouncementList(list);
-            System.out.print(">  ");
+            System.out.print("""
+                ============================================================
+                 1. 공지사항 상세 조회   |   2. 고객센터 메뉴
+                ============================================================
+                >\t""");
+            selectAnMenu();
         }
+    }
+    private void showAnManagementMenu(){
+        System.out.print("""
+                ============================================================
+                 1. 공지사항 수정  |  2. 공지사항 삭제  |  3. 고객센터 메뉴
+                ============================================================
+                >\t""");
+        selectAnMgMenu();
     }
 
 
@@ -130,8 +138,8 @@ public class BoardControllerImpl implements BoardController {
             printAnnouncementList(list);
             String num  = input.readLine().trim();
             switch (num) {
-                case "1" -> handleGetAnnouncementDetail();
-                case "2" -> handleAddAnnouncement();
+                case "1" -> System.out.println("비회원 문의글 조회");
+                case "2" -> System.out.println("비회원 문의글 작성");
                 case "3" -> {return "mainMenu";}
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
@@ -197,6 +205,46 @@ public class BoardControllerImpl implements BoardController {
         }
         return "continue";
     }
+    private void selectAnTaMenu(){
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> handleGetAnnouncementDetail();
+                case "2" -> handleAddAnnouncement();
+                case "3" -> System.out.println();
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void selectAnMenu(){
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> handleGetAnnouncementDetail();
+                case "2" -> System.out.println();
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void selectAnMgMenu(){
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> handleModifyAnnouncement();
+                case "2" -> System.out.println("공지사항 삭제");
+                case "3" -> System.out.println();
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 
     @Override
     public List<Announcement> getAnnouncementList() {
@@ -210,6 +258,10 @@ public class BoardControllerImpl implements BoardController {
     public Announcement getAnnouncement(int anIdx) {
         return board.getAnnouncement(anIdx);
     }
+    @Override
+    public Boolean modifyAnnouncement(Announcement announcement) {
+        return board.modifyAnnouncement(announcement);
+    }
 
 
     private void handleGetAnnouncementDetail() {
@@ -217,6 +269,10 @@ public class BoardControllerImpl implements BoardController {
 
         Announcement announcement = getAnnouncement(anIdx);
         printAnnouncementDetail(announcement);
+
+        // 수정 삭제
+        if(totalAdmin == null) return;
+        else showAnManagementMenu();
     }
     private void handleAddAnnouncement() {
         int taIdx = totalAdmin.getTaIdx();
@@ -238,6 +294,28 @@ public class BoardControllerImpl implements BoardController {
             System.out.println("공지사항 등록에 실패했습니다: " + e.getMessage());
         }
     }
+    private void handleModifyAnnouncement() {
+        int anIdx = getAnIdx();
+        int taIdx = totalAdmin.getTaIdx();
+        String title = getTitle();
+        String content = getContent();
+
+        Announcement announcement = new Announcement();
+        announcement.setAnIdx(anIdx);
+        announcement.setTaIdx(taIdx);
+        announcement.setAnTitle(title);
+        announcement.setAnContent(content);
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = modifyAnnouncement(announcement);
+            if(result == true) System.out.println("공지사항이 수정되었습니다.");
+        } catch (Exception e) {
+            System.out.println("공지사항 수정에 실패했습니다: " + e.getMessage());
+        }
+    }
 
     private void printAnnouncementList(List<Announcement> list){
         System.out.println("[공지사항 목록]");
@@ -246,7 +324,7 @@ public class BoardControllerImpl implements BoardController {
         for (Announcement a : list) {
             System.out.printf(" %5d | %20s | %5d | %10s \n", a.getAnIdx(), a.getAnTitle(), a.getTaIdx(), a.getUpdatedAt());
         }
-        System.out.println("=".repeat(60));
+        System.out.println("-".repeat(60));
     }
     private void printAnnouncementDetail(Announcement announcement) {
         System.out.printf(" %10s | %-40s \n", "제목", announcement.getAnTitle());
