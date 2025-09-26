@@ -2,6 +2,7 @@ package controller;
 
 import domain.Announcement;
 import domain.Expense;
+import domain.Inquiry;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface BoardController {
     Boolean addAnnouncement(Announcement announcement);
     Boolean modifyAnnouncement(Announcement announcement);
     Boolean removeAnnouncement(int anIdx);
+
+    List<Inquiry> getInquiryList();
 }

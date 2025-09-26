@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 
 @Data
 public class Inquiry {
-    private int iqIdxl;
+    private int iqIdx;
     private char iqType; // 0 - 1:1문의글  1 - 일반 문의글
     private String iqTitle;
     private String iqContent;

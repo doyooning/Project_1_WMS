@@ -3,6 +3,7 @@ package service;
 import dao.BoardDao;
 import domain.Announcement;
 import domain.Expense;
+import domain.Inquiry;
 
 import java.util.List;
 
@@ -49,6 +50,11 @@ public class BoardServiceImpl implements BoardService {
         int result = boardDao.removeAnnouncement(anIdx);
         if(result > 0) return true;
         else return false;
+    }
+
+    @Override
+    public List<Inquiry> getInquiryList() {
+        return boardDao.getInquiryList();
     }
 
 }

@@ -2,6 +2,7 @@ package dao;
 
 import domain.Announcement;
 import domain.Expense;
+import domain.Inquiry;
 import domain.Warehouse;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface Board {
     int modifyAnnouncement(Announcement announcement);
     int removeAnnouncement(int anIdx);
 
+    List<Inquiry> getInquiryList();
 }

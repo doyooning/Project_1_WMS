@@ -101,9 +101,9 @@ public class BoardControllerImpl implements BoardController {
                 >\t""");
     }
     private void showAnnouncementMenu(){
+        List<Announcement> list = getAnnouncementList();
+        printAnnouncementList(list);
         if(totalAdmin != null){
-            List<Announcement> list = getAnnouncementList();
-            printAnnouncementList(list);
             System.out.print("""
                     ============================================================
                       1. 공지사항 상세 조회 | 2. 공지사항 작성 | 3. 고객센터 메뉴
@@ -111,8 +111,6 @@ public class BoardControllerImpl implements BoardController {
                     >\t""");
             selectAnTaMenu();
         } else {
-            List<Announcement> list = getAnnouncementList();
-            printAnnouncementList(list);
             System.out.print("""
                 ============================================================
                  1. 공지사항 상세 조회   |   2. 고객센터 메뉴
@@ -128,6 +126,31 @@ public class BoardControllerImpl implements BoardController {
                 ============================================================
                 >\t""");
         selectAnMgMenu();
+    }
+    private void showIqMenu(){
+        List<Inquiry> list = getInquiryList();
+        printInquiryList(list);
+        if(user != null){
+            System.out.print("""
+                    ============================================================
+                      1. 문의글 상세 조회 | 2. 문의글 작성 | 3. 고객센터 메뉴
+                    ============================================================
+                    >\t""");
+            selectIqUserMenu();
+        } else {
+            System.out.print("""
+                ============================================================
+                 1. 공지사항 상세 조회   |   2. 고객센터 메뉴
+                ============================================================
+                >\t""");
+            selectIqMenu();
+        }
+    }
+    private void showIqMgUserMenu(){
+
+    }
+    private void showIqAnswerMenu(){
+
     }
 
 
@@ -153,7 +176,7 @@ public class BoardControllerImpl implements BoardController {
             String num = input.readLine().trim();
             switch (num) {
                 case "1" -> showAnnouncementMenu();
-                case "2" -> System.out.println("문의글");
+                case "2" -> showIqMenu();
                 case "3" -> {return "mainMenu";}
                 case "4" -> {
                     System.out.println("Logout");
@@ -172,7 +195,7 @@ public class BoardControllerImpl implements BoardController {
             String num = input.readLine().trim();
             switch (num) {
                 case "1" -> showAnnouncementMenu();
-                case "2" -> System.out.println("문의글");
+                case "2" -> showIqMenu();
                 case "3" -> {return "mainMenu";}
                 case "4" -> {
                     System.out.println("Logout");
@@ -191,7 +214,7 @@ public class BoardControllerImpl implements BoardController {
             String num = input.readLine().trim();
             switch (num) {
                 case "1" -> showAnnouncementMenu();
-                case "2" -> System.out.println("문의글");
+                case "2" -> showIqMenu();
                 case "3" -> {return "mainMenu";}
                 case "4" -> {
                     System.out.println("Logout");
@@ -243,6 +266,32 @@ public class BoardControllerImpl implements BoardController {
             throw new RuntimeException(e);
         }
     }
+    private void selectIqUserMenu(){
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> System.out.println("문의글 상세조회");
+                case "2" -> System.out.println("문의글 작성");
+                case "3" -> System.out.println();
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void selectIqMenu() {
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> System.out.println("문의글 상세 조회");
+                case "2" -> System.out.println();
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 
 
@@ -266,7 +315,10 @@ public class BoardControllerImpl implements BoardController {
     public Boolean removeAnnouncement(int anIdx) {
         return board.removeAnnouncement(anIdx);
     }
-
+    @Override
+    public List<Inquiry> getInquiryList() {
+        return board.getInquiryList();
+    }
 
 
     private void handleGetAnnouncementDetail() {
@@ -361,6 +413,17 @@ public class BoardControllerImpl implements BoardController {
         System.out.println(" 내용");
         System.out.println( announcement.getAnContent());
     }
+    private void printInquiryList(List<Inquiry> list){
+        System.out.println("[문의글 목록]");
+        System.out.printf(" %6s | %15s | %5s | %10s | %5s \n", "문의글 번호", "글제목", "작성자", "작성일", "타입");
+        System.out.println("-".repeat(60));
+        for (Inquiry i : list) {
+            String type = i.getIqType() == '0' ? "일반" : "1:1";
+            System.out.printf(" %6s | %15s | %5s | %10s | %5s \n", i.getIqIdx(), i.getIqTitle(), i.getUIdx(), i.getUpdatedAt(), type);
+        }
+        System.out.println("-".repeat(60));
+    }
+
 
     private int getAnIdx(){
         while(true) {
