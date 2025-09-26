@@ -164,6 +164,7 @@ public class Main {
             // 사용자 이름 가져오기
             try {
                 Object userInfo = memberControl.getUserInfo(loginId);
+                financeControl.setLoggedInUser(userInfo);
                 if (userInfo instanceof domain.User) {
                     currentUserName = ((domain.User) userInfo).getUName();
                 } else if (userInfo instanceof domain.WarehouseAdmin) {
@@ -233,7 +234,13 @@ public class Main {
                     System.out.println("출고관리 기능은 추후 구현 예정입니다.");
                     break;
                 case "4":
-                    System.out.println("재무관리 기능은 추후 구현 예정입니다.");
+                    // financeControl.showFinanceMenu()의 반환값에 따라 로그아웃 처리
+                    if (!financeControl.showFinanceMenu()) {
+                        currentUserType = null;
+                        currentUserId = null;
+                        currentUserName = null;
+                        inDashboard = false;
+                    }
                     break;
                 case "5":
                     System.out.println("고객센터 기능은 추후 구현 예정입니다.");
