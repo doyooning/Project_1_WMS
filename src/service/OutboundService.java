@@ -1,6 +1,5 @@
 package service;
 
-import dao.InboundBillVO;
 import dao.OutboundBillVO;
 import dao.OutboundDAO;
 
@@ -22,7 +21,7 @@ public class OutboundService implements InOutboundService {
     private OutboundDAO outboundDao = OutboundDAO.getInstance();
 
     @Override
-    public int approveRequest() {
+    public int approveRequest(int requestId) {
         return 0;
     }
 

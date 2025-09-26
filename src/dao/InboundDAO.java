@@ -1,6 +1,5 @@
 package dao;
 
-import domain.Inbound;
 import util.DBUtil;
 
 import java.sql.*;
@@ -23,8 +22,26 @@ public class InboundDAO implements InOutboundDAO {
     // statics
 
     // 요청 승인
-    public void approveRequest() {
-        System.out.println("InboundDao approveRequest");
+    public int approveRequest(int requestId) {
+        // 프로시저
+        String sql = "{call approveInRequestStatus(?, ?)}";
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, requestId);
+
+            // 실행
+            call.execute();
+
+            // 리턴
+            int rtn = call.getInt(2);
+            return rtn;
+
+        } catch (SQLException e) {
+            return -1;
+        }
     }
 
     // Inbound 테이블에 정보 등록
@@ -133,7 +150,7 @@ public class InboundDAO implements InOutboundDAO {
     // Inbound 요청 상태 수정 : 취소됨
     public int cancelInboundData(int requestId) {
         //프로시저
-        String sql = "{call updateInRequestStatus(?, ?)}";
+        String sql = "{call cancelInRequestStatus(?, ?)}";
 
         try(Connection conn = DBUtil.getConnection();
             CallableStatement call =  conn.prepareCall(sql)
