@@ -97,12 +97,13 @@ public class TotalAdminDao {
     }
 
     public TotalAdmin getTotalAdminInfo(Connection connection, String adminId) throws SQLException {
-        String sql = "SELECT taId, taEmail, taName, taPhone, createdAt FROM TotalAdmin WHERE taId = ? AND status = 'EXIST'";
+        String sql = "SELECT taIdx, taId, taEmail, taName, taPhone, createdAt FROM TotalAdmin WHERE taId = ? AND status = 'EXIST'";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, adminId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     TotalAdmin admin = new TotalAdmin();
+                    admin.setTaIdx(rs.getInt("taIdx"));
                     admin.setTaId(rs.getString("taId"));
                     admin.setTaEmail(rs.getString("taEmail"));
                     admin.setTaName(rs.getString("taName"));

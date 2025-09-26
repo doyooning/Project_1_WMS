@@ -310,6 +310,36 @@ public class MemberControllerImpl implements MemberController {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public java.util.List<domain.PendingUserApproval> getPendingUserApprovals() {
+        try (java.sql.Connection connection = util.DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+            return approvalDao.findPendingUsers(connection);
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public java.util.List<domain.PendingWarehouseAdminApproval> getPendingWarehouseAdminApprovals() {
+        try (java.sql.Connection connection = util.DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+            return approvalDao.findPendingWarehouseAdmins(connection);
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void updateApprovalStatus(int aIdx, String status, Integer taIdx) {
+        try (java.sql.Connection connection = util.DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+            approvalDao.updateApprovalStatus(connection, aIdx, status, taIdx);
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 
 
