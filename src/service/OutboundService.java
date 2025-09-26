@@ -84,7 +84,9 @@ public class OutboundService implements InOutboundService {
 
 
     @Override
-    public void getBoundInfo() {
+    public List<List<String>> getBoundInfo(int uId) {
+        List<List<String>> list = outboundDao.getRequestById(uId);
 
+        return list;
     }
 }

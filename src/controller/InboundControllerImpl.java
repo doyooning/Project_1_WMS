@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,10 +41,11 @@ public class InboundControllerImpl implements InOutboundController{
     private InboundService inboundService = InboundService.getInstance();
 
     @Override
-    public void showMenu(int authNum) {
+    public void showMenu(int[] userData) {
+        int uId = userData[0];
         int status = 0;
         // 권한 구분 임의 구현..
-        if (authNum == 1) {
+        if (userData[1] == 1) {
             System.out.print(
                     """
                     ============================================================
@@ -55,7 +55,7 @@ public class InboundControllerImpl implements InOutboundController{
                     메뉴를 고르세요 :\s"""
             );
 
-        } else if (authNum == 2) {
+        } else if (userData[1] == 2) {
             System.out.print(
                     """
                     ============================================================
@@ -68,28 +68,28 @@ public class InboundControllerImpl implements InOutboundController{
         try {
             // 메뉴 번호 입력받음
             int menuNum = Integer.parseInt(br.readLine());
-            status = selectMenu(authNum, menuNum);
+            status = selectMenu(userData, menuNum);
             if (status == 1) {
-                showMenu(authNum);
+                showMenu(userData);
             }
 
         } catch (IOException | NumberFormatException e) {
             System.out.println(Errors.INVALID_INPUT_ERROR.getText());
-            showMenu(authNum);
+            showMenu(userData);
 
         } catch (Exception e) {
             System.out.println(Errors.UNEXPECTED_ERROR.getText());
             e.printStackTrace();
-            showMenu(authNum);
+            showMenu(userData);
         }
     }
 
     @Override
-    public int selectMenu(int authNum, int menuNum) {
+    public int selectMenu(int[] userData, int menuNum) {
         switch (menuNum) {
             case 1 -> {
                 int status = 0;
-                if(authNum == 1) {
+                if(userData[1] == 1) {
                     // 1. 입고 요청 승인
                     // 미승인된 입고요청 목록 출력
 
@@ -107,7 +107,7 @@ public class InboundControllerImpl implements InOutboundController{
                         );
                     }
 
-                } else if(authNum == 2) {
+                } else if(userData[1] == 2) {
                     // 1. 입고 요청
                     status = InputRequestData();
                     if (status == -1) {
@@ -164,8 +164,8 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
             case 5 -> {
-                System.out.println("5. 입고 현황 조회");
-                inboundService.getBoundInfo();
+                // 5. 입고 현황 조회
+                showInfoMenu(userData[0]);
 
             }
 
@@ -264,13 +264,74 @@ public class InboundControllerImpl implements InOutboundController{
     }
 
     @Override
-    public void showInfoMenu() {
+    public void showInfoMenu(int uId) {
+        int status = 0;
+        System.out.print(
+                """
+                ============================================================
+                ####################### 입고 현황 조회 #######################
+                ============================================================
+                1. 입고 요청 조회		    2. 요청 상품 리스트	      3. 뒤로가기
+                ============================================================
+                메뉴를 고르세요. :\s"""
+        );
+        try {
+            int menuNum = Integer.parseInt(br.readLine());
+            status = selectInfoMenu(menuNum, uId);
+            if (status == 1) {
+                System.out.println("============================================================");
+                System.out.println(".");
+                System.out.println(".");
+                System.out.println(".");
+                showInfoMenu(uId);
+            } else if (status == -1) {
+                System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                showInfoMenu(uId);
+            }
 
+        } catch (IOException | NumberFormatException e) {
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            showInfoMenu(uId);
+
+        } catch (Exception e) {
+            System.out.println(Errors.UNEXPECTED_ERROR.getText());
+            e.printStackTrace();
+            showInfoMenu(uId);
+        }
     }
 
     @Override
-    public int selectInfoMenu(int menuNum) {
-        return 0;
+    public int selectInfoMenu(int menuNum, int uId) {
+        int status = 0;
+        try {
+            switch (menuNum) {
+                // 입고 요청 조회
+                case 1 -> {
+                    List<List<String>> requestList = inboundService.getBoundInfo(uId);
+                    if (requestList == null) {
+                        return -1;
+                    }
+                    printRequestList(requestList);
+
+                }
+                // 요청 상품 리스트
+                case 2 -> {
+                    List<List<String>> requestItemList = inboundService.getBoundItemInfo(uId);
+                    if (requestItemList == null) {
+                        return -1;
+                    }
+                    printRequestItemList(requestItemList);
+
+                }
+                case 3 -> {
+                    // 뒤로가기
+                    return 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
     }
 
 
@@ -603,6 +664,37 @@ public class InboundControllerImpl implements InOutboundController{
             throw new RuntimeException(e);
         }
         return rtn;
+    }
+
+    public void printRequestList(List<List<String>> list) {
+        for (List<String> requests : list) {
+            System.out.printf(
+                    """
+                    ============================================================
+                     요청번호 |  입고기한  | 창고 |      요청일자     |
+                      %4s       %10s     %3s        %15s
+                    
+                                                  |  요청상태  |     입고일자     |
+                                                     %10s          %15s
+                    
+                    """,  requests.get(0), requests.get(1), requests.get(2),
+                    requests.get(3),  requests.get(4), requests.get(5)
+            );
+        }
+    }
+
+    public void printRequestItemList(List<List<String>> list) {
+        for (List<String> items : list) {
+            System.out.printf(
+                    """
+                    ============================================================
+                     요청번호 | 순번 | 물품번호 |      물품명     |  수량  | 창고번호 |
+                      %4s    %4s    %3s        %20s      %4s   %2s
+                    
+                    """,  items.get(0), items.get(1), items.get(2),
+                    items.get(3),  items.get(4), items.get(5)
+            );
+        }
     }
 
 }

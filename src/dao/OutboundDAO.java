@@ -242,12 +242,13 @@ public class OutboundDAO implements InOutboundDAO {
     }
 
     @Override
-    public void getRequestById(int inRequestIdx) {
-
+    public List<List<String>> getRequestById(int num) {
+        List<List<String>> list = new  ArrayList<>();
+        return list;
     }
 
     @Override
-    public void getItemsById(int inRequestIdx) {
+    public List<List<String>> getItemsById(int inRequestIdx) {
 
     }
 }

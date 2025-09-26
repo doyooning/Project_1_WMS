@@ -243,16 +243,81 @@ public class InboundDAO implements InOutboundDAO {
 
     }
 
-    // 요청을 ID값으로 찾기
+    // 요청을 유저ID로 찾기
     @Override
-    public void getRequestById(int inRequestIdx) {
+    public List<List<String>> getRequestById(int uId) {
 
+        String sql = "{call getRequestByUId(?)}";
+        List<List<String>> inRequestList = new ArrayList<>();
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, uId);
+
+            // 실행
+            boolean hasResult = call.execute();
+            if (hasResult) {
+                try (ResultSet rs = call.getResultSet()) {
+                    while (rs.next()) {
+                        List<String> request = new ArrayList<>();
+                        request.add(rs.getString(1)); // inRequestIdx
+                        request.add(rs.getString(2)); // inDueDate
+                        request.add(rs.getString(3)); // wIdx
+                        request.add(rs.getString(4)); // inRequestDate
+                        request.add(rs.getString(5)); // requestStatus
+                        request.add(rs.getString(6)); // inboundDate (null -> '-')
+                        inRequestList.add(request);
+                    }
+                }
+            }
+
+            // 리턴
+            return inRequestList;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // 요청의 물품 정보를 ID값으로 찾기
     @Override
-    public void getItemsById(int inRequestIdx) {
+    public List<List<String>> getItemsById(int uId) {
+        String sql = "{call getItemsByUId(?)}";
+        List<List<String>> inRequestItemList = new ArrayList<>();
 
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, uId);
+
+            // 실행
+            boolean hasResult = call.execute();
+            if (hasResult) {
+                try (ResultSet rs = call.getResultSet()) {
+                    while (rs.next()) {
+                        List<String> item = new ArrayList<>();
+                        item.add(rs.getString(1)); // inRequestIdx
+                        item.add(rs.getString(2)); // inItemIdx
+                        item.add(rs.getString(3)); // pIdx
+                        item.add(rs.getString(4)); // pName
+                        item.add(rs.getString(5)); // pQuantity
+                        item.add(rs.getString(6)); // wIdx
+                        inRequestItemList.add(item);
+                    }
+                }
+            }
+
+            // 리턴
+            return inRequestItemList;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

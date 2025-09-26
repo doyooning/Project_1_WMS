@@ -37,9 +37,9 @@ public class OutboundControllerImpl implements InOutboundController{
     private OutboundService outboundService = OutboundService.getInstance();
 
     @Override
-    public void showMenu(int authNum) {
+    public void showMenu(int[] userData) {
         // 권한 구분 임의 구현..
-        if (authNum == 1) {
+        if (userData[1] == 1) {
             System.out.print(
                     """
                     ============================================================
@@ -49,7 +49,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     메뉴를 고르세요 :\s"""
             );
 
-        } else if (authNum == 2) {
+        } else if (userData[1] == 2) {
             System.out.print(
                     """
                     ============================================================
@@ -62,25 +62,25 @@ public class OutboundControllerImpl implements InOutboundController{
         try {
             // 메뉴 번호 입력받음
             int menuNum = Integer.parseInt(br.readLine());
-            selectMenu(authNum, menuNum);
+            selectMenu(userData, menuNum);
 
         } catch (IOException | NumberFormatException e) {
             System.out.println(Errors.INVALID_INPUT_ERROR.getText());
-            showMenu(authNum);
+            showMenu(userData);
 
         } catch (Exception e) {
             System.out.println(Errors.UNEXPECTED_ERROR.getText());
             e.printStackTrace();
-            showMenu(authNum);
+            showMenu(userData);
         }
     }
 
     @Override
-    public int selectMenu(int authNum, int menuNum) {
+    public int selectMenu(int[] userData, int menuNum) {
         switch (menuNum) {
             case 1 -> {
                 int status = 0;
-                if(authNum == 1) {
+                if(userData[1] == 1) {
                     // 1. 출고 요청 승인
                     // 미승인된 출고요청 목록 출력
 
@@ -98,7 +98,7 @@ public class OutboundControllerImpl implements InOutboundController{
                         );
                     }
 
-                } else if(authNum == 2) {
+                } else if(userData[1] == 2) {
                     // 1. 출고 요청
                     status = InputRequestData();
 
@@ -157,7 +157,7 @@ public class OutboundControllerImpl implements InOutboundController{
 
             case 5 -> {
                 System.out.println("5. 출고 현황 조회");
-                outboundService.getBoundInfo();
+//                outboundService.getBoundInfo();
 
             }
 
@@ -250,12 +250,12 @@ public class OutboundControllerImpl implements InOutboundController{
     }
 
     @Override
-    public void showInfoMenu() {
+    public void showInfoMenu(int userNum) {
 
     }
 
     @Override
-    public int selectInfoMenu(int menuNum) {
+    public int selectInfoMenu(int menuNum, int uId) {
         return 0;
     }
 
