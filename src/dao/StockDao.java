@@ -100,4 +100,12 @@ public class StockDao {
         conn = DBUtil.getConnection();
 
     }
+
+    public boolean updateCheckLog(int clIdx){
+        conn = DBUtil.getConnection();
+    }
+
+    public boolean checkUpdateCondition(int clIdx, int wlIdx){
+        conn = DBUtil.getConnection();
+    }
 }
