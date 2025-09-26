@@ -61,5 +61,6 @@ public class StockDao {
 
     private int checkCheckLogExist(int clIdx){
         return 0;
+
     }
 }
