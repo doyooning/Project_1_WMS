@@ -3,6 +3,8 @@ package dao;
 import util.DBUtil;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OutboundDAO implements InOutboundDAO {
 
@@ -149,6 +151,72 @@ public class OutboundDAO implements InOutboundDAO {
         }
     }
 
+    // Outbound 요청 정보 불러오기
+    public OutboundBillVO readOutReqBillData(int requestId) {
+        String sql = "{call readOutReqBillData(?, ?, ?, ?, ?)}";
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, requestId);
+            call.registerOutParameter(2, Types.INTEGER);
+            call.registerOutParameter(3, Types.TIMESTAMP);
+            call.registerOutParameter(4, Types.INTEGER);
+            call.registerOutParameter(5, Types.VARCHAR);
+
+            // 실행
+            call.execute();
+            OutboundBillVO outboundBill = new OutboundBillVO();
+
+            outboundBill.setOutRequestId(call.getInt(2));
+            outboundBill.setOutDate(call.getTimestamp(3));
+            outboundBill.setWId(call.getInt(4));
+            outboundBill.setUName(call.getString(5));
+
+            // 리턴
+            return outboundBill;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // Outbound 물품 정보 불러오기
+    public List<List<String>> readOutItemBillData(int requestId) {
+        String sql = "{call readOutItemBillData(?)}";
+        List<List<String>> outboundList = new ArrayList<>();
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, requestId);
+
+            // 실행
+            boolean hasResult = call.execute();
+            if (hasResult) {
+                try (ResultSet rs = call.getResultSet()) {
+                    while (rs.next()) {
+                        List<String> itemBill = new ArrayList<>();
+                        itemBill.add(rs.getString(1)); // outRequestIdx
+                        itemBill.add(rs.getString(2)); // outboundDate
+                        itemBill.add(rs.getString(3)); // wIdx
+                        itemBill.add(rs.getString(4)); // uName
+                        outboundList.add(itemBill);
+                    }
+                }
+            }
+
+            // 리턴
+            return outboundList;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     @Override
     public void getRequestList() {

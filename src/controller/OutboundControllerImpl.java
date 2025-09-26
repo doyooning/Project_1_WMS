@@ -1,5 +1,7 @@
 package controller;
 
+import dao.InboundBillVO;
+import dao.OutboundBillVO;
 import service.OutboundService;
 
 import java.io.BufferedReader;
@@ -8,6 +10,7 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /*
  * 메뉴 첫 접근
@@ -42,7 +45,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     """
                     ============================================================
                     1. 출고 요청 승인		  2. 출고 요청 수정		 3. 출고 요청 취소
-                    4. 출고리스트 조회	      5. 출고 현황 조회		 6. 나가기
+                    4. 출고고지서 출력	      5. 출고 현황 조회		 6. 나가기
                     ============================================================
                     메뉴를 고르세요 :\s"""
             );
@@ -52,7 +55,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     """
                     ============================================================
                     1. 출고 요청 		  2. 출고 요청 수정		 3. 출고 요청 취소
-                    4. 출고리스트 조회	      5. 출고 현황 조회		 6. 나가기
+                    4. 출고고지서 출력	      5. 출고 현황 조회		 6. 나가기
                     ============================================================
                     메뉴를 고르세요 :\s"""
             );
@@ -123,8 +126,20 @@ public class OutboundControllerImpl implements InOutboundController{
 
             }
             case 4 -> {
-                System.out.println("4. 출고리스트 조회");
-//                outboundService.showRequestInfo();
+                int status = 0;
+                // 4. 출고고지서 출력
+                status = showRequestInfo();
+                if (status == -1) {
+                    System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                } else {
+                    System.out.print(
+                            """
+                            .
+                            .
+                            .
+                            """
+                    );
+                }
 
             }
 
@@ -188,7 +203,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     System.out.print(
                             """
                             ============================================================
-                            수정할 입고요청 번호를 입력해주세요 :\s"""
+                            수정할 출고요청 번호를 입력해주세요 :\s"""
                     );
                     int requestId = Integer.parseInt(br.readLine());
                     status = InputRequestDataUpdate(requestId);
@@ -202,7 +217,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     System.out.print(
                             """
                             ============================================================
-                            수정할 입고요청 번호를 입력해주세요 :\s"""
+                            수정할 출고요청 번호를 입력해주세요 :\s"""
                     );
                     int requestId = Integer.parseInt(br.readLine());
                     status = InputRequestItemUpdate(requestId);
@@ -427,5 +442,88 @@ public class OutboundControllerImpl implements InOutboundController{
             return -1;
         }
         return rtn;
+    }
+
+    public int showRequestInfo() {
+        int rtn = 0;
+        try {
+            System.out.print(
+                    """
+                    ============================================================
+                    ####################### 출고고지서 출력 #######################
+                    ============================================================
+                    출력할 출고요청 번호를 입력해주세요.
+                    요청번호 :\s"""
+            );
+            int requestId = Integer.parseInt(br.readLine());
+
+            // 출력 확인
+            System.out.print(
+                    """
+                    ============================================================
+                    해당 출고요청의 출고고지서를 출력하시겠습니까?
+                    (Y/N 입력) :\s"""
+            );
+            String select = br.readLine().toUpperCase();
+            if (select.charAt(0) == 'N') {
+                System.out.print("""
+                    ============================================================
+                    메뉴 화면으로 이동합니다.
+                    ============================================================
+                    """);
+            } else if (select.charAt(0) == 'Y') {
+                // 요청 정보 전송
+                OutboundBillVO vo = outboundService.showReqBillData(requestId);
+                List<List<String>> list = outboundService.showItemBillData(requestId);
+
+                if ((vo == null) || (list == null)) {
+                    System.out.print(Errors.VO_LOAD_ERROR.getText());
+                    rtn = -1;
+                } else {
+                    printBill(vo, list);
+                    System.out.print("""
+                    ============================================================
+                    아무 키나 누르면 입고 관리 메뉴로 돌아갑니다.
+                    :\s""");
+                    String input = br.readLine();
+
+                }
+            } else {
+                throw new IOException();
+            }
+
+        } catch (IOException e) {
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            return -1;
+        }
+        return rtn;
+    }
+
+    // 출고고지서 양식대로 출력
+    public void printBill(OutboundBillVO vo, List<List<String>> list) {
+
+        System.out.printf(
+                """
+                ============================================================
+                 요청번호 |  출고일자  |  창고위치  |                 |  요청자  |
+                   %8d       %11s       %10d                          %8s
+                
+                """, vo.getOutRequestId(), outformat.format(vo.getOutDate()), vo.getWId(), vo.getUName()
+        );
+        int totalPrice = 0;
+
+        for (List<String> item : list) {
+            System.out.printf("""
+                 순번 |             물품이름               |  수량  |   단가   |
+                 %4s  \t\t\t\t\t      %35s      \t\t\t\t\t      %3s \t   %10s
+                """, item.get(0), item.get(1), item.get(2), item.get(3)
+            );
+            totalPrice += (Integer.parseInt(item.get(2)) * Integer.parseInt(item.get(3)));
+        }
+
+        System.out.printf("""
+                                                                 | 총 금액  |
+                                                                    %10d
+                """, totalPrice);
     }
 }

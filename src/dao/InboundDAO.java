@@ -153,7 +153,7 @@ public class InboundDAO implements InOutboundDAO {
         }
     }
 
-    // Inbound 요청 + 물품 정보 전부
+    // Inbound 요청 정보 불러오기
     public InboundBillVO readInReqBillData(int requestId) {
         String sql = "{call readInReqBillData(?, ?, ?, ?, ?)}";
 
@@ -185,7 +185,7 @@ public class InboundDAO implements InOutboundDAO {
         }
     }
 
-    // Inbound 요청 + 물품 정보 전부
+    // Inbound 물품 정보 불러오기
     public List<List<String>> readInItemBillData(int requestId) {
         String sql = "{call readInItemBillData(?)}";
         List<List<String>> inboundList = new ArrayList<>();
@@ -219,7 +219,6 @@ public class InboundDAO implements InOutboundDAO {
             return null;
         }
     }
-
 
     // 요청 불러오기
     @Override

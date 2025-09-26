@@ -50,7 +50,7 @@ public class InboundControllerImpl implements InOutboundController{
                     """
                     ============================================================
                     1. 입고 요청 승인		  2. 입고 요청 수정		 3. 입고 요청 취소
-                    4. 입고 고지서 출력	  5. 입고 현황 조회		 6. 나가기
+                    4. 입고고지서 출력	      5. 입고 현황 조회		 6. 나가기
                     ============================================================
                     메뉴를 고르세요 :\s"""
             );
@@ -60,7 +60,7 @@ public class InboundControllerImpl implements InOutboundController{
                     """
                     ============================================================
                     1. 입고 요청 		  2. 입고 요청 수정		 3. 입고 요청 취소
-                    4. 입고 고지서 출력	  5. 입고 현황 조회		 6. 나가기
+                    4. 입고고지서 출력	      5. 입고 현황 조회		 6. 나가기
                     ============================================================
                     메뉴를 고르세요 :\s"""
             );
@@ -120,7 +120,7 @@ public class InboundControllerImpl implements InOutboundController{
             }
             case 3 -> {
                 int status = 0;
-                // 3. 출고 요청 취소
+                // 3. 입고 요청 취소
                 status = cancelRequest();
                 if (status == -1) {
                     System.out.println(Errors.DATA_INPUT_ERROR.getText());
@@ -128,7 +128,7 @@ public class InboundControllerImpl implements InOutboundController{
                     System.out.print(
                             """
                             ============================================================
-                            출고 요청 취소가 완료되었습니다.
+                            입고 요청 취소가 완료되었습니다.
                             ============================================================
                             """
                     );
@@ -150,9 +150,6 @@ public class InboundControllerImpl implements InOutboundController{
                             """
                     );
                 }
-
-//                inboundService.showRequestInfo();
-
             }
 
             case 5 -> {
@@ -502,7 +499,7 @@ public class InboundControllerImpl implements InOutboundController{
                 List<List<String>> list = inboundService.showItemBillData(requestId);
 
                 if ((vo == null) || (list == null)) {
-                    System.out.println("vo list null");
+                    System.out.print(Errors.VO_LOAD_ERROR.getText());
                     rtn = -1;
                 } else {
                     printBill(vo, list);
