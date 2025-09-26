@@ -1,6 +1,10 @@
 package service;
 
+import dao.InboundBillVO;
+import dao.OutboundBillVO;
 import dao.OutboundDAO;
+
+import java.util.List;
 
 public class OutboundService implements InOutboundService {
 
@@ -62,6 +66,19 @@ public class OutboundService implements InOutboundService {
         }
         return 0;
     }
+
+    public OutboundBillVO showReqBillData(int requestId) {
+        OutboundBillVO vo = outboundDao.readOutReqBillData(requestId);
+
+        return vo;
+    }
+
+    public List<List<String>> showItemBillData(int requestId) {
+        List<List<String>> list = outboundDao.readOutItemBillData(requestId);
+
+        return list;
+    }
+
 
     @Override
     public void getBoundInfo() {
