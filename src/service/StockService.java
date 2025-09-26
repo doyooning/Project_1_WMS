@@ -3,6 +3,7 @@ package service;
 import dao.StockDao;
 import domain.CheckLog;
 import domain.Stock;
+import domain.Warehouse;
 
 import java.util.*;
 
@@ -60,5 +61,46 @@ public class StockService {
 
         int result = stockDao.removeCheckLog(clIdx);
         return result;
+    }
+
+    public List<CheckLog> getCheckLogList(int wIdx){
+        if(stockDao == null) stockDao = StockDao.getInstance();
+
+        List<CheckLog> checkLogList = null;
+        //총관리자인 경우
+        checkLogList = stockDao.getCheckLogList(1, 0);
+        //창고관리자인 경우
+        checkLogList = stockDao.getCheckLogList(2, wIdx);
+
+        return checkLogList;
+    }
+
+    public boolean checkWarehouseIsStorage(String wUniqueNum){
+        if(stockDao == null) stockDao = StockDao.getInstance();
+
+        int result = stockDao.checkWarehouseIsStorage(wUniqueNum);
+        if(result == 0) return false;
+        return true;
+    }
+
+    public List<CheckLog> getSectionCheckLogList(String wUniqueNum, String wsName) {
+        if(stockDao == null) stockDao = StockDao.getInstance();
+
+        List<CheckLog> checkLogList = stockDao.getSectionCheckLoglist(wUniqueNum, wsName);
+        return checkLogList;
+    }
+
+    public List<CheckLog> getWarehouseCheckLogList(String wUniqueNum) {
+        if(stockDao == null) stockDao = StockDao.getInstance();
+
+        List<CheckLog> checkLogList = stockDao.getWarehouseCheckLogList(wUniqueNum);
+        return checkLogList;
+    }
+
+    public Warehouse getWarehouseInfo(int wIdx){
+        if(stockDao == null) stockDao = StockDao.getInstance();
+
+        Warehouse warehouse = stockDao.getWarehouseInfo(wIdx);
+        return warehouse;
     }
 }

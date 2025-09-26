@@ -3,6 +3,8 @@ package dao;
 import Util.DBUtil;
 import domain.CheckLog;
 import domain.Stock;
+import domain.Warehouse;
+
 import java.util.*;
 import java.sql.*;
 
@@ -25,16 +27,26 @@ public class StockDao {
     //카테고리는 procedure 작성할 때 해당 카테고리가 존재하는지 확인해줘야함!!!!
     public List<Stock> getPrimaryCategoryStockList(String cName){
         conn = DBUtil.getConnection();
+
+        int result = checkCategoryExist(cName, 2);
     }
     public List<Stock> getSecondaryCategoryStockList(String cName){
         conn = DBUtil.getConnection();
+
+        int result = checkCategoryExist(cName, 3);
     }
     public List<Stock> getTertiaryCategoryStockList(String cName){
         conn = DBUtil.getConnection();
+
+        int result = checkCategoryExist(cName, 4);
     }
 
     public List<Stock> getProductStockList(String pIdx){
         conn = DBUtil.getConnection();
+    }
+
+    private int checkCategoryExist(String cName, int num){
+
     }
 
     public int checkWarehouseAdmin(String wUniqueNum){
@@ -61,6 +73,31 @@ public class StockDao {
 
     private int checkCheckLogExist(int clIdx){
         return 0;
+
+    }
+
+    public List<CheckLog> getCheckLogList(int check, int wIdx){
+        conn = DBUtil.getConnection();
+
+
+    }
+
+    public int checkWarehouseIsStorage(String wUniqueNum){
+        conn = DBUtil.getConnection();
+    }
+
+    public List<CheckLog> getSectionCheckLoglist(String wUniqueNum, String wsName){
+        conn = DBUtil.getConnection();
+
+        //해당 section이름이 존재하는지...
+    }
+
+    public List<CheckLog> getWarehouseCheckLogList(String wUniqueNum){
+        conn = DBUtil.getConnection();
+    }
+
+    public Warehouse getWarehouseInfo(int wIdx){
+        conn = DBUtil.getConnection();
 
     }
 }

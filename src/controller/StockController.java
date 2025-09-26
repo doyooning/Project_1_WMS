@@ -2,6 +2,7 @@ package controller;
 
 import domain.CheckLog;
 import domain.Stock;
+import domain.Warehouse;
 import service.StockService;
 
 import java.util.*;
@@ -119,7 +120,7 @@ public class StockController {
         );
         List<Stock> stockList = stockService.getAllStockList();
 
-        printList(stockList, 1);
+        printStockList(stockList, 1);
     }
 
     private void showCategoryStockList(int num){
@@ -141,7 +142,7 @@ public class StockController {
         if(category.equals("exit")) return;
 
         List<Stock> stockList = stockService.getCategoryStockList(num, category);
-        printList(stockList, num);
+        printStockList(stockList, num);
     }
 
     private String getCategory(){
@@ -175,7 +176,7 @@ public class StockController {
         String pIdx = getPIdx();
         if(pIdx.equals("exit")) return;
         List<Stock> stockList = stockService.getProductStockList(pIdx);
-        printList(stockList, 5);
+        printStockList(stockList, 5);
     }
 
     private String getPIdx(){
@@ -247,7 +248,7 @@ public class StockController {
                 stockService = StockService.getInstance();
                 switch(input.trim()){
                     case "1" -> showDeleteChecklogMenu();//재고실사 삭제메뉴
-                    case "2" -> //재고 실사 조회 메뉴
+                    case "2" -> showChecklogSearchMenu(); //재고 실사 조회 메뉴
                 }
 
 
@@ -261,7 +262,7 @@ public class StockController {
                 switch(input.trim()){
                     case "1" -> showAddChecklogMenu(); //재고실사등록
                     case "2" -> showDeleteChecklogMenu();//재고실사삭제
-                    case "3" -> //재고실사조회
+                    case "3" -> showChecklogSearchMenu();//재고실사조회
                     case "4" -> //재고실사수정
                 }
 
@@ -280,6 +281,7 @@ public class StockController {
                 ========================재고 실사 등록========================
                 """
         );
+        System.out.println("재고 실사를 등록할 창고 고유번호를 입력해주세요.(창고 고유번호는 ware로 시작합니다.)");
         String input = getWarehouseUniqueNum();
         if(input.equals("exit")) return;
 
@@ -289,16 +291,15 @@ public class StockController {
         }
 
         System.out.println("[등록된 재고 실사]");
-        String menu = String.format("%-8s%-8s%-10s%-8s%-10s", "실사로그번호", "창고번호", "창고명", "일치여부", "등록일");
+        String menu = String.format("%-8s%-8s%-10s%-10s%-10s", "실사로그번호", "창고번호", "창고명", "일치여부", "등록일");
         System.out.println(menu);
         System.out.println("------------------------------------------------------------");
         String list = String.format("%-8d%-8s%-10s%-8s%-10s",
-                                    checkLog.getClIdx(), checkLog.getWUniqueNum(), checkLog.getWName(), checkLog.getClCorrect(), checkLog.getCreatedAt());
+                                    checkLog.getClIdx(), checkLog.getWUniqueNum(), checkLog.getWName(), checkLog.getClCorrect(), sdf.format(checkLog.getCreatedAt()));
         System.out.println(list);
     }
 
     private String getWarehouseUniqueNum(){
-        System.out.println("재고 실사를 등록할 창고 고유번호를 입력해주세요.(창고 고유번호는 ware로 시작합니다.)");
         while(true){
             try{
                 System.out.print("> ");
@@ -358,7 +359,153 @@ public class StockController {
         }
     }
 
-    private void printList(List<Stock> stockList, int menu) {
+    private void showChecklogSearchMenu(){
+        //총관리자와 창고관리자만 가능함
+        System.out.println(
+                """
+                 ============================================================
+                 ==========================창고 조회===========================
+                 재고 실사 조회 메뉴를 선택해주세요. 
+                 1. 전체 재고 실사 조회
+                 2. 색션별 재고 실사 조회
+                 3. 창고별 재고 실사 조회
+                 ------------------------------------------------------------
+                 """
+        );
+        selectChecklogSearchMenu();
+    }
+
+    private void selectChecklogSearchMenu(){
+        while(true){
+            try{
+                System.out.print("> ");
+                String input = reader.readLine();
+
+                if(!input.trim().matches("[1-3]")){
+                    System.out.println("1-3까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요.");
+                    continue;
+                }else if(input.trim().toLowerCase().equals("exit")) return;
+
+                switch(input.trim()){
+                    case "1" -> showChecklogList(1);//전체 재고 실사 조회
+                    case "2" -> showChecklogList(2);//섹션별 재고 실사 조회
+                    case "3" -> showChecklogList(3);//창고별 재고 실사 조회
+                }
+                break;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void showChecklogList(int num){
+        //enum으로 뺄거임
+        List<CheckLog> checkLogList;
+        switch(num){
+            case 1 -> {
+                System.out.println( """
+                        ============================================================
+                        =======================전체 재고 실사 조회=====================
+                """);
+                //총관리자의 경우
+                checkLogList = stockService.getCheckLogList(0);
+
+                //창고관리자의 경우
+                checkLogList = stockService.getCheckLogList(); //창고관리자가 관리하는 wIdx 넣기
+                if(checkLogList == null){} //예외처리
+
+                printCheckLogList(checkLogList);
+            }
+
+            case 2 -> {
+                System.out.println( """
+                        ============================================================
+                        ======================섹션별 재고 실사 조회====================
+                """);
+
+                //총관리자인 경우 (창고번호 입력 + 섹션 입력)
+                System.out.println("조회할 창고번호를 입력해주세요.");
+                String wUniqueNum = getWarehouseUniqueNum();
+                if(wUniqueNum.equals("exit")) return;
+                boolean result = stockService.checkWarehouseIsStorage(wUniqueNum);
+
+                if(!result){
+                    System.out.println("조회하신 창고는 마이크로풀필먼트 입니다. 섹션이 존재하지 않습니다.");
+                    return;
+                }
+
+                System.out.println("해당 창고의 조회할 섹션을 입력해주세요.");
+                String wsName = getWarehouseSectionName();
+                if(wsName.equals("exit")) return;
+                checkLogList = stockService.getSectionCheckLogList(wUniqueNum, wsName);
+                if(checkLogList == null){
+                    System.out.println("해당 섹션이 존재하지 않습니다." ); return;
+                } //해당 섹션이 존재하지 않음
+
+
+                //창고관리자인 경우 (창고관리자가 관리하는 창고에 대해서만... + 섹션입력)
+                //먼저 창고관리자가 관리하는 창고가 보관형인지 확인
+                Warehouse warehouse = stockService.getWarehouseInfo();
+                if(warehouse.getWtIdx() != 1){
+                    System.out.println("현재 관리하는 창고는 보관형 창고가 아닙니다.");
+                    return;
+                }
+
+                System.out.println("창고의 조회할 섹션을 입력해주세요.");
+                String wsName2 = getWarehouseSectionName();
+                if(wsName2.equals("exit")) return;
+                checkLogList = stockService.getSectionCheckLogList(, wsName2);
+                if(checkLogList == null){
+                    System.out.println("해당 섹션이 존재하지 않습니다." ); return;
+                }
+
+                printCheckLogList(checkLogList);
+            }
+
+            case 3 -> {
+                System.out.println( """
+                        ============================================================
+                        ======================창고별 재고 실사 조회====================
+                """);
+
+                //총관리자인 경우 (창고번호 입력받기)
+                System.out.println("조회할 창고번호를 입력해주세요.");
+                String wUniqueNum = getWarehouseUniqueNum();
+                if(wUniqueNum.equals("exit")) return;
+                checkLogList = stockService.getWarehouseCheckLogList(wUniqueNum);
+                if(checkLogList == null){
+                    System.out.println("해당 창고가 존재하지 않습니다."); return;
+                }
+
+                //창고관리자인 경우 (창고관리자가 관리하는 창고에 대해서 바로 출력) -> wUniqueNum 받아야함
+                Warehouse warehouse = stockService.getWarehouseInfo();
+                checkLogList = stockService.getWarehouseCheckLogList(warehouse.getWIdx());
+
+                printCheckLogList(checkLogList);
+            }
+        }
+    }
+
+    private String getWarehouseSectionName(){
+        //섹션은 섹션~~형태로 포맷이 고정되어있음
+        while(true){
+            try{
+                System.out.print("> ");
+                String input = reader.readLine();
+
+                if(!input.trim().replaceAll("\\s+", "").startsWith("섹션")){
+                    System.out.println("섹션명의 양식이 맞지 않습니다. 다시 입력해주세요.");
+                    continue;
+                }else if(input.trim().toLowerCase().equals("exit")) return "exit";
+
+                return input.trim().replaceAll("\\s+", "");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void printStockList(List<Stock> stockList, int menu) {
         int page = 2, index = 0;
 
         while(index < stockList.size()){
@@ -400,6 +547,29 @@ public class StockController {
             if(!result) return;
             page++;
         }
+    }
+
+    private void printCheckLogList(List<CheckLog> checkLogList) {
+        String menu = String.format("%-8s%-8s%-10s%-10s%-10s", "실사로그번호", "창고번호", "섹션명" ,"일치여부", "등록일");
+
+        System.out.println(menu);
+        System.out.println("------------------------------------------------------------");
+
+        int page = 2, index = 0;
+        while(index < checkLogList.size()){
+            if(index != 0 && index%20==0){
+                boolean result = showPageOfList(page);
+                if(!result) break;
+                System.out.println("------------------------------------------------------------");
+                page++;
+            }
+            CheckLog current = checkLogList.get(index);
+            String format = String.format("%-8d%-8s%-10s%-10s%-10s",
+                                            current.getClIdx(), current.getWUniqueNum(), current.getWsName(), current.getClCorrect(), sdf.format(current.getCreatedAt()));
+            System.out.println(format);
+            index++;
+        }
+        System.out.println();
     }
 
     private boolean showPageOfList(int page){
