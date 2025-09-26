@@ -302,7 +302,7 @@ public class InboundControllerImpl implements InOutboundController{
 
     @Override
     public int selectInfoMenu(int menuNum, int uId) {
-        int status = 0;
+        int status = 1;
         try {
             switch (menuNum) {
                 // 입고 요청 조회
@@ -331,7 +331,7 @@ public class InboundControllerImpl implements InOutboundController{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 1;
+        return status;
     }
 
 
