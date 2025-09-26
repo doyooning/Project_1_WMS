@@ -1,0 +1,239 @@
+package controller;
+
+import domain.*;
+import service.BoardService;
+import service.BoardServiceImpl;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
+
+public class BoardControllerImpl implements BoardController {
+
+    private User user;
+    private WarehouseAdmin whAdmin;
+    private TotalAdmin totalAdmin;
+    private int authority = 0;
+    //private boolean loop = true;
+    //Service 객체
+    private BoardServiceImpl board;
+    //사용자 입력
+    BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+
+    // 싱글톤 패턴 적용
+    private static BoardControllerImpl instance;
+    private BoardControllerImpl() {
+        this.board = BoardServiceImpl.getInstance();
+    }
+    public static BoardControllerImpl getInstance() {
+        if (instance == null) instance = new BoardControllerImpl();
+        return instance;
+    }
+
+    @Override
+    public void setLoggedInUser(Object user) {
+        if (user instanceof TotalAdmin) {
+            this.totalAdmin = (TotalAdmin) user;
+            this.authority = 1;
+        } else if (user instanceof WarehouseAdmin) {
+            this.whAdmin = (WarehouseAdmin) user;
+            this.authority = 2;
+        } else if (user instanceof User) {
+            this.user = (User) user;
+            this.authority = 3;
+        }
+    }
+
+    //메인 화면 출력 메서드, 권한에 따라 다른 메서드로 화면 출력
+    @Override
+    public Boolean showBoardMenu() {
+        while(true) {
+            String choice;
+            switch (authority) {
+                case 0:
+                    showNonUserMenu();
+                    choice = selectNonUserMenu();
+                    if ("mainMenu".equals(choice)) return true;
+                    break;
+                case 1:
+                    showUserMenu();
+                    choice = selectTotalAdminMenu();
+                    if ("mainMenu".equals(choice)) return true;
+                    if ("logout".equals(choice)) return false;
+                    break;
+                case 2:
+                    showUserMenu();
+                    choice = selectWhAdminMenu();
+                    if ("mainMenu".equals(choice)) return true;
+                    if ("logout".equals(choice)) return false;
+                    break;
+                case 3:
+                    showUserMenu();
+                    choice = selectUserMenu();
+                    if ("mainMenu".equals(choice)) return true;
+                    if ("logout".equals(choice)) return false;
+                    break;
+                default:
+                    System.out.println("접속 불가! 권한이 존재하지 않습니다.");
+            }
+        }
+    }
+
+    private void showNonUserMenu() {
+        //비회원 화면
+        System.out.println("""
+                ============================================================
+                                         고객센터
+                ============================================================
+                 1. 문의글 조회  |  2. 문의글 작성  |  3. 메인 메뉴
+                ============================================================
+                >   """);
+    }
+    private void showUserMenu() {
+        //총관리자, 창고관리자. 일반회원 화면
+        System.out.print("""
+                ============================================================
+                                          고객센터
+                ============================================================
+                 1. 공지사항  |  2. 문의글  |  3. 메인 메뉴  |  4. 로그아웃
+                ============================================================
+                >  """);
+    }
+    private void showAnnouncementMenu(){
+        if(totalAdmin != null){
+            System.out.println("""
+                    ============================================================
+                      1. 공지사항 조회   |   2. 공지사항 작성  |  3. 메인
+                    ============================================================
+                    """);
+            List<Announcement> list = getAnnouncementList();
+            printAnnouncementList(list);
+            System.out.print(">  ");
+        } else {
+            System.out.println("""
+                ============================================================
+                 1. 공지사항 조회   |   2. 고객센터 메뉴
+                ============================================================
+                """);
+            List<Announcement> list = getAnnouncementList();
+            printAnnouncementList(list);
+            System.out.print(">  ");
+        }
+    }
+
+
+    //권한별 메뉴선택 및 메서드 호출
+    private String selectNonUserMenu(){
+        try {
+            List<Announcement> list = getAnnouncementList();
+            printAnnouncementList(list);
+            String num  = input.readLine().trim();
+            switch (num) {
+                case "1" -> handleGetAnnouncementDetail();
+                case "2" -> handleAddAnnouncement();
+                case "3" -> {return "mainMenu";}
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        return "continue";
+    }
+    private String selectTotalAdminMenu(){
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> showAnnouncementMenu();
+                case "2" -> System.out.println("문의글");
+                case "3" -> {return "mainMenu";}
+                case "4" -> {
+                    System.out.println("Logout");
+                    return "logout";}
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return "continue";
+    }
+    private String selectWhAdminMenu(){
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> showAnnouncementMenu();
+                case "2" -> System.out.println("문의글");
+                case "3" -> {return "mainMenu";}
+                case "4" -> {
+                    System.out.println("Logout");
+                    return "logout";}
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return "continue";
+    }
+    private String selectUserMenu(){
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> showAnnouncementMenu();
+                case "2" -> System.out.println("문의글");
+                case "3" -> {return "mainMenu";}
+                case "4" -> {
+                    System.out.println("Logout");
+                    return "logout";}
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return "continue";
+    }
+
+    @Override
+    public List<Announcement> getAnnouncementList() {
+        return board.getAnnouncementList();
+    }
+
+    private void handleGetAnnouncementDetail() {
+
+    }
+    private void handleAddAnnouncement() {
+
+    }
+
+    private void printAnnouncementList(List<Announcement> list){
+        System.out.println("[공지사항 목록]");
+        System.out.printf(" %10s | %20s | %5s | %10s \n", "공지사항 번호", "글제목", "작성자", "작성일");
+        System.out.println("-".repeat(60));
+        for (Announcement a : list) {
+            System.out.printf(" %5d | %20s | %5d | %10s \n", a.getAnIdx(), a.getAnTitle(), a.getTaIdx(), a.getUpdatedAt());
+        }
+        System.out.println("=".repeat(60));
+    }
+
+
+//    private String getWriter(){
+//        return inputNum("작성자> ");
+//    }
+//    private String getPassword(){
+//        return inputNum("비밀번호> ");
+//    }
+
+    private String inputNum(String msg){
+        System.out.print(msg);
+        try {
+            return input.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
