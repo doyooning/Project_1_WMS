@@ -109,7 +109,7 @@ public class InboundControllerImpl implements InOutboundController{
 
                 } else if(userData[1] == 2) {
                     // 1. 입고 요청
-                    status = InputRequestData();
+                    status = InputRequestData(userData[0]);
                     if (status == -1) {
                         System.out.println(Errors.DATA_INPUT_ERROR.getText());
 
@@ -341,7 +341,7 @@ public class InboundControllerImpl implements InOutboundController{
 
     // 입고 요청 정보를 서비스에 보내기
     // 창고번호 int, 입고기한 date -> 물품번호 , 물품개수
-    public int InputRequestData() {
+    public int InputRequestData(int uId) {
         int rtn = 0;
         try {
             System.out.print(
@@ -363,7 +363,7 @@ public class InboundControllerImpl implements InOutboundController{
             Date date = informat.parse(dueDate);
             String newDueDate = outformat.format(date);
             // 요청 정보 전송
-            int requestStatus = inboundService.addRequest(wId, newDueDate);
+            int requestStatus = inboundService.addRequest(uId, wId, newDueDate);
 
             // 실행 결과 오류 검증
             if (requestStatus == -1) {
@@ -386,7 +386,7 @@ public class InboundControllerImpl implements InOutboundController{
                 );
                 int productQuantity = Integer.parseInt(br.readLine());
                 // 물품 정보 전송
-                int itemStatus = inboundService.addRequest(productId, productQuantity);
+                int itemStatus = inboundService.addRequest(uId, productId, productQuantity);
 
                 // 실행 결과 오류 검증
                 if (itemStatus == -1) {
@@ -414,7 +414,7 @@ public class InboundControllerImpl implements InOutboundController{
             System.out.println(Errors.INVALID_INPUT_ERROR.getText());
         } catch (ParseException e) {
             e.printStackTrace();
-            InputRequestData();
+            InputRequestData(uId);
         }
         return rtn;
     }
@@ -600,7 +600,7 @@ public class InboundControllerImpl implements InOutboundController{
                 """
                 ============================================================
                  요청번호 |  입고일자  |  창고위치  |                 |  요청자  |
-                   %8d       %11s       %10d                          %8s
+                %4d\t  %10s\t %3d\t            \t%8s
                 
                 """, vo.getInRequestId(), outformat.format(vo.getInDate()), vo.getWId(), vo.getUName()
         );
@@ -609,7 +609,7 @@ public class InboundControllerImpl implements InOutboundController{
         for (List<String> item : list) {
             System.out.printf("""
                  순번 |             물품이름               |  수량  |   단가   |
-                 %4s  \t\t\t\t\t      %35s      \t\t\t\t\t      %3s \t   %10s
+                %4s\t  %-20s\t     %4s\t%10s
                 """, item.get(0), item.get(1), item.get(2), item.get(3)
             );
             totalPrice += (Integer.parseInt(item.get(2)) * Integer.parseInt(item.get(3)));
@@ -617,7 +617,7 @@ public class InboundControllerImpl implements InOutboundController{
 
         System.out.printf("""
                                                                  | 총 금액  |
-                                                                    %10d
+                                                                  %8d
                 """, totalPrice);
     }
 
