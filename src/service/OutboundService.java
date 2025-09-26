@@ -22,7 +22,11 @@ public class OutboundService implements InOutboundService {
 
     @Override
     public int approveRequest(int requestId) {
-        return 0;
+        int status = outboundDao.approveRequest(requestId);
+        if(status <= 0){
+            return -1;
+        }
+        return status;
     }
 
     public int addRequest(int warehouseId, String dueDate) {
