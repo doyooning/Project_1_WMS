@@ -28,4 +28,7 @@ public interface InOutboundService {
     // 고지서 출력 물품정보
     List<List<String>> showItemBillData(int requestId);
 
+    // 미승인 요청 조회
+    List<List<String>> getPendingRequestList();
+
 }

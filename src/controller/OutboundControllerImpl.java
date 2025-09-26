@@ -38,6 +38,7 @@ public class OutboundControllerImpl implements InOutboundController{
 
     @Override
     public void showMenu(int[] userData) {
+        int status = 0;
         // 권한 구분 임의 구현..
         if (userData[1] == 1) {
             System.out.print(
@@ -62,7 +63,10 @@ public class OutboundControllerImpl implements InOutboundController{
         try {
             // 메뉴 번호 입력받음
             int menuNum = Integer.parseInt(br.readLine());
-            selectMenu(userData, menuNum);
+            status = selectMenu(userData, menuNum);
+            if (status == 1) {
+                showMenu(userData);
+            }
 
         } catch (IOException | NumberFormatException e) {
             System.out.println(Errors.INVALID_INPUT_ERROR.getText());
@@ -101,6 +105,18 @@ public class OutboundControllerImpl implements InOutboundController{
                 } else if(userData[1] == 2) {
                     // 1. 출고 요청
                     status = InputRequestData(userData[0]);
+                    if (status == -1) {
+                        System.out.println(Errors.DATA_INPUT_ERROR.getText());
+
+                    } else {
+                        System.out.printf(
+                                """
+                                ============================================================
+                                출고 요청이 등록되었습니다. 회원님의 요청 번호는 [%d] 입니다.
+                                ============================================================
+                                """, status
+                        );
+                    }
 
                 }
                 if (status == -1) {
@@ -152,22 +168,24 @@ public class OutboundControllerImpl implements InOutboundController{
                             """
                     );
                 }
-
             }
 
             case 5 -> {
-                System.out.println("5. 출고 현황 조회");
-//                outboundService.getBoundInfo();
-
+                // 5. 출고 현황 조회
+                if(userData[1] == 1) {
+                    showAdminInfoMenu();
+                } else if(userData[1] == 2) {
+                    showInfoMenu(userData[0]);
+                }
             }
 
             case 6 -> {
-                System.out.println("6. 나가기");
-                System.exit(0);
+                // 6. 나가기
+                return 0;
             }
         }
 
-        return 0;
+        return 1;
     }
 
     @Override
@@ -286,6 +304,42 @@ public class OutboundControllerImpl implements InOutboundController{
         }
     }
 
+    public void showAdminInfoMenu() {
+        int status = 0;
+        System.out.print(
+                """
+                ============================================================
+                ####################### 출고 현황 조회 #######################
+                ============================================================
+                1. 미승인 요청 조회		2. 기간별 출고 현황	      3. 뒤로가기
+                ============================================================
+                메뉴를 고르세요. :\s"""
+        );
+        try {
+            int menuNum = Integer.parseInt(br.readLine());
+            status = selectAdminInfoMenu(menuNum);
+            if (status == 1) {
+                System.out.println("============================================================");
+                System.out.println(".");
+                System.out.println(".");
+                System.out.println(".");
+                showAdminInfoMenu();
+            } else if (status == -1) {
+                System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                showAdminInfoMenu();
+            }
+
+        } catch (IOException | NumberFormatException e) {
+            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            showAdminInfoMenu();
+
+        } catch (Exception e) {
+            System.out.println(Errors.UNEXPECTED_ERROR.getText());
+            e.printStackTrace();
+            showAdminInfoMenu();
+        }
+    }
+
     @Override
     public int selectInfoMenu(int menuNum, int uId) {
         int status = 1;
@@ -319,6 +373,39 @@ public class OutboundControllerImpl implements InOutboundController{
         }
         return status;
     }
+
+    public int selectAdminInfoMenu(int menuNum) {
+        int status = 1;
+        try {
+            switch (menuNum) {
+                // 미승인 요청 조회
+                case 1 -> {
+                    List<List<String>> pRequestList = outboundService.getPendingRequestList();
+                    if (pRequestList == null) {
+                        return -1;
+                    }
+                    printPendingRequest(pRequestList);
+
+                }
+                // 기간별 출고 현황
+                case 2 -> {
+
+
+                }
+                case 3 -> {
+                    // 뒤로가기
+                    return 0;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    /*
+     * ---------------------서브 메서드----------------------
+     * */
 
     public int InputRequestData(int uId) {
         int rtn = 0;
@@ -672,6 +759,20 @@ public class OutboundControllerImpl implements InOutboundController{
                     
                     """,  items.get(0), items.get(1), items.get(2),
                     items.get(3),  items.get(4), items.get(5)
+            );
+        }
+    }
+
+    public void printPendingRequest(List<List<String>> list) {
+        for (List<String> requests : list) {
+            System.out.printf(
+                    """
+                    ============================================================
+                    요청번호| 창고 |  요청자  | 물품건수 |  출고기한  |    요청일자    |
+                      %4s    %3s    %6s       %4s       %10s      %15s
+                    
+                    """,  requests.get(0), requests.get(1), requests.get(2),
+                    requests.get(3),  requests.get(4), requests.get(5)
             );
         }
     }

@@ -238,9 +238,41 @@ public class OutboundDAO implements InOutboundDAO {
         }
     }
 
+    // 미승인 요청 불러오기
     @Override
-    public void getRequestList() {
+    public List<List<String>> getPendingRequestList() {
+        String sql = "{call getPendingOutRequest()}";
+        List<List<String>> pRequestList = new ArrayList<>();
 
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+
+            // 실행
+            boolean hasResult = call.execute();
+            if (hasResult) {
+                try (ResultSet rs = call.getResultSet()) {
+                    while (rs.next()) {
+                        List<String> pRequest = new ArrayList<>();
+                        pRequest.add(rs.getString(1)); // outRequestIdx
+                        pRequest.add(rs.getString(2)); // wIdx
+                        pRequest.add(rs.getString(3)); // uName
+                        pRequest.add(rs.getString(4)); // count(outItemIdx) as itemCount
+                        pRequest.add(rs.getString(5)); // outDueDate
+                        pRequest.add(rs.getString(6)); // outRequestDate
+                        pRequestList.add(pRequest);
+                    }
+                }
+            }
+
+            // 리턴
+            return pRequestList;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

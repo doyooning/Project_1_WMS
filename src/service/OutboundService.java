@@ -98,4 +98,11 @@ public class OutboundService implements InOutboundService {
 
         return list;
     }
+
+    @Override
+    public List<List<String>> getPendingRequestList() {
+        List<List<String>> list = outboundDao.getPendingRequestList();
+
+        return list;
+    }
 }
