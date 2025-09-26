@@ -1,6 +1,7 @@
 package service;
 
 import dao.StockDao;
+import domain.CheckLog;
 import domain.Stock;
 
 import java.util.*;
@@ -42,5 +43,15 @@ public class StockService {
         List<Stock> stockList = stockDao.getProductStockList(pIdx);
         if(stockList.isEmpty() || stockList == null) {} //예외처리
         return stockList;
+    }
+
+    public CheckLog addCheckLog(){
+        if(stockDao == null) stockDao = StockDao.getInstance();
+
+        int result = stockDao.addCheckLog();
+        if(result != 1) return null;
+
+        CheckLog newCheckLog = stockDao.getNewCheckLog();
+        return newCheckLog;
     }
 }

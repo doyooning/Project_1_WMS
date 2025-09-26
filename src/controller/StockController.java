@@ -1,5 +1,6 @@
 package controller;
 
+import domain.CheckLog;
 import domain.Stock;
 import service.StockService;
 
@@ -192,6 +193,125 @@ public class StockController {
                 return input;
             }catch(IOException e){
                 e.printStackTrace();
+            }
+        }
+    }
+
+
+    /**
+     * 재고 실사
+     */
+
+    private void showStockChecklogMenu(){
+        //재고실사는 총관리자와 창고관리자만 메뉴에 접근할 수 있지만, 보여지는 메뉴가 다름
+
+        //총관리자
+        String menu1 =  """
+                ============================================================
+                ==========================재고 실사==========================
+                재고 실사 메뉴를 선택해주세요.
+                1. 재고 실사 삭제
+                2. 재고 실사 조회
+                ------------------------------------------------------------
+                """ ;
+
+        //창고관리자
+        String menu2 = """
+                ============================================================
+                ==========================재고 실사==========================
+                재고 실사 메뉴를 선택해주세요.
+                1. 재고 실사 등록
+                2. 재고 실사 삭제
+                3. 재고 실사 조회
+                4. 재고 실사 수정
+                ------------------------------------------------------------
+                """ ;
+
+        //메뉴 출력
+        System.out.println();
+        selecStockChecklogMenu();
+    }
+
+    private void selecStockChecklogMenu(){
+        while(true){
+            try{
+                System.out.print("> ");
+                String input = reader.readLine();
+
+                //총관리자일 때는 메뉴가 2개까지 밖에 없으니
+                if(!input.trim().matches("[12]")) {
+                    System.out.println("1-2까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요. ");
+                    continue;
+                }else if(input.trim().toLowerCase().equals("exit")) return;
+
+                stockService = StockService.getInstance();
+                switch(input.trim()){
+                    case "1" -> //재고실사 삭제메뉴
+                    case "2" -> //재고 실사 조회 메뉴
+                }
+
+
+                //창고관리자 일때는 메뉴가 4개임
+                if(!input.trim().matches("[1-4]")){
+                    System.out.println("1-4까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요. ");
+                    continue;
+                }else if(input.trim().toLowerCase().equals("exit")) return;
+
+                stockService = StockService.getInstance();
+                switch(input.trim()){
+                    case "1" -> showAddChecklogMenu(); //재고실사등록
+                    case "2" -> //재고실사삭제
+                    case "3" -> //재고실사조회
+                    case "4" -> //재고실사수정
+                }
+
+                 break;
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void showAddChecklogMenu(){
+        //창고관리자만
+        System.out.println(
+                """
+                ============================================================
+                ========================재고 실사 등록========================
+                """
+        );
+        String input = getWarehouseUniqueNum();
+        if(input.equals("exit")) return;
+
+        CheckLog checkLog = stockService.addCheckLog();
+        if(checkLog == null){
+            System.out.println("[오류]: 재고실사가 등록되지 않았습니다."); return;
+        }
+
+        System.out.println("[등록된 재고 실사]");
+        String menu = String.format("%-8s%-8s%-10s%-8s%-10s", "실사로그번호", "창고번호", "창고명", "일치여부", "등록일");
+        System.out.println(menu);
+        System.out.println("------------------------------------------------------------");
+        String list = String.format("%-8d%-8s%-10s%-8s%-10s",
+                                    checkLog.getClIdx(), checkLog.getWUniqueNum(), checkLog.getWName(), checkLog.getClCorrect(), checkLog.getCreatedAt());
+        System.out.println(list);
+    }
+
+    private String getWarehouseUniqueNum(){
+        System.out.println("재고 실사를 등록할 창고 고유번호를 입력해주세요.(창고 고유번호는 ware로 시작합니다.)");
+        while(true){
+            try{
+                System.out.print("> ");
+                String input = reader.readLine();
+
+                if(!input.trim().replaceAll("\\s+", "").startsWith("ware")) {
+                    System.out.println("창고번호 양식에 맞지 않습니다. 다시 입력해주세요.");
+                    continue;
+                }else if(input.trim().toLowerCase().equals("exit")) return "exit";
+
+                return input;
+            }catch(IOException e){
+                e.printStackTrace();;
             }
         }
     }

@@ -1,6 +1,7 @@
 package dao;
 
 import Util.DBUtil;
+import domain.CheckLog;
 import domain.Stock;
 import java.util.*;
 import java.sql.*;
@@ -33,6 +34,21 @@ public class StockDao {
     }
 
     public List<Stock> getProductStockList(String pIdx){
+        conn = DBUtil.getConnection();
+    }
+
+    public int checkWarehouseAdmin(String wUniqueNum){
+        conn = DBUtil.getConnection();
+        // 이거 구현 의논해야함
+    }
+
+    public int addCheckLog(){
+        conn = DBUtil.getConnection();
+
+        //등록 성공시 1, 실패시 0 -> count로 비교
+    }
+
+    public CheckLog getNewCheckLog(){
         conn = DBUtil.getConnection();
     }
 }
