@@ -45,23 +45,24 @@ public class InboundDAO implements InOutboundDAO {
     }
 
     // Inbound 테이블에 정보 등록
-    public int addInboundData(int warehouseId, String dueDate) {
+    public int addInboundData(int uId, int warehouseId, String dueDate) {
         // 프로시저
-        String sql = "{call createInRequest(?, ?, ?)}";
+        String sql = "{call createInRequest(?, ?, ?, ?)}";
 
         try(Connection conn = DBUtil.getConnection();
             CallableStatement call =  conn.prepareCall(sql)
         ) {
             // 데이터
-            call.setDate(1, Date.valueOf(dueDate));
-            call.setInt(2, warehouseId);
-            call.registerOutParameter(3, Types.INTEGER);
+            call.setInt(1, uId);
+            call.setDate(2, Date.valueOf(dueDate));
+            call.setInt(3, warehouseId);
+            call.registerOutParameter(4, Types.INTEGER);
 
             // 실행
             call.execute();
 
             // 리턴
-            int rtn = call.getInt(3);
+            int rtn = call.getInt(4);
             return rtn;
 
         } catch (SQLException e) {
@@ -71,23 +72,24 @@ public class InboundDAO implements InOutboundDAO {
     }
 
     // InboundItem 테이블에 정보 등록
-    public int addInboundItemData(String productId, int productQuantity) {
+    public int addInboundItemData(int uId, String productId, int productQuantity) {
         //프로시저
-        String sql = "{call createInRequestProduct(?, ?, ?)}";
+        String sql = "{call createInRequestProduct(?, ?, ?, ?)}";
 
         try(Connection conn = DBUtil.getConnection();
             CallableStatement call = conn.prepareCall(sql)
         ) {
             // 데이터
-            call.setString(1, productId);
-            call.setInt(2, productQuantity);
-            call.registerOutParameter(3, Types.INTEGER);
+            call.setInt(1, uId);
+            call.setString(2, productId);
+            call.setInt(3, productQuantity);
+            call.registerOutParameter(4, Types.INTEGER);
 
             // 실행
             call.execute();
 
             // 리턴
-            int rtn = call.getInt(3);
+            int rtn = call.getInt(4);
             return rtn;
 
         } catch (SQLException e) {

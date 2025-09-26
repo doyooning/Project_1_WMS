@@ -29,16 +29,16 @@ public class OutboundService implements InOutboundService {
         return status;
     }
 
-    public int addRequest(int warehouseId, String dueDate) {
-        int status = outboundDao.addOutboundData(warehouseId, dueDate);
+    public int addRequest(int id, int warehouseId, String dueDate) {
+        int status = outboundDao.addOutboundData(id, warehouseId, dueDate);
         if (status <= 0) {
             return -1;
         }
         return status;
     }
 
-    public int addRequest(String productId, int productQuantity) {
-        int status = outboundDao.addOutboundItemData(productId, productQuantity);
+    public int addRequest(int id, String productId, int productQuantity) {
+        int status = outboundDao.addOutboundItemData(id, productId, productQuantity);
         if (status <= 0) {
             return -1;
         }

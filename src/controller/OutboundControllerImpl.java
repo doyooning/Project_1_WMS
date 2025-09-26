@@ -100,7 +100,7 @@ public class OutboundControllerImpl implements InOutboundController{
 
                 } else if(userData[1] == 2) {
                     // 1. 출고 요청
-                    status = InputRequestData();
+                    status = InputRequestData(userData[0]);
 
                 }
                 if (status == -1) {
@@ -259,7 +259,7 @@ public class OutboundControllerImpl implements InOutboundController{
         return 0;
     }
 
-    public int InputRequestData() {
+    public int InputRequestData(int uId) {
         int rtn = 0;
         try {
             System.out.print(
@@ -281,7 +281,7 @@ public class OutboundControllerImpl implements InOutboundController{
             Date date = informat.parse(dueDate);
             String newDueDate = outformat.format(date);
             // 요청 정보 전송
-            int requestStatus = outboundService.addRequest(wId, newDueDate);
+            int requestStatus = outboundService.addRequest(uId, wId, newDueDate);
 
             // 실행 결과 오류 검증
             if (requestStatus == -1) {
@@ -305,7 +305,7 @@ public class OutboundControllerImpl implements InOutboundController{
                 );
                 int productQuantity = Integer.parseInt(br.readLine());
                 // 물품 정보 전송
-                int itemStatus = outboundService.addRequest(productId, productQuantity);
+                int itemStatus = outboundService.addRequest(uId, productId, productQuantity);
 
                 // 실행 결과 오류 검증
                 if (itemStatus == -1) {
@@ -334,7 +334,7 @@ public class OutboundControllerImpl implements InOutboundController{
             System.out.println(Errors.INVALID_INPUT_ERROR.getText());
         } catch (ParseException e) {
             e.printStackTrace();
-            InputRequestData();
+            InputRequestData(uId);
         }
         return rtn;
     }
