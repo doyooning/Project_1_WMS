@@ -54,4 +54,11 @@ public class StockService {
         CheckLog newCheckLog = stockDao.getNewCheckLog();
         return newCheckLog;
     }
+
+    public int removeCheckLog(int clIdx){
+        if(stockDao == null) stockDao = StockDao.getInstance();
+
+        int result = stockDao.removeCheckLog(clIdx);
+        return result;
+    }
 }
