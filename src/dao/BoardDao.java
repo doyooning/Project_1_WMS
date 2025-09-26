@@ -3,6 +3,7 @@ package dao;
 import domain.Announcement;
 import domain.EntityStatus;
 import domain.Expense;
+import domain.Inquiry;
 import util.DBUtil;
 
 import java.sql.*;
@@ -159,5 +160,42 @@ public class BoardDao implements Board {
             disConnect();
         }
         return 0;
+    }
+
+    @Override
+    public List<Inquiry> getInquiryList() {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call getInquiryList()}";
+            cstmt = conn.prepareCall(sql);
+
+            rs = cstmt.executeQuery();
+
+            List<Inquiry> list = new ArrayList<>();
+            while (rs.next()) {
+                Inquiry inquiry = new Inquiry();
+
+                inquiry.setIqIdx(rs.getInt("iqIdx"));
+                String iqTypeStr = rs.getString("iqType"); // CHAR(1) → String
+                char iqType = iqTypeStr.charAt(0);
+                inquiry.setIqType(iqType);
+                inquiry.setIqTitle(rs.getString("iqTitle"));
+                inquiry.setIqContent(rs.getString("iqContent"));
+                inquiry.setCreatedAt(rs.getTimestamp("createdAt"));
+                inquiry.setUpdatedAt(rs.getTimestamp("updatedAt"));
+                inquiry.setStatus(EntityStatus.valueOf(rs.getString("status")));
+                inquiry.setUIdx(rs.getInt("uIdx"));
+                inquiry.setIqPassword(rs.getString("iqPassword"));
+
+                list.add(inquiry);
+            }
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return null;
     }
 }
