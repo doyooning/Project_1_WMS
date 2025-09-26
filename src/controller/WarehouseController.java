@@ -238,7 +238,7 @@ public class WarehouseController {
                 최대수용용량| %d
                 창고 타입| %s
                 도주소| %s
-                """, temp.getWIdx(), temp.getWName(), temp.getWRent(), temp.getWStock(), temp.getWMaxAmount(), temp.getWtName(), temp.getDoName());
+                """, temp.getWUniqueNum(), temp.getWName(), temp.getWRent(), temp.getWStock(), temp.getWMaxAmount(), temp.getWtName(), temp.getDoName());
         System.out.println(format+"\n");
     }
 
@@ -367,13 +367,13 @@ public class WarehouseController {
             String format = null;
             switch(num){
                 case 1 -> format = String.format("%-8s%-10s%-7s%-11s%-10s",
-                        warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getDoName(),
+                        warehouseList.get(index).getWUniqueNum(), warehouseList.get(index).getWName(), warehouseList.get(index).getDoName(),
                         warehouseList.get(index).getWtName(),sdf.format(warehouseList.get(index).getCreatedAt())); //전체 창고현황 출력
                 case 3 -> format = String.format("%-8s%-10s%-7d%-7d%-17s",
-                        warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getWRent(),
+                        warehouseList.get(index).getWUniqueNum(), warehouseList.get(index).getWName(), warehouseList.get(index).getWRent(),
                         warehouseList.get(index).getWStock(),trimToLen(warehouseList.get(index).getWAddr(), 17));
                 case 4 -> format = String.format("%-8s%-10s%-8d%-8d%-9s",
-                        warehouseList.get(index).getWIdx(), warehouseList.get(index).getWName(), warehouseList.get(index).getWRent(),
+                        warehouseList.get(index).getWUniqueNum(), warehouseList.get(index).getWName(), warehouseList.get(index).getWRent(),
                         warehouseList.get(index).getWStock(), warehouseList.get(index).getDoName()
                         );
             }

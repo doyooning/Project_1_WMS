@@ -263,7 +263,7 @@ public class StockController {
                     case "1" -> showAddChecklogMenu(); //재고실사등록
                     case "2" -> showDeleteChecklogMenu();//재고실사삭제
                     case "3" -> showChecklogSearchMenu();//재고실사조회
-                    case "4" -> //재고실사수정
+                    case "4" -> showUpdateChecklogMenu();//재고실사수정
                 }
 
                  break;
@@ -404,8 +404,8 @@ public class StockController {
         switch(num){
             case 1 -> {
                 System.out.println( """
-                        ============================================================
-                        =======================전체 재고 실사 조회=====================
+                ============================================================
+                =======================전체 재고 실사 조회=====================
                 """);
                 //총관리자의 경우
                 checkLogList = stockService.getCheckLogList(0);
@@ -419,8 +419,8 @@ public class StockController {
 
             case 2 -> {
                 System.out.println( """
-                        ============================================================
-                        ======================섹션별 재고 실사 조회====================
+                ============================================================
+                ======================섹션별 재고 실사 조회====================
                 """);
 
                 //총관리자인 경우 (창고번호 입력 + 섹션 입력)
@@ -445,7 +445,7 @@ public class StockController {
 
                 //창고관리자인 경우 (창고관리자가 관리하는 창고에 대해서만... + 섹션입력)
                 //먼저 창고관리자가 관리하는 창고가 보관형인지 확인
-                Warehouse warehouse = stockService.getWarehouseInfo();
+                Warehouse warehouse = stockService.getWarehouseInfo(); //창고관리자 wIdx 넣기
                 if(warehouse.getWtIdx() != 1){
                     System.out.println("현재 관리하는 창고는 보관형 창고가 아닙니다.");
                     return;
@@ -454,7 +454,7 @@ public class StockController {
                 System.out.println("창고의 조회할 섹션을 입력해주세요.");
                 String wsName2 = getWarehouseSectionName();
                 if(wsName2.equals("exit")) return;
-                checkLogList = stockService.getSectionCheckLogList(, wsName2);
+                checkLogList = stockService.getSectionCheckLogList(warehouse.getWUniqueNum(), wsName2);
                 if(checkLogList == null){
                     System.out.println("해당 섹션이 존재하지 않습니다." ); return;
                 }
@@ -464,8 +464,8 @@ public class StockController {
 
             case 3 -> {
                 System.out.println( """
-                        ============================================================
-                        ======================창고별 재고 실사 조회====================
+                ============================================================
+                ======================창고별 재고 실사 조회====================
                 """);
 
                 //총관리자인 경우 (창고번호 입력받기)
@@ -478,8 +478,8 @@ public class StockController {
                 }
 
                 //창고관리자인 경우 (창고관리자가 관리하는 창고에 대해서 바로 출력) -> wUniqueNum 받아야함
-                Warehouse warehouse = stockService.getWarehouseInfo();
-                checkLogList = stockService.getWarehouseCheckLogList(warehouse.getWIdx());
+                Warehouse warehouse = stockService.getWarehouseInfo(); //창고관리자 wIdx 넣기
+                checkLogList = stockService.getWarehouseCheckLogList(warehouse.getWUniqueNum());
 
                 printCheckLogList(checkLogList);
             }
@@ -503,6 +503,27 @@ public class StockController {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void showUpdateChecklogMenu(){
+        System.out.println( """
+                ============================================================
+                ========================재고 실사 수정=======================
+                """);
+        System.out.println("수정하고자 하는 실사로그번호를 입력해주세요.");
+        int clIdx = getChecklogIdx();
+        if(clIdx == -1) return;
+
+        boolean result = stockService.checkUpdateCondition(clIdx, ); //창고관리자 wIdx 넣기
+        if(!result){
+            System.out.println("실사로그 수정 조건에 맞지 않습니다."); return;
+        }
+
+        boolean updateResult = stockService.updateCheckLog(clIdx);
+        if(!updateResult){
+            System.out.println("실사로그 수정에 실패했습니다."); return;
+        }
+        System.out.println("성공적으로 수정되었습니다.");
     }
 
     private void printStockList(List<Stock> stockList, int menu) {

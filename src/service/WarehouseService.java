@@ -27,7 +27,7 @@ public class WarehouseService {
         List<Warehouse> list = warehouseDao.getWarehouseList();
 
         for (Warehouse warehouse : list) {
-            if(warehouse.getWIdx().equals(temp.getWIdx())) {
+            if(warehouse.getWUniqueNum().equals(temp.getWUniqueNum())) {
                 System.out.println("이미 존재하는 창고입니다. 창고 등록에 실패하였습니다.");
                 return false;
             }

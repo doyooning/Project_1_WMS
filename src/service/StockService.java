@@ -103,4 +103,18 @@ public class StockService {
         Warehouse warehouse = stockDao.getWarehouseInfo(wIdx);
         return warehouse;
     }
+
+    public boolean updateCheckLog(int clIdx){
+        if(stockDao == null) stockDao = StockDao.getInstance();
+
+        boolean result = stockDao.updateCheckLog(clIdx);
+        return result;
+    }
+
+    public boolean checkUpdateCondition(int clIdx, int wIdx){
+        if(stockDao == null) stockDao = StockDao.getInstance();
+
+        boolean result = stockDao.checkUpdateCondition(clIdx, wIdx);
+        return result;
+    }
 }

@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 
 @Data
 public class Warehouse {
-    private String wIdx;
+    private int wIdx;
     private String wName;
     private String wAddr;
     private int wRent;
@@ -19,4 +19,5 @@ public class Warehouse {
     private String doName;
     private int wtIdx;
     private String wtName;
+    private String wUniqueNum;
 }
