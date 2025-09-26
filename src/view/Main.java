@@ -306,7 +306,13 @@ public class Main {
                     System.out.println("재고관리 기능은 추후 구현 예정입니다.");
                     break;
                 case "4":
-                    System.out.println("재무관리 기능은 추후 구현 예정입니다.");
+                    // financeControl.showFinanceMenu()의 반환값에 따라 로그아웃 처리
+                    if (!financeControl.showFinanceMenu()) {
+                        currentUserType = null;
+                        currentUserId = null;
+                        currentUserName = null;
+                        inDashboard = false;
+                    }
                     break;
                 case "5":
                     System.out.println("고객센터 기능은 추후 구현 예정입니다.");
@@ -361,7 +367,13 @@ public class Main {
                     System.out.println("회원관리 기능은 추후 구현 예정입니다.");
                     break;
                 case "3":
-                    System.out.println("재무관리 기능은 추후 구현 예정입니다.");
+                    // financeControl.showFinanceMenu()의 반환값에 따라 로그아웃 처리
+                    if (!financeControl.showFinanceMenu()) {
+                        currentUserType = null;
+                        currentUserId = null;
+                        currentUserName = null;
+                        inDashboard = false;
+                    }
                     break;
                 case "4":
                     System.out.println("입고관리 기능은 추후 구현 예정입니다.");
