@@ -312,6 +312,46 @@ public class MemberControllerImpl implements MemberController {
     }
 
     @Override
+    public boolean isUserApproved(String userId) {
+        try (Connection connection = DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+            return approvalDao.isUserApproved(connection, userId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean isWarehouseAdminApproved(String adminId) {
+        try (Connection connection = DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+            return approvalDao.isWarehouseAdminApproved(connection, adminId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String getUserApprovalStatus(String userId) {
+        try (Connection connection = DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+            return approvalDao.getUserApprovalStatus(connection, userId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String getWarehouseAdminApprovalStatus(String adminId) {
+        try (Connection connection = DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+            return approvalDao.getWarehouseAdminApprovalStatus(connection, adminId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public java.util.List<domain.PendingUserApproval> getPendingUserApprovals() {
         try (java.sql.Connection connection = util.DBUtil.getConnection()) {
             if (connection == null) throw new IllegalStateException("DB connection is null");
