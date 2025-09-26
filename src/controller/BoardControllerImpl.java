@@ -220,7 +220,23 @@ public class BoardControllerImpl implements BoardController {
     }
     private void handleAddAnnouncement() {
         int taIdx = totalAdmin.getTaIdx();
+        String title = getTitle();
+        String content = getContent();
 
+        Announcement announcement = new Announcement();
+        announcement.setTaIdx(taIdx);
+        announcement.setAnTitle(title);
+        announcement.setAnContent(content);
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = addAnnouncement(announcement);
+            if(result == true) System.out.println("공지사항이 등록되었습니다.");
+        } catch (Exception e) {
+            System.out.println("공지사항 등록에 실패했습니다: " + e.getMessage());
+        }
     }
 
     private void printAnnouncementList(List<Announcement> list){
@@ -252,6 +268,38 @@ public class BoardControllerImpl implements BoardController {
                 throw new RuntimeException(e);
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            }
+        }
+    }
+    private String getTitle(){
+        return inputNum("title>  ");
+    }
+    private String getContent(){
+        StringBuffer text = new StringBuffer();
+        System.out.println("[q 입력 시 작성 완료] content>  ");
+        while(true){
+            String content = inputNum(">  ");
+            if(content.toLowerCase().equals("q")) break;
+            text.append(content).append("\n");
+        }
+        return text.toString();
+    }
+    private Boolean getConfirm(){
+        while(true) {
+            //메뉴 번호 입력
+            String num = inputNum("""
+                    ============================================================
+                      1. 확인  |  2. 취소
+                    ============================================================
+                     >  """);
+            switch (num) {
+                case "1" -> {
+                    return true;
+                }
+                case "2" -> {
+                    return false;
+                }
+                default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         }
     }
