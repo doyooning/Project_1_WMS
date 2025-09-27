@@ -612,6 +612,7 @@ public class BoardControllerImpl implements BoardController {
 
             if(writer.equals(inquiry.getIqWriter()) && password.equals(inquiry.getIqPassword())){
                 printInquiryDetail(inquiry);
+                showIqMgMenu(inquiry);
             }
         }
     }
