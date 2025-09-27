@@ -47,6 +47,15 @@ public class BoardControllerImpl implements BoardController {
         }
     }
 
+    @Override
+    public void logoutUser(){
+        this.user = null;
+        this.totalAdmin = null;
+        this.whAdmin = null;
+        this.authority = 0;
+        this.userInfo = null;
+    }
+
     //메인 화면 출력 메서드, 권한에 따라 다른 메서드로 화면 출력
     @Override
     public Boolean showBoardMenu() {
@@ -56,25 +65,25 @@ public class BoardControllerImpl implements BoardController {
                 case 0:
                     showNonUserMenu();
                     choice = selectNonUserMenu();
-                    if ("mainMenu".equals(choice)) return true;
+                    if ("mainMenu".equals(choice)) {logoutUser(); return false;}
                     break;
                 case 1:
                     showUserMenu();
                     choice = selectTotalAdminMenu();
                     if ("mainMenu".equals(choice)) return true;
-                    if ("logout".equals(choice)) return false;
+                    if ("logout".equals(choice)) {logoutUser(); return false;}
                     break;
                 case 2:
                     showUserMenu();
                     choice = selectWhAdminMenu();
                     if ("mainMenu".equals(choice)) return true;
-                    if ("logout".equals(choice)) return false;
+                    if ("logout".equals(choice)) {logoutUser(); return false;}
                     break;
                 case 3:
                     showUserMenu();
                     choice = selectUserMenu();
                     if ("mainMenu".equals(choice)) return true;
-                    if ("logout".equals(choice)) return false;
+                    if ("logout".equals(choice)) {logoutUser(); return false;}
                     break;
                 default:
                     System.out.println("접속 불가! 권한이 존재하지 않습니다.");
@@ -87,14 +96,13 @@ public class BoardControllerImpl implements BoardController {
                 ============================================================
                                          고객센터
                 ============================================================""");
-        List<Announcement> list = getAnnouncementList();
-        printAnnouncementList(list);
-        System.out.println("""
+        List<Inquiry> list = getInquiryList();
+        printInquiryList(list);
+        System.out.print("""
                 ============================================================
                  1. 문의글 조회  |  2. 문의글 작성  |  3. 메인 메뉴
                 ============================================================
                 >\t""");
-        selectNonUserMenu();
     }
     private void showUserMenu() {
         //총관리자, 창고관리자. 일반회원 화면
@@ -125,13 +133,13 @@ public class BoardControllerImpl implements BoardController {
             selectAnMenu();
         }
     }
-    private void showAnManagementMenu(){
+    private void showAnManagementMenu(int anIdx){
         System.out.print("""
                 ============================================================
                  1. 공지사항 수정  |  2. 공지사항 삭제  |  3. 고객센터 메뉴
                 ============================================================
                 >\t""");
-        selectAnMgMenu();
+        selectAnMgMenu(anIdx);
     }
     private void showIqMenu(){
         List<Inquiry> list = getInquiryList();
@@ -146,7 +154,7 @@ public class BoardControllerImpl implements BoardController {
         } else {
             System.out.print("""
                 ============================================================
-                 1. 공지사항 상세 조회   |   2. 고객센터 메뉴
+                 1. 문의글 상세 조회   |   2. 고객센터 메뉴
                 ============================================================
                 >\t""");
             selectIqMenu();
@@ -182,12 +190,10 @@ public class BoardControllerImpl implements BoardController {
     //권한별 메뉴선택 및 메서드 호출
     private String selectNonUserMenu(){
         try {
-            List<Announcement> list = getAnnouncementList();
-            printAnnouncementList(list);
             String num  = input.readLine().trim();
             switch (num) {
                 case "1" -> handleNonUserGetIqDetail();
-                case "2" -> System.out.println("비회원 문의글 작성");
+                case "2" -> handleNonUserAddInquiry();
                 case "3" -> {return "mainMenu";}
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
@@ -278,12 +284,12 @@ public class BoardControllerImpl implements BoardController {
             throw new RuntimeException(e);
         }
     }
-    private void selectAnMgMenu(){
+    private void selectAnMgMenu(int anIdx){
         try {
             String num = input.readLine().trim();
             switch (num) {
-                case "1" -> handleModifyAnnouncement();
-                case "2" -> handleRemoveAnnouncement();
+                case "1" -> handleModifyAnnouncement(anIdx);
+                case "2" -> handleRemoveAnnouncement(anIdx);
                 case "3" -> System.out.println();
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
@@ -423,7 +429,7 @@ public class BoardControllerImpl implements BoardController {
         // 수정 삭제
         if(totalAdmin == null || announcement == null) {
         }
-        else showAnManagementMenu();
+        else showAnManagementMenu(anIdx);
     }
     private void handleAddAnnouncement() {
         int taIdx = totalAdmin.getTaIdx();
@@ -445,8 +451,8 @@ public class BoardControllerImpl implements BoardController {
             System.out.println("공지사항 등록에 실패했습니다: " + e.getMessage());
         }
     }
-    private void handleModifyAnnouncement() {
-        int anIdx = getAnIdx();
+    private void handleModifyAnnouncement(int anIdx) {
+        //int anIdx = getAnIdx();
         int taIdx = totalAdmin.getTaIdx();
         String title = getTitle();
         String content = getContent();
@@ -467,8 +473,8 @@ public class BoardControllerImpl implements BoardController {
             System.out.println("공지사항 수정에 실패했습니다: " + e.getMessage());
         }
     }
-    private void handleRemoveAnnouncement() {
-        int anIdx = getAnIdx();
+    private void handleRemoveAnnouncement(int anIdx) {
+        //int anIdx = getAnIdx();
 
         Boolean tf = getConfirm();
         if(tf==false) return;
@@ -483,19 +489,19 @@ public class BoardControllerImpl implements BoardController {
     private void handleGetInquiryDetail() {
         int ipIdx = getiqIdx();
         Inquiry inquiry = getInquiry(userInfo, ipIdx);
-        if (inquiry != null) {
+        if (inquiry == null) {
             System.out.println("찾으신 문의글이 존재하지 않습니다.");
-        } else if (ipIdx == 0) {
-            System.out.println("1:1 문의글입니다.");
+        } else if (totalAdmin == null){
+            if(inquiry.getIqType() == '0' && inquiry.getUIdx() != user.getUIdx()){
+                System.out.println("1:1 문의글입니다.");
+            } else {
+                printInquiryDetail(inquiry);
+                if(inquiry.getUIdx() == user.getUIdx())
+                showIqMgMenu(inquiry);
+            }
         } else {
             printInquiryDetail(inquiry);
-            if(totalAdmin != null){
-                showRsMgMenu(inquiry);
-            } else if(user != null && inquiry.getUIdx() == user.getUIdx()){
-                showIqMgMenu(inquiry);
-            } else {
-                System.out.println();
-            }
+            showRsMgMenu(inquiry);
         }
     }
     private void handleModifyInquiry(int iqIdx){
@@ -602,7 +608,7 @@ public class BoardControllerImpl implements BoardController {
     private void handleNonUserGetIqDetail() {
         int ipIdx = getiqIdx();
         Inquiry inquiry = getInquiry(userInfo, ipIdx);
-        if (inquiry != null) {
+        if (inquiry == null) {
             System.out.println("찾으신 문의글이 존재하지 않습니다.");
         } else if (inquiry.getUIdx() != 0) {
             System.out.println("접근 권한이 없습니다.");
@@ -619,11 +625,10 @@ public class BoardControllerImpl implements BoardController {
     private void handleNonUserAddInquiry(){
         Inquiry inquiry = new Inquiry();
 
-        char type = getType();
         String title = getTitle();
         String content = getContent();
 
-        inquiry.setIqType(type);
+        inquiry.setIqType('1');
         inquiry.setIqTitle(title);
         inquiry.setIqContent(content);
 
@@ -651,10 +656,10 @@ public class BoardControllerImpl implements BoardController {
 
     private void printAnnouncementList(List<Announcement> list){
         System.out.println("[공지사항 목록]");
-        System.out.printf(" %10s | %20s | %5s | %10s \n", "공지사항 번호", "글제목", "작성자", "작성일");
+        System.out.printf(" %7s | %10s | %3s | %21s \n", "공지사항 번호", "글제목", "작성자", "작성일");
         System.out.println("-".repeat(60));
         for (Announcement a : list) {
-            System.out.printf(" %5d | %20s | %5d | %10s \n", a.getAnIdx(), a.getAnTitle(), a.getTaIdx(), a.getUpdatedAt());
+            System.out.printf(" %11d | %10s | %5d | %21s \n", a.getAnIdx(), a.getAnTitle(), a.getTaIdx(), a.getUpdatedAt());
         }
         System.out.println("-".repeat(60));
     }
@@ -676,7 +681,7 @@ public class BoardControllerImpl implements BoardController {
         System.out.printf(" %6s | %15s | %5s | %10s | %5s \n", "문의글 번호", "글제목", "작성자", "작성일", "타입");
         System.out.println("-".repeat(60));
         for (Inquiry i : list) {
-            String type = i.getIqType() == '0' ? "일반" : "1:1";
+            String type = i.getIqType() == '0' ? "1:1" : "일반";
             System.out.printf(" %6d | %15s | %5d | %10s | %5s \n", i.getIqIdx(), i.getIqTitle(), i.getUIdx(), i.getUpdatedAt(), type);
         }
         System.out.println("-".repeat(60));

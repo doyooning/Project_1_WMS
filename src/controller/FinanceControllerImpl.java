@@ -41,11 +41,23 @@ public class FinanceControllerImpl implements FinanceController {
             this.authority = 1;
         } else if (user instanceof WarehouseAdmin) {
             this.whAdmin = (WarehouseAdmin) user;
+            if (this.whAdmin.getWIdx() == 0) {
+                int wIdx = finance.getWidxByWaidx(this.whAdmin.getWaIdx());
+                this.whAdmin.setWIdx(wIdx);
+            }
             this.authority = 2;
         } else if (user instanceof User) {
             this.user = (User) user;
             this.authority = 3;
         }
+    }
+
+    @Override
+    public void logoutUser() {
+        this.user = null;
+        this.whAdmin = null;
+        this.totalAdmin = null;
+        this.authority = 0;
     }
 
     //메인 화면 출력 메서드, 권한에 따라 다른 메서드로 화면 출력
@@ -58,19 +70,19 @@ public class FinanceControllerImpl implements FinanceController {
                     showTotalAdminMenu();
                     choice = selectTotalAdminMenu();
                     if ("mainMenu".equals(choice)) return true;
-                    if ("logout".equals(choice)) return false;
+                    if ("logout".equals(choice)) {logoutUser(); return false;}
                     break;
                 case 2:
                     showWhAdminMenu();
                     choice = selectWhAdminMenu();
                     if ("mainMenu".equals(choice)) return true;
-                    if ("logout".equals(choice)) return false;
+                    if ("logout".equals(choice)) {logoutUser(); return false;}
                     break;
                 case 3:
                     showUserMenu();
                     choice = selectUserMenu();
                     if ("mainMenu".equals(choice)) return true;
-                    if ("logout".equals(choice)) return false;
+                    if ("logout".equals(choice)) {logoutUser(); return false;}
                     break;
                 default:
                     System.out.println("접속 불가! 권한이 존재하지 않습니다.");
