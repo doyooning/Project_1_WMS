@@ -86,7 +86,7 @@ public class FinanceControllerImpl implements FinanceController {
                                                       재무관리
                             ============================================================
                              1.전체 재무 조회 | 2.창고별 재무 조회 | 3.메인 메뉴 | 4.로그아웃
-                            >  """);
+                            >\t""");
     }
     private void showWhAdminMenu(){
         //창고 관리자 화면
@@ -94,10 +94,10 @@ public class FinanceControllerImpl implements FinanceController {
                             ============================================================
                                                       재무관리
                             ============================================================
-                              1.재무 조회 | 2.지출 관리 | 2.구독승인 관리 | 3.메인 메뉴 |
-                              4.로그아웃
+                              1.재무 조회 | 2.지출 관리 | 3.구독승인 관리 | 4.메인 메뉴 |
+                              5.로그아웃
                             ============================================================
-                            >  """);
+                            >\t""");
     }
     private void showUserMenu(){
         //일반회원 화면
@@ -106,14 +106,14 @@ public class FinanceControllerImpl implements FinanceController {
                                                      재무관리
                            ============================================================
                                        1.구독 관리  |  2.메인 메뉴  |  3.로그아웃
-                           >  """);
+                           >\t""");
     }
     private void showExpenseMenu(){
         System.out.print("""
                 ============================================================
                   1. 지출 내역 등록 | 2. 지출 내역 수정 | 3. 지출 내역 삭제
                 ============================================================
-                >  """);
+                >\t""");
         selectExpenseMenu();
     }
     private void showUserSubMenu(){
@@ -127,7 +127,7 @@ public class FinanceControllerImpl implements FinanceController {
                     ============================================================
                        1.구독 신청  |  2.재무관리 메뉴
                     ============================================================
-                    >  """, subStatus);
+                    >\t""", subStatus);
             selectNonSubUserMenu();
         } else{
             System.out.printf("""
@@ -137,7 +137,7 @@ public class FinanceControllerImpl implements FinanceController {
                     ============================================================
                         1.구독 변경  |  2.구독 취소 |  3.재무관리 메뉴
                     ============================================================
-                    >   """, subInfo.getSmIdx(), subInfo.getSmName(), subInfo.getSmPrice(), subInfo.getSmAmount(), subStatus);
+                    >\t""", subInfo.getSmIdx(), subInfo.getSmName(), subInfo.getSmPrice(), subInfo.getSmAmount(), subStatus);
             selectSubUserMenu();
         }
     }
@@ -146,8 +146,22 @@ public class FinanceControllerImpl implements FinanceController {
                 ============================================================
                   1.구독신청 조회 | 2.재무관리 메뉴
                 ============================================================
-                >  """);
+                >\t""");
         selectSubWhMenu();
+    }
+    private void showWhSubMgMenu(){
+        int waIdx = whAdmin.getWaIdx();
+
+        //구독 신청 목록 출력
+        List<SubApproval> list = getPendingSubApprovalList(waIdx);
+        printSubApprovalList(list);
+
+        System.out.print("""
+                ============================================================
+                  1.구독신청 검토 | 2.재무관리 메뉴
+                ============================================================
+                >\t""");
+        selectSubWhMgMenu();
     }
 
     //권한별 메뉴선택 및 메서드 호출
@@ -247,6 +261,18 @@ public class FinanceControllerImpl implements FinanceController {
         }
     }
     private void selectSubWhMenu(){
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> showWhSubMgMenu(); // 핸들러 호출
+                case "2" -> System.out.println();
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void selectSubWhMgMenu(){
         try {
             String num = input.readLine().trim();
             switch (num) {
@@ -436,12 +462,6 @@ public class FinanceControllerImpl implements FinanceController {
         }
     }
     private void handleWhSubscription(){
-        int waIdx = whAdmin.getWaIdx();
-
-        //구독 신청 목록 출력
-        List<SubApproval> list = getPendingSubApprovalList(waIdx);
-        printSubApprovalList(list);
-
         int saIdx = getSubApprovalId();
 
         Map<String, Object> detail = getSubApprovalDetail(saIdx);
@@ -455,7 +475,7 @@ public class FinanceControllerImpl implements FinanceController {
             else result = approveSubscription(saIdx);
             if(result == true) System.out.println("구독 신청이 처리되었습니다.");
         } catch (Exception e) {
-            System.out.println("구독 선청 처리에 실패했습니다: " + e.getMessage());
+            System.out.println("구독 신청 처리에 실패했습니다: " + e.getMessage());
         }
     }
 

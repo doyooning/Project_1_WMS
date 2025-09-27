@@ -8,9 +8,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
 
 public class BoardControllerImpl implements BoardController {
-
+    private Object userInfo;
     private User user;
     private WarehouseAdmin whAdmin;
     private TotalAdmin totalAdmin;
@@ -33,6 +34,7 @@ public class BoardControllerImpl implements BoardController {
 
     @Override
     public void setLoggedInUser(Object user) {
+        userInfo = user;
         if (user instanceof TotalAdmin) {
             this.totalAdmin = (TotalAdmin) user;
             this.authority = 1;
@@ -146,11 +148,30 @@ public class BoardControllerImpl implements BoardController {
             selectIqMenu();
         }
     }
-    private void showIqMgUserMenu(){
-
+    private void showIqMgMenu(Inquiry inquiry){
+        System.out.print("""
+                    ============================================================
+                      1. 문의글 수정 | 2. 문의글 삭제 | 3. 고객센터 메뉴
+                    ============================================================
+                    >\t""");
+        selectIqMgMenu(inquiry);
     }
-    private void showIqAnswerMenu(){
-
+    private void showRsMgMenu(Inquiry inquiry){
+        if(inquiry.getResponse() != null){
+            System.out.print("""
+                    ============================================================
+                      1. 답변 수정 | 2. 답변 삭제 | 3. 고객센터 메뉴
+                    ============================================================
+                    >\t""");
+            selectRsMgMenu(inquiry);
+        } else{
+            System.out.print("""
+                    ============================================================
+                      1. 답변 작성 | 2. 고객센터 메뉴
+                    ============================================================
+                    >\t""");
+            selectRsMgMenu(inquiry);
+        }
     }
 
 
@@ -270,8 +291,8 @@ public class BoardControllerImpl implements BoardController {
         try {
             String num = input.readLine().trim();
             switch (num) {
-                case "1" -> System.out.println("문의글 상세조회");
-                case "2" -> System.out.println("문의글 작성");
+                case "1" -> handleGetInquiryDetail();
+                case "2" -> handleAddInquiry();
                 case "3" -> System.out.println();
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
@@ -283,12 +304,51 @@ public class BoardControllerImpl implements BoardController {
         try {
             String num = input.readLine().trim();
             switch (num) {
-                case "1" -> System.out.println("문의글 상세 조회");
+                case "1" -> handleGetInquiryDetail();
                 case "2" -> System.out.println();
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+    private void selectIqMgMenu(Inquiry inquiry) {
+        try {
+            String num = input.readLine().trim();
+            switch (num) {
+                case "1" -> handleModifyInquiry(inquiry.getIqIdx());
+                case "2" -> handleRemoveInquiry(inquiry.getIqIdx());
+                case "3" -> System.out.println();
+                default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void selectRsMgMenu(Inquiry inquiry) {
+        if(inquiry.getResponse() == null) {
+            try {
+                String num = input.readLine().trim();
+                switch (num) {
+                    case "1" -> handleAddResponse(inquiry.getIqIdx());
+                    case "2" -> System.out.println();
+                    default -> System.out.println("번호를 잘못 입력했습니다.");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else{
+            try {
+                String num = input.readLine().trim();
+                switch (num) {
+                    case "1" -> handleModifyResponse(inquiry.getIqIdx());
+                    case "2" -> handleRemoveResponse(inquiry.getIqIdx());
+                    case "3" -> System.out.println();
+                    default -> System.out.println("번호를 잘못 입력했습니다.");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -318,6 +378,10 @@ public class BoardControllerImpl implements BoardController {
     @Override
     public List<Inquiry> getInquiryList() {
         return board.getInquiryList();
+    }
+    @Override
+    public Inquiry getInquiry(Object userInfo, int iqIdx) {
+        return board.getInquiry(userInfo, iqIdx);
     }
 
 
@@ -387,7 +451,36 @@ public class BoardControllerImpl implements BoardController {
             System.out.println("공지사항 삭제에 실패했습니다: " + e.getMessage());
         }
     }
+    private void handleGetInquiryDetail() {
+        int ipIdx = getiqIdx();
+        Inquiry inquiry = getInquiry(userInfo, ipIdx);
+        if (inquiry != null) {
+            System.out.println("찾으신 문의글이 존재하지 않습니다.");
+        } else if (ipIdx == 0) {
+            System.out.println("1:1 문의글입니다.");
+        } else {
 
+            if(user == null){
+                showRsMgMenu(inquiry);
+            } else{
+                showIqMgMenu(inquiry);
+            }
+        }
+    }
+    private void handleModifyInquiry(int iqIdx){
+
+    }
+    private void handleRemoveInquiry(int iqIdx){
+
+    }
+    private void handleAddInquiry(){
+
+    }
+    private void handleAddResponse(int iqIdx){
+
+    }
+    private void handleModifyResponse(int iqIdx){}
+    private void handleRemoveResponse(int iqIdx){}
 
 
 
@@ -467,6 +560,19 @@ public class BoardControllerImpl implements BoardController {
                     return false;
                 }
                 default -> System.out.println("번호를 잘못 입력했습니다.");
+            }
+        }
+    }
+    private int getiqIdx(){
+        while(true) {
+            try {
+                int anIdx = Integer.parseInt(inputNum("문의글번호> "));
+                System.out.println("=".repeat(60));
+                return anIdx;
+            } catch (NumberFormatException e) {
+                throw new RuntimeException(e);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }

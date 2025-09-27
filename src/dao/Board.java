@@ -1,9 +1,6 @@
 package dao;
 
-import domain.Announcement;
-import domain.Expense;
-import domain.Inquiry;
-import domain.Warehouse;
+import domain.*;
 
 import java.util.List;
 
@@ -15,4 +12,7 @@ public interface Board {
     int removeAnnouncement(int anIdx);
 
     List<Inquiry> getInquiryList();
+
+    Inquiry getInquiry(int iqIdx);
+    Response getResponse(int iqIdx);
 }
