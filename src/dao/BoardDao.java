@@ -271,13 +271,15 @@ public class BoardDao implements Board {
         // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "{call addInquiry(?, ?, ?, ?)}";
+            String sql = "{call addInquiry(?, ?, ?, ?, ?, ?)}";
             cstmt = conn.prepareCall(sql);
 
             cstmt.setInt(1, inquiry.getUIdx());
             cstmt.setString(2, Character.toString(inquiry.getIqType()));
             cstmt.setString(3, inquiry.getIqTitle());
             cstmt.setString(4, inquiry.getIqContent());
+            cstmt.setString(5, inquiry.getIqWriter());
+            cstmt.setString(6, inquiry.getIqPassword());
 
             return cstmt.executeUpdate();
         } catch (SQLException e) {

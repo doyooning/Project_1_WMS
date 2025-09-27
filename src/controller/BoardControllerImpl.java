@@ -616,6 +616,33 @@ public class BoardControllerImpl implements BoardController {
             }
         }
     }
+    private void handleNonUserAddInquiry(){
+        Inquiry inquiry = new Inquiry();
+
+        char type = getType();
+        String title = getTitle();
+        String content = getContent();
+
+        inquiry.setIqType(type);
+        inquiry.setIqTitle(title);
+        inquiry.setIqContent(content);
+
+        String writer = getWriter();
+        String password = getPassword();
+
+        inquiry.setIqWriter(writer);
+        inquiry.setIqPassword(password);
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = addInquiry(inquiry);
+            if(result == true) System.out.println("문의글이 등록되었습니다.");
+        } catch (Exception e) {
+            System.out.println("문의글 등록에 실패했습니다: " + e.getMessage());
+        }
+    }
 
 
 
