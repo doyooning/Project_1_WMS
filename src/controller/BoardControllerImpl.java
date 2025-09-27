@@ -638,7 +638,7 @@ public class BoardControllerImpl implements BoardController {
         }
         System.out.printf(" %10s | %-40s \n", "제목", announcement.getAnTitle());
         System.out.println("-".repeat(60));
-        System.out.printf(" %10s | %-40s \n", "작성자", announcement.getTaIdx());
+        System.out.printf(" %10s | %-40d \n", "작성자", announcement.getTaIdx());
         System.out.printf(" %10s | %-40s \n", "작성일", announcement.getUpdatedAt());
         System.out.println("-".repeat(60));
         System.out.println(" 내용");
@@ -650,7 +650,7 @@ public class BoardControllerImpl implements BoardController {
         System.out.println("-".repeat(60));
         for (Inquiry i : list) {
             String type = i.getIqType() == '0' ? "일반" : "1:1";
-            System.out.printf(" %6s | %15s | %5s | %10s | %5s \n", i.getIqIdx(), i.getIqTitle(), i.getUIdx(), i.getUpdatedAt(), type);
+            System.out.printf(" %6d | %15s | %5d | %10s | %5s \n", i.getIqIdx(), i.getIqTitle(), i.getUIdx(), i.getUpdatedAt(), type);
         }
         System.out.println("-".repeat(60));
     }
@@ -661,7 +661,11 @@ public class BoardControllerImpl implements BoardController {
         }
         System.out.printf(" %10s | %-40s \n", "제목", inquiry.getIqTitle());
         System.out.println("-".repeat(60));
-        System.out.printf(" %10s | %-40s \n", "작성자", inquiry.getUIdx());
+        if(inquiry.getUIdx()!=0){
+            System.out.printf(" %10s | %-40d \n", "작성자", inquiry.getUIdx());
+        } else{
+            System.out.printf(" %10s | %-40s \n", "작성자", "비회원");
+        }
         System.out.printf(" %10s | %-40s \n", "작성일", inquiry.getUpdatedAt());
         System.out.println("-".repeat(60));
         System.out.println(" 내용");
@@ -677,7 +681,7 @@ public class BoardControllerImpl implements BoardController {
         }
         System.out.println("-".repeat(60));
         System.out.println("[답변]");
-        System.out.printf(" %10s | %-40s \n", "작성자", response.getTaIdx());
+        System.out.printf(" %10s | %-40d \n", "작성자", response.getTaIdx());
         System.out.printf(" %10s | %-40s \n", "작성일", response.getUpdatedAt());
         System.out.println("-".repeat(60));
         System.out.println(" 내용");
