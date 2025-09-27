@@ -463,11 +463,13 @@ public class BoardControllerImpl implements BoardController {
         } else if (ipIdx == 0) {
             System.out.println("1:1 문의글입니다.");
         } else {
-
-            if(user == null){
+            printInquiryDetail(inquiry);
+            if(totalAdmin != null){
                 showRsMgMenu(inquiry);
-            } else{
+            } else if(user != null && inquiry.getUIdx() == user.getUIdx()){
                 showIqMgMenu(inquiry);
+            } else {
+                System.out.println();
             }
         }
     }
@@ -538,6 +540,19 @@ public class BoardControllerImpl implements BoardController {
             System.out.printf(" %6s | %15s | %5s | %10s | %5s \n", i.getIqIdx(), i.getIqTitle(), i.getUIdx(), i.getUpdatedAt(), type);
         }
         System.out.println("-".repeat(60));
+    }
+    private void printInquiryDetail(Inquiry inquiry) {
+        if (inquiry == null) {
+            System.out.println("해당 공지사항이 존재하지 않습니다.");
+            return;
+        }
+        System.out.printf(" %10s | %-40s \n", "제목", inquiry.getIqTitle());
+        System.out.println("-".repeat(60));
+        System.out.printf(" %10s | %-40s \n", "작성자", inquiry.getUIdx());
+        System.out.printf(" %10s | %-40s \n", "작성일", inquiry.getUpdatedAt());
+        System.out.println("-".repeat(60));
+        System.out.println(" 내용");
+        System.out.println( inquiry.getIqContent());
     }
 
 
