@@ -182,7 +182,7 @@ public class BoardControllerImpl implements BoardController {
             printAnnouncementList(list);
             String num  = input.readLine().trim();
             switch (num) {
-                case "1" -> System.out.println("비회원 문의글 조회");
+                case "1" -> handleNonUserGetIqDetail();
                 case "2" -> System.out.println("비회원 문의글 작성");
                 case "3" -> {return "mainMenu";}
                 default -> System.out.println("번호를 잘못 입력했습니다.");
@@ -595,6 +595,25 @@ public class BoardControllerImpl implements BoardController {
             System.out.println("문의 답변 삭제에 실패했습니다: " + e.getMessage());
         }
     }
+    private void handleNonUserGetIqDetail() {
+        int ipIdx = getiqIdx();
+        Inquiry inquiry = getInquiry(userInfo, ipIdx);
+        if (inquiry != null) {
+            System.out.println("찾으신 문의글이 존재하지 않습니다.");
+        } else if (inquiry.getUIdx() != 0) {
+            System.out.println("접근 권한이 없습니다.");
+        } else {
+            String writer = getWriter();
+            String password = getPassword();
+
+            if(writer.equals(inquiry.getIqWriter()) && password.equals(inquiry.getIqPassword())){
+                printInquiryDetail(inquiry);
+            }
+        }
+    }
+
+
+
 
 
 
@@ -737,14 +756,12 @@ public class BoardControllerImpl implements BoardController {
             }
         }
     }
-
-
-//    private String getWriter(){
-//        return inputNum("작성자> ");
-//    }
-//    private String getPassword(){
-//        return inputNum("비밀번호> ");
-//    }
+    private String getWriter(){
+        return inputNum("작성자> ");
+    }
+    private String getPassword(){
+        return inputNum("비밀번호> ");
+    }
 
     private String inputNum(String msg){
         System.out.print(msg);
