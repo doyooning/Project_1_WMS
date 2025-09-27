@@ -350,4 +350,24 @@ public class BoardDao implements Board {
         }
         return 0;
     }
+
+    @Override
+    public int modifyResponse(Response response) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call modifyResponse(?, ?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, response.getIqIdx());
+            cstmt.setString(2, response.getRContent());
+
+            return cstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
 }

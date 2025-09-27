@@ -20,4 +20,5 @@ public interface Board {
     int removeInquiry(int iqIdx);
 
     int addResponse(Response response);
+    int modifyResponse(Response response);
 }
