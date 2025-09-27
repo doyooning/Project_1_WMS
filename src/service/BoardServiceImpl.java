@@ -74,4 +74,11 @@ public class BoardServiceImpl implements BoardService {
         return inquiry;
     }
 
+    @Override
+    public boolean addInquiry(Inquiry inquiry) {
+        int result = boardDao.addInquiry(inquiry);
+        if(result > 0) return true;
+        else return false;
+    }
+
 }

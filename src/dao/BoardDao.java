@@ -265,4 +265,26 @@ public class BoardDao implements Board {
         }
         return null;
     }
+
+    @Override
+    public int addInquiry(Inquiry inquiry) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call addInquiry(?, ?, ?, ?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, inquiry.getUIdx());
+            cstmt.setString(2, Character.toString(inquiry.getIqType()));
+            cstmt.setString(3, inquiry.getIqTitle());
+            cstmt.setString(4, inquiry.getIqContent());
+
+            return cstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
 }
