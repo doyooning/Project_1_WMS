@@ -31,4 +31,5 @@ public interface BoardController {
     Boolean removeInquiry(int iqIdx);
 
     Boolean addResponse(Response response);
+    Boolean modifyResponse(Response response);
 }

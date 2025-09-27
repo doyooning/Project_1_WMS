@@ -24,4 +24,5 @@ public interface BoardService {
     boolean removeInquiry(int iqIdx);
 
     boolean addResponse(Response response);
+    boolean modifyResponse(Response response);
 }
