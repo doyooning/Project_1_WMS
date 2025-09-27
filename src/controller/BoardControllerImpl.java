@@ -395,6 +395,10 @@ public class BoardControllerImpl implements BoardController {
     public Boolean removeInquiry(int iqIdx) {
         return board.removeInquiry(iqIdx);
     }
+    @Override
+    public Boolean addResponse(Response response) {
+        return board.addResponse(response);
+    }
 
 
 
@@ -538,7 +542,22 @@ public class BoardControllerImpl implements BoardController {
         }
     }
     private void handleAddResponse(int iqIdx){
+        Response response = new Response();
+        response.setIqIdx(iqIdx);
+        response.setTaIdx(totalAdmin.getTaIdx());
 
+        String content = getContent();
+        response.setRContent(content);
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = addResponse(response);
+            if(result == true) System.out.println("문의 답변이 등록되었습니다.");
+        } catch (Exception e) {
+            System.out.println("문의 답변 등록에 실패했습니다: " + e.getMessage());
+        }
     }
     private void handleModifyResponse(int iqIdx){}
     private void handleRemoveResponse(int iqIdx){}
@@ -579,7 +598,7 @@ public class BoardControllerImpl implements BoardController {
     }
     private void printInquiryDetail(Inquiry inquiry) {
         if (inquiry == null) {
-            System.out.println("해당 공지사항이 존재하지 않습니다.");
+            System.out.println("해당 문의글이 존재하지 않습니다.");
             return;
         }
         System.out.printf(" %10s | %-40s \n", "제목", inquiry.getIqTitle());
@@ -589,6 +608,22 @@ public class BoardControllerImpl implements BoardController {
         System.out.println("-".repeat(60));
         System.out.println(" 내용");
         System.out.println( inquiry.getIqContent());
+        if(inquiry.getResponse() != null){
+            printResponseDetail(inquiry.getResponse());
+        }
+    }
+    private void printResponseDetail(Response response) {
+        if (response == null) {
+            System.out.println("해당 답변은 존재하지 않습니다.");
+            return;
+        }
+        System.out.println("-".repeat(60));
+        System.out.println("[답변]");
+        System.out.printf(" %10s | %-40s \n", "작성자", response.getTaIdx());
+        System.out.printf(" %10s | %-40s \n", "작성일", response.getUpdatedAt());
+        System.out.println("-".repeat(60));
+        System.out.println(" 내용");
+        System.out.println( response.getRContent());
     }
 
 

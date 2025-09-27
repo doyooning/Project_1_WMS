@@ -1,9 +1,6 @@
 package service;
 
-import domain.Announcement;
-import domain.Expense;
-import domain.Inquiry;
-import domain.Warehouse;
+import domain.*;
 
 import java.util.List;
 import java.util.Map;
@@ -25,4 +22,6 @@ public interface BoardService {
     boolean addInquiry(Inquiry inquiry);
     boolean modifyInquiry(Inquiry inquiry);
     boolean removeInquiry(int iqIdx);
+
+    boolean addResponse(Response response);
 }

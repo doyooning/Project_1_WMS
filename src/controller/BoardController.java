@@ -3,6 +3,7 @@ package controller;
 import domain.Announcement;
 import domain.Expense;
 import domain.Inquiry;
+import domain.Response;
 
 import java.util.List;
 import java.util.Map;
@@ -28,4 +29,6 @@ public interface BoardController {
     Boolean addInquiry(Inquiry inquiry);
     Boolean modifyInquiry(Inquiry inquiry);
     Boolean removeInquiry(int iqIdx);
+
+    Boolean addResponse(Response response);
 }
