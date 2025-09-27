@@ -13,6 +13,8 @@ public interface FinanceController {
     //로그인 유저 정보 연동
     void setLoggedInUser(Object user);
 
+    void logoutUser();
+
     // 재무 관리 메인 페이지, 진입점
     Boolean showFinanceMenu();
 

@@ -215,6 +215,8 @@ public class Main {
             String choice = scan.nextLine().trim();
             switch (choice) {
                 case "0":
+                    financeControl.logoutUser();
+                    boardControl.logoutUser();
                     System.out.println("로그아웃합니다.");
                     currentUserType = null;
                     currentUserId = null;
@@ -239,6 +241,7 @@ public class Main {
                         currentUserType = null;
                         currentUserId = null;
                         currentUserName = null;
+                        boardControl.logoutUser();
                         inDashboard = false;
                     }
                     break;
@@ -248,6 +251,7 @@ public class Main {
                         currentUserType = null;
                         currentUserId = null;
                         currentUserName = null;
+                        financeControl.logoutUser();
                         inDashboard = false;
                     }
                     break;
@@ -293,6 +297,8 @@ public class Main {
             String choice = scan.nextLine().trim();
             switch (choice) {
                 case "0":
+                    financeControl.logoutUser();
+                    boardControl.logoutUser();
                     System.out.println("로그아웃합니다.");
                     currentUserType = null;
                     currentUserId = null;
@@ -317,6 +323,7 @@ public class Main {
                         currentUserType = null;
                         currentUserId = null;
                         currentUserName = null;
+                        boardControl.logoutUser();
                         inDashboard = false;
                     }
                     break;
@@ -326,6 +333,7 @@ public class Main {
                         currentUserType = null;
                         currentUserId = null;
                         currentUserName = null;
+                        financeControl.logoutUser();
                         inDashboard = false;
                     }
                     break;
@@ -363,6 +371,8 @@ public class Main {
             String choice = scan.nextLine().trim();
             switch (choice) {
                 case "0":
+                    financeControl.logoutUser();
+                    boardControl.logoutUser();
                     System.out.println("로그아웃합니다.");
                     currentUserType = null;
                     currentUserId = null;
@@ -384,6 +394,7 @@ public class Main {
                         currentUserType = null;
                         currentUserId = null;
                         currentUserName = null;
+                        boardControl.logoutUser();
                         inDashboard = false;
                     }
                     break;
@@ -405,6 +416,7 @@ public class Main {
                         currentUserType = null;
                         currentUserId = null;
                         currentUserName = null;
+                        financeControl.logoutUser();
                         inDashboard = false;
                     }
                     break;
