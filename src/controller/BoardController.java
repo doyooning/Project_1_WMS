@@ -5,6 +5,7 @@ import domain.Expense;
 import domain.Inquiry;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BoardController {
     //로그인 유저 정보 연동
@@ -23,4 +24,5 @@ public interface BoardController {
     Boolean removeAnnouncement(int anIdx);
 
     List<Inquiry> getInquiryList();
+    Inquiry getInquiry(Object userInfo, int iqIdx);
 }

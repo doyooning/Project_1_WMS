@@ -1,9 +1,7 @@
 package service;
 
 import dao.BoardDao;
-import domain.Announcement;
-import domain.Expense;
-import domain.Inquiry;
+import domain.*;
 
 import java.util.List;
 
@@ -55,6 +53,25 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public List<Inquiry> getInquiryList() {
         return boardDao.getInquiryList();
+    }
+
+    @Override
+    public Inquiry getInquiry(Object userInfo, int iqIdx) {
+        Inquiry inquiry = boardDao.getInquiry(iqIdx);
+        if (inquiry != null) {
+            inquiry.setResponse(boardDao.getResponse(iqIdx));
+
+            if (userInfo instanceof WarehouseAdmin) {
+                if (inquiry.getIqType() == '0') {
+                    inquiry.setIqIdx(0);
+                }
+            } else if (userInfo instanceof User) {
+                if (inquiry.getIqType() == '0' && inquiry.getUIdx() != ((User) userInfo).getUIdx()) {
+                    inquiry.setIqIdx(0);
+                }
+            }
+        }
+        return inquiry;
     }
 
 }

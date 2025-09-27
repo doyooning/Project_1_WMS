@@ -6,6 +6,7 @@ import domain.Inquiry;
 import domain.Warehouse;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BoardService {
 
@@ -18,4 +19,6 @@ public interface BoardService {
     boolean removeAnnouncement(int anIdx);
 
     List<Inquiry> getInquiryList();
+
+    Inquiry getInquiry(Object userInfo, int iqIdx);
 }

@@ -1,9 +1,6 @@
 package dao;
 
-import domain.Announcement;
-import domain.EntityStatus;
-import domain.Expense;
-import domain.Inquiry;
+import domain.*;
 import util.DBUtil;
 
 import java.sql.*;
@@ -191,6 +188,76 @@ public class BoardDao implements Board {
                 list.add(inquiry);
             }
             return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return null;
+    }
+
+    @Override
+    public Inquiry getInquiry(int iqIdx) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call getInquiry(?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, iqIdx);
+
+            rs = cstmt.executeQuery();
+
+            if (rs.next()) {
+                Inquiry inquiry = new Inquiry();
+
+                inquiry.setIqIdx(rs.getInt("iqIdx"));
+                String iqTypeStr = rs.getString("iqType"); // CHAR(1) → String
+                char iqType = iqTypeStr.charAt(0);
+                inquiry.setIqType(iqType);
+                inquiry.setIqTitle(rs.getString("iqTitle"));
+                inquiry.setIqContent(rs.getString("iqContent"));
+                inquiry.setCreatedAt(rs.getTimestamp("createdAt"));
+                inquiry.setUpdatedAt(rs.getTimestamp("updatedAt"));
+                inquiry.setStatus(EntityStatus.valueOf(rs.getString("status")));
+                inquiry.setUIdx(rs.getInt("uIdx"));
+                inquiry.setIqPassword(rs.getString("iqPassword"));
+
+                return inquiry;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return null;
+    }
+
+    @Override
+    public Response getResponse(int iqIdx) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call getResponse(?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, iqIdx);
+
+            rs = cstmt.executeQuery();
+
+            if (rs.next()) {
+                Response response = new Response();
+
+                response.setRIdx(rs.getInt("rIdx"));
+                response.setIqIdx(rs.getInt("iqIdx"));
+                response.setTaIdx(rs.getInt("taIdx"));
+                response.setRContent(rs.getString("rContent"));
+                response.setCreatedAt(rs.getTimestamp("createdAt"));
+                response.setUpdatedAt(rs.getTimestamp("updatedAt"));
+                response.setStatus(EntityStatus.valueOf(rs.getString("status")));
+
+                return response;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
