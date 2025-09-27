@@ -81,16 +81,20 @@ public class BoardControllerImpl implements BoardController {
             }
         }
     }
-
     private void showNonUserMenu() {
         //비회원 화면
         System.out.println("""
                 ============================================================
                                          고객센터
+                ============================================================""");
+        List<Announcement> list = getAnnouncementList();
+        printAnnouncementList(list);
+        System.out.println("""
                 ============================================================
                  1. 문의글 조회  |  2. 문의글 작성  |  3. 메인 메뉴
                 ============================================================
                 >\t""");
+        selectNonUserMenu();
     }
     private void showUserMenu() {
         //총관리자, 창고관리자. 일반회원 화면
@@ -182,7 +186,7 @@ public class BoardControllerImpl implements BoardController {
             printAnnouncementList(list);
             String num  = input.readLine().trim();
             switch (num) {
-                case "1" -> System.out.println("비회원 문의글 조회");
+                case "1" -> System.out.println("비회원 문의글 조회");//handleNonUserGetIqDetail();
                 case "2" -> System.out.println("비회원 문의글 작성");
                 case "3" -> {return "mainMenu";}
                 default -> System.out.println("번호를 잘못 입력했습니다.");
@@ -737,8 +741,6 @@ public class BoardControllerImpl implements BoardController {
             }
         }
     }
-
-
 //    private String getWriter(){
 //        return inputNum("작성자> ");
 //    }

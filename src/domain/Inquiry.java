@@ -15,7 +15,7 @@ public class Inquiry {
     private EntityStatus status;
     private int uIdx;
     private String iqPassword;
-    private String uqWriter;
+    private String iqWriter;
 
     private Response response;
 }
