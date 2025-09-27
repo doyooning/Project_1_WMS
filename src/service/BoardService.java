@@ -21,4 +21,6 @@ public interface BoardService {
     List<Inquiry> getInquiryList();
 
     Inquiry getInquiry(Object userInfo, int iqIdx);
+
+    boolean addInquiry(Inquiry inquiry);
 }

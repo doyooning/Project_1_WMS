@@ -383,6 +383,10 @@ public class BoardControllerImpl implements BoardController {
     public Inquiry getInquiry(Object userInfo, int iqIdx) {
         return board.getInquiry(userInfo, iqIdx);
     }
+    @Override
+    public Boolean addInquiry(Inquiry inquiry) {
+        return board.addInquiry(inquiry);
+    }
 
 
     private void handleGetAnnouncementDetail() {
@@ -474,7 +478,26 @@ public class BoardControllerImpl implements BoardController {
 
     }
     private void handleAddInquiry(){
+        Inquiry inquiry = new Inquiry();
+        inquiry.setUIdx(user.getUIdx());
 
+        char type = getType();
+        String title = getTitle();
+        String content = getContent();
+
+        inquiry.setIqType(type);
+        inquiry.setIqTitle(title);
+        inquiry.setIqContent(content);
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = addInquiry(inquiry);
+            if(result == true) System.out.println("문의글이 등록되었습니다.");
+        } catch (Exception e) {
+            System.out.println("문의글 등록에 실패했습니다: " + e.getMessage());
+        }
     }
     private void handleAddResponse(int iqIdx){
 
@@ -573,6 +596,24 @@ public class BoardControllerImpl implements BoardController {
                 throw new RuntimeException(e);
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            }
+        }
+    }
+    private char getType(){
+        while(true) {
+            String type = inputNum("""
+                    ============================================================
+                      1. 1:1 문의 | 2. 일반 문의
+                    ============================================================
+                    >\t""");
+            switch (type) {
+                case "1" -> {
+                    return '0';
+                }
+                case "2" -> {
+                    return '1';
+                }
+                default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         }
     }

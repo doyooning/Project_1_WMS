@@ -25,4 +25,5 @@ public interface BoardController {
 
     List<Inquiry> getInquiryList();
     Inquiry getInquiry(Object userInfo, int iqIdx);
+    Boolean addInquiry(Inquiry inquiry);
 }
