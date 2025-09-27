@@ -403,6 +403,10 @@ public class BoardControllerImpl implements BoardController {
     public Boolean modifyResponse(Response response) {
         return board.modifyResponse(response);
     }
+    @Override
+    public Boolean removeResponse(int iqIdx) {
+        return board.removeResponse(iqIdx);
+    }
 
 
 
@@ -580,7 +584,17 @@ public class BoardControllerImpl implements BoardController {
             System.out.println("문의 답변 수정에 실패했습니다: " + e.getMessage());
         }
     }
-    private void handleRemoveResponse(int iqIdx){}
+    private void handleRemoveResponse(int iqIdx){
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = removeResponse(iqIdx);
+            if(result == true) System.out.println("문의 답변이 삭제되었습니다.");
+        } catch (Exception e) {
+            System.out.println("문의 답변 삭제에 실패했습니다: " + e.getMessage());
+        }
+    }
 
 
 

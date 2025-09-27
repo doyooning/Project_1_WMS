@@ -25,4 +25,5 @@ public interface BoardService {
 
     boolean addResponse(Response response);
     boolean modifyResponse(Response response);
+    boolean removeResponse(int iqIdx);
 }

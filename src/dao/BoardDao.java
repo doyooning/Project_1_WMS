@@ -370,4 +370,23 @@ public class BoardDao implements Board {
         }
         return 0;
     }
+
+    @Override
+    public int removeResponse(int iqIdx) {
+        // CallableStatement 사용으로 변경
+        try {
+            conn = DBUtil.getConnection();
+            String sql = "{call removeResponse(?)}";
+            cstmt = conn.prepareCall(sql);
+
+            cstmt.setInt(1, iqIdx);
+
+            return cstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            disConnect();
+        }
+        return 0;
+    }
 }
