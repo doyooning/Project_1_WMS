@@ -20,7 +20,12 @@ public class WarehouseService {
 
     public List<Warehouse> getWarehouseList() {
         warehouseDao = WarehouseDao.getInstance();
-        return warehouseDao.getWarehouseList();
+
+        List<Warehouse> warehouseList = warehouseDao.getWarehouseList();
+        if(warehouseList == null) {System.out.println("전체 현황 리스트를 불러오는 중 오류가 발생했습니다."); }
+        else if(warehouseList.size() == 0) {System.out.println("창고 리스트에 창고가 존재하지 않습니다."); }
+
+        return warehouseList;
     }
 
     public boolean addWarehouse(Warehouse temp) {
@@ -49,7 +54,9 @@ public class WarehouseService {
 
     public Warehouse getWarehouse(String wUniqueNum) {
         int check = warehouseDao.checkWarehouseExist(wUniqueNum); // count 이용해서 해당 창고 존재하는지 확인
-        if(check == 0) return null;
+        if(check == -1){ System.out.print("창고 존재 확인 중 에러가 발생했습니다. "); return null;}
+        else if(check == 0){
+            System.out.print("해당 창고는 존재하지 않습니다. "); return null;}
 
         Warehouse warehouse = warehouseDao.getWarehouse(wUniqueNum);
         return warehouse;
@@ -58,7 +65,7 @@ public class WarehouseService {
     public List<Warehouse> getAddressWarehouse(int doIdx){
         List<Warehouse> addrWarehouseList = warehouseDao.getAddressWarehouse(doIdx);
 
-        if(addrWarehouseList == null || addrWarehouseList.isEmpty()) return null;
+        if(addrWarehouseList == null) return null;
 
         return addrWarehouseList;
     }
@@ -66,7 +73,7 @@ public class WarehouseService {
     public List<Warehouse> getTypeWarehouse(int wtIdx){
         List<Warehouse> typeWarehouseList = warehouseDao.getTypeWarehouse(wtIdx);
 
-        if(typeWarehouseList == null || typeWarehouseList.isEmpty()) return null;
+        if(typeWarehouseList == null) return null;
 
         return typeWarehouseList;
     }

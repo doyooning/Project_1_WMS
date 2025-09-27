@@ -1,12 +1,14 @@
 package controller;
 
 import domain.Warehouse;
+import domain.WarehouseAdmin;
 import service.WarehouseService;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+//이 class에서는 User 저장이 의미없음. 어짜피 각 유저마다 시작하는 메소드가 정해져있음
 public class WarehouseController {
     private WarehouseService warehouseService;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -26,23 +28,27 @@ public class WarehouseController {
         return warehouseController;
     }
 
+
     public void showWarehouseMenu() {
         //총관리자인 경우
-        System.out.println(
-                """
-                        ============================================================
-                        ========================창고 전체 메뉴=========================
-                        이용할 서비스를 선택해주세요.
-                        1. 창고 등록
-                        2. 창고 조회
-                        ------------------------------------------------------------
-                        """
-        );
-        selectWarehouseMenu();
+        while(true){
+            System.out.println(
+                    """
+                            ============================================================
+                            ========================창고 전체 메뉴=========================
+                            이용할 서비스를 선택해주세요.
+                            1. 창고 등록
+                            2. 창고 조회
+                            ------------------------------------------------------------
+                            """
+            );
+            boolean flag = selectWarehouseMenu();
+            if(!flag) break;
+        }
         //총관리자가 아닌 경우 바로 showWarehouseSearchMenu부터 시작
     }
 
-    private void selectWarehouseMenu() {
+    private boolean selectWarehouseMenu() {
         //총관리자인 경우에만 실행가능한 메소드
         while (true) {
             try {
@@ -52,10 +58,10 @@ public class WarehouseController {
                 if (!input.trim().matches("[12]")) {
                     System.out.println("1-2까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요.");
                     continue;
-                } else if (input.trim().toLowerCase().equals("exit")) return;
+                } else if (input.trim().toLowerCase().equals("exit")) return false;
 
                 switch (input) {
-                    case "1" -> getWarehouse();
+                    case "1" ->showWarehouseAddition();
                     case "2" -> showWarehouseSearchMenu();
                 }
                 break;
@@ -63,6 +69,7 @@ public class WarehouseController {
                 throw new RuntimeException(e);
             }
         }
+        return true;
     }
 
     private void showWarehouseAddition(){
@@ -107,7 +114,7 @@ public class WarehouseController {
 
             //나머지 예외처리는 service에서 할 예정
             Warehouse temp = new Warehouse();
-            temp.setWIdx(wIdx);
+            temp.setWUniqueNum(wIdx);
             temp.setWName(wName);
             temp.setWAddr(wAddr);
             temp.setWtName(wtName.trim().replaceAll("\\s", ""));
@@ -133,7 +140,7 @@ public class WarehouseController {
     }
 
 
-    private void showWarehouseSearchMenu() {
+    public void showWarehouseSearchMenu() {
         //총관리자, 창고관리자인 경우
         System.out.println(
                 """
@@ -144,17 +151,6 @@ public class WarehouseController {
                         2. 창고 고유 번호별 조회
                         3. 소재지별 조회
                         4. 창고 종류별 조회
-                        ------------------------------------------------------------
-                        """
-        );
-
-        //배송기사, 일반회원, 비회원인 경우
-        System.out.println(
-                """
-                        ============================================================
-                        ==========================창고 조회===========================
-                        창고 조회 종류를 선택해주세요. 
-                        1. 전체 현황 리스트 조회
                         ------------------------------------------------------------
                         """
         );
@@ -173,22 +169,20 @@ public class WarehouseController {
                 } else if (input.trim().toLowerCase().equals("exit")) return;
 
                 //이후 switch로 case 구분
-
-
-                //회원, 비회원, 배송기사 확인 후 실행
-                if (!input.trim().matches("[1]")) {
-                    System.out.println("1만 입력할 수 있습니다. 다시 입력해주세요.");
-                } else if (input.trim().toLowerCase().equals("exit")) return;
-
-                //이후 switch로 case 구분
-
+                switch(Integer.parseInt(input.trim())){
+                    case 1 -> showAllWarehouseList();
+                    case 2 -> showWIdxWarehouseList();
+                    case 3 -> showAddrWarehouseList();
+                    case 4 -> showTypeWarehouseList();
+                }
+                break;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    private void showAllWarehouseList() {
+    public void showAllWarehouseList() {
         //모두가 조회 가능
         System.out.println(
                         """
@@ -201,7 +195,7 @@ public class WarehouseController {
         System.out.println("------------------------------------------------------------");
 
         List<Warehouse> warehouseList = warehouseService.getWarehouseList();
-
+        if(warehouseList == null || warehouseList.size() == 0) return;
         //목록이 많은 경우 한번에 20개까지만 보기
         printList(warehouseList, 1);
     }
@@ -222,7 +216,7 @@ public class WarehouseController {
             else {
                 temp = warehouseService.getWarehouse(wUniqueNum);
                 if(temp == null) {
-                    System.out.println("해당 창고가 존재하지 않습니다. 창고 고유 번호를 다시 입력해주세요.\n");
+                    System.out.println("창고 고유 번호를 다시 입력해주세요.\n");
                 }else break;
             }
         }
@@ -270,7 +264,9 @@ public class WarehouseController {
         if(menuNum == -1) return;
         List<Warehouse> warehouseList = warehouseService.getAddressWarehouse(menuNum);
 
-        if(warehouseList == null || warehouseList.isEmpty()) {} //예외처리
+        if(warehouseList == null) {
+            System.out.println("소재지별 창고 조회 리스트를 불러오는 중 예외가 발생했습니다."); return;
+        } //예외처리
 
         String menu = String.format("%-8s%-10s%-7s%-7s%-17s", "창고번호", "창고이름", "창고임대료", "창고별재고", "상세주소");
         System.out.println(menu);
@@ -316,10 +312,12 @@ public class WarehouseController {
                 """
         );
         int result = getWarehouseType();
-        if(result == -1) return;
+        if(result == -1) return; //exit
         List<Warehouse> warehouseList = warehouseService.getTypeWarehouse(result);
 
-        if(warehouseList == null || warehouseList.isEmpty()) {} //예외 처리
+        if(warehouseList == null) {
+            System.out.println("창고 종류별 창고 조회 중 예외가 발생했습니다."); return ;
+        } //예외 처리
 
         String menu = String.format("%-8s%-10s%-8s%-8s%-9s", "창고번호", "창고이름", "창고임대료", "창고별재고", "도주소");
         System.out.println(menu);
