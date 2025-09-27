@@ -414,6 +414,13 @@ public class OutboundControllerImpl implements InOutboundController{
                         return -1;
                     }
                     printRequestByPeriod(requestList);
+                    System.out.print(
+                            """
+                            ============================================================
+                            아무 키나 누르면 메뉴 화면으로 이동합니다.
+                            :\s"""
+                    );
+                    String input = br.readLine();
 
                 }
                 case 3 -> {
@@ -809,9 +816,9 @@ public class OutboundControllerImpl implements InOutboundController{
             System.out.printf(
                     """
                     ============================================================
-                    [%d] 요청번호 %3s
-                      요청자  | 창고ID |   출고물품   |        출고일자
-                    %-8s  %-2s  %-15s  %-19s
+                    [%d] 요청번호 %-3s
+                      요청자 | 창고ID |     입고물품     |        입고일자
+                     %-6s    %-2s    %-15s%-19s
                     
                     """, count, requests.get(0), requests.get(2), requests.get(1),
                     requests.get(3), requests.get(4)
