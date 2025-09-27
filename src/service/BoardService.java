@@ -24,4 +24,5 @@ public interface BoardService {
 
     boolean addInquiry(Inquiry inquiry);
     boolean modifyInquiry(Inquiry inquiry);
+    boolean removeInquiry(int iqIdx);
 }
