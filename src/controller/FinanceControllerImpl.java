@@ -710,7 +710,8 @@ public class FinanceControllerImpl implements FinanceController {
         System.out.println("-".repeat(60));
     }
     private void printSubApprovalDetail(Map<String, Object> result){
-        System.out.printf("%d  |  %d  |  %s \n", (int)result.get("availableAmount"), (int)result.get("requiredAmount"), String.valueOf(result.get("result")));
+        System.out.println("[구독승인 검토 내용]");
+        System.out.printf("수용가능용량 : %d  |  사용자 요구용량 : %d  |  승인가능여부 : %s \n", (int)result.get("availableAmount"), (int)result.get("requiredAmount"), String.valueOf(result.get("result")));
     }
 
 
