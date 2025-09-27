@@ -113,19 +113,8 @@ public class OutboundService implements InOutboundService {
     }
 
     public List<List<String>> getRequestListByPeriod(String start, String end) {
-        try {
-            // sql에서 사용 가능한 date타입으로 변환
-            Date startDate = (Date) sdf.parse(start);
-            Date endDate = (Date) sdf.parse(end);
-            Timestamp startTimestamp = new Timestamp(startDate.getTime());
-            Timestamp endTimestamp = new Timestamp(endDate.getTime());
+        List<List<String>> list = outboundDao.getRequestListByPeriod(start, end);
 
-            List<List<String>> list = outboundDao.getRequestListByPeriod(startTimestamp, endTimestamp);
-            return list;
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return list;
     }
 }

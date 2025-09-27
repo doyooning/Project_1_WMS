@@ -385,6 +385,13 @@ public class InboundControllerImpl implements InOutboundController{
                         return -1;
                     }
                     printPendingRequest(pRequestList);
+                    System.out.print(
+                            """
+                            ============================================================
+                            아무 키나 누르면 메뉴 화면으로 이동합니다.
+                            :\s"""
+                    );
+                    String input = br.readLine();
 
                 }
                 // 기간별 입고 현황
@@ -413,7 +420,7 @@ public class InboundControllerImpl implements InOutboundController{
                     if (requestList == null) {
                         return -1;
                     }
-                    printPendingRequest(requestList);
+                    printRequestByPeriod(requestList);
 
 
                 }
@@ -693,8 +700,8 @@ public class InboundControllerImpl implements InOutboundController{
         System.out.printf(
                 """
                 ============================================================
-                 요청번호 |  입고일자  |  창고위치  |                 |  요청자  |
-                %4d\t  %10s\t %3d\t            \t%8s
+                 요청번호 |  입고일자  | 창고위치 |  요청자  |
+                   %-3d  %-10s  %-3d   %-8s
                 
                 """, vo.getInRequestId(), outformat.format(vo.getInDate()), vo.getWId(), vo.getUName()
         );
@@ -702,16 +709,16 @@ public class InboundControllerImpl implements InOutboundController{
 
         for (List<String> item : list) {
             System.out.printf("""
-                 순번 |             물품이름               |  수량  |   단가   |
-                %4s\t  %-20s\t     %4s\t%10s
+                 순번 |       물품이름       |  수량  |    단가    |
+                  %-3s  %-16s  %-4s    %-8s
                 """, item.get(0), item.get(1), item.get(2), item.get(3)
             );
             totalPrice += (Integer.parseInt(item.get(2)) * Integer.parseInt(item.get(3)));
         }
 
         System.out.printf("""
-                                                                 | 총 금액  |
-                                                                  %8d
+                                                   |   총 금액  |
+                                                        %-8d
                 """, totalPrice);
     }
 
@@ -765,11 +772,11 @@ public class InboundControllerImpl implements InOutboundController{
             System.out.printf(
                     """
                     ============================================================
-                     요청번호 |  입고기한  | 창고 |      요청일자     |
-                      %4s       %10s     %3s        %15s
+                     요청번호 |   입고기한   | 창고 |      요청일자     |
+                      %-4s %-10s  %-3s %-15s
                     
-                                                  |  요청상태  |     입고일자     |
-                                                     %10s          %15s
+                                                 |  요청상태  |      입고일자     |
+                                                  %-10s %-15s
                     
                     """,  requests.get(0), requests.get(1), requests.get(2),
                     requests.get(3),  requests.get(4), requests.get(5)
@@ -783,7 +790,7 @@ public class InboundControllerImpl implements InOutboundController{
                     """
                     ============================================================
                      요청번호 | 순번 | 물품번호 |      물품명     |  수량  | 창고번호 |
-                      %4s    %4s    %3s        %20s      %4s   %2s
+                      %-4s    %-4s    %-3s   %-14s  %-4s    %-3s
                     
                     """,  items.get(0), items.get(1), items.get(2),
                     items.get(3),  items.get(4), items.get(5)
@@ -796,11 +803,29 @@ public class InboundControllerImpl implements InOutboundController{
             System.out.printf(
                     """
                     ============================================================
-                    요청번호| 창고 |          물품정보          |      입고일자      |
-                      %4s    %3s    %15s     %20s
+                    요청번호 %3s , %4s 님의 입고 요청이 대기중입니다.
+                    창고ID | 상품건수 |   입고기한   |        요청일자
+                      %-2s     %-3s     %-10s     %-19s
                     
-                    """,  requests.get(0), requests.get(1), requests.get(2),
+                    """,  requests.get(0), requests.get(2), requests.get(1),
                     requests.get(3),  requests.get(4), requests.get(5)
+            );
+        }
+    }
+
+    public void printRequestByPeriod(List<List<String>> list) {
+        int count = 0;
+        for (List<String> requests : list) {
+            count++;
+            System.out.printf(
+                    """
+                    ============================================================
+                    [%d] 요청번호 %3s
+                      요청자  | 창고ID |   입고물품   |        입고일자
+                    %-8s  %-2s  %-15s  %-19s
+                    
+                    """, count, requests.get(0), requests.get(2), requests.get(1),
+                    requests.get(3), requests.get(4)
             );
         }
     }

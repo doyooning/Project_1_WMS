@@ -20,8 +20,8 @@ public class Main {
         // 회원번호 필요
         int[] userData = new int[2];
         // 임시 유저 데이터 (회원번호, 권한구분)
-        userData[0] = 3;
-        userData[1] = 2;
+        userData[0] = 1;
+        userData[1] = 1;
 
         inoutcontrol.showMenu(userData);
 

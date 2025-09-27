@@ -351,7 +351,7 @@ public class OutboundDAO implements InOutboundDAO {
         }
     }
 
-    public List<List<String>> getRequestListByPeriod(Timestamp startDate, Timestamp endDate) {
+    public List<List<String>> getRequestListByPeriod(String startDate, String endDate) {
         String sql = "{call getOutReqListByPeriod(?, ?)}";
         List<List<String>> requestList = new ArrayList<>();
 
@@ -359,8 +359,8 @@ public class OutboundDAO implements InOutboundDAO {
             CallableStatement call =  conn.prepareCall(sql)
         ) {
             // 데이터
-            call.setTimestamp(1, startDate);
-            call.setTimestamp(2, endDate);
+            call.setString(1, startDate);
+            call.setString(2, endDate);
 
             // 실행
             boolean hasResult = call.execute();
@@ -370,8 +370,9 @@ public class OutboundDAO implements InOutboundDAO {
                         List<String> periodReqList = new ArrayList<>();
                         periodReqList.add(String.valueOf(rs.getInt(1))); // outRequestIdx
                         periodReqList.add(String.valueOf(rs.getInt(2))); // wIdx
-                        periodReqList.add(rs.getString(3)); // itemInfo(...등 n건)
-                        periodReqList.add(String.valueOf(rs.getTimestamp(4))); // outboundDate
+                        periodReqList.add(rs.getString(3)); // uName
+                        periodReqList.add(rs.getString(4)); // itemInfo(...등 n건)
+                        periodReqList.add(String.valueOf(rs.getTimestamp(5))); // outboundDate
                         requestList.add(periodReqList);
                     }
                 }

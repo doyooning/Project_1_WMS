@@ -413,7 +413,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     if (requestList == null) {
                         return -1;
                     }
-                    printPendingRequest(requestList);
+                    printRequestByPeriod(requestList);
 
                 }
                 case 3 -> {
@@ -792,11 +792,29 @@ public class OutboundControllerImpl implements InOutboundController{
             System.out.printf(
                     """
                     ============================================================
-                    요청번호| 창고 |          물품정보          |      출고일자      |
-                      %4s    %3s    %15s     %20s
+                    요청번호 %3s , %4s 님의 출고 요청이 대기중입니다.
+                    창고ID | 상품건수 |   출고기한   |        요청일자
+                      %-2s     %-3s     %-10s     %-19s
                     
-                    """,  requests.get(0), requests.get(1), requests.get(2),
+                    """,  requests.get(0), requests.get(2), requests.get(1),
                     requests.get(3),  requests.get(4), requests.get(5)
+            );
+        }
+    }
+
+    public void printRequestByPeriod(List<List<String>> list) {
+        int count = 0;
+        for (List<String> requests : list) {
+            count++;
+            System.out.printf(
+                    """
+                    ============================================================
+                    [%d] 요청번호 %3s
+                      요청자  | 창고ID |   출고물품   |        출고일자
+                    %-8s  %-2s  %-15s  %-19s
+                    
+                    """, count, requests.get(0), requests.get(2), requests.get(1),
+                    requests.get(3), requests.get(4)
             );
         }
     }
