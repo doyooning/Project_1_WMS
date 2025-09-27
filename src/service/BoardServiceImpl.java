@@ -109,4 +109,11 @@ public class BoardServiceImpl implements BoardService {
         else return false;
     }
 
+    @Override
+    public boolean removeResponse(int iqIdx) {
+        int result = boardDao.removeResponse(iqIdx);
+        if(result > 0) return true;
+        else return false;
+    }
+
 }
