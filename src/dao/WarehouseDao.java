@@ -2,6 +2,8 @@ package dao;
 
 import Util.DBUtil;
 import domain.Warehouse;
+import exception.DaoException;
+
 import java.util.*;
 import java.sql.*;
 import java.util.concurrent.Callable;
@@ -37,9 +39,8 @@ public class WarehouseDao {
 
             return warehouseList; //warehouseList가 0이면 창고없음
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 전체 현황 리스트를 불러오는 중 오류가 발생했습니다.", e);
         }
-        return null;//에러
     }
 
     public boolean addWarehouse(Warehouse warehouse) {
@@ -58,9 +59,8 @@ public class WarehouseDao {
             boolean result = cs.execute();
             return result;
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 창고 등록 도중 문제가 발생했습니다.", e);
         }
-        return false;
     }
 
     public int getDoIdx(String doName){
@@ -77,9 +77,8 @@ public class WarehouseDao {
             }
             return 0; //해당 doName이 존재하지 않음
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 도주소번호를 조회하던 중 문제가 발생했습니다.", e);
         }
-        return -1; //에러발생
     }
 
     public int getWtIdx(String wtName){
@@ -94,11 +93,10 @@ public class WarehouseDao {
                     return rs.getInt(1);
                 }
             }
-            return 0; //해당 doName이 존재하지 않음
+            return 0; //해당 wtName이 존재하지 않음
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 창고타입번호를 조회하던 중 문제가 발생했습니다.", e);
         }
-        return -1; //에러발생
     }
 
     public Warehouse getWarehouse(String wUniqueNum) {
@@ -123,9 +121,8 @@ public class WarehouseDao {
                 return warehouse;
             }
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 창고 번호로 창고를 조회하던 중 문제가 발생했습니다.", e);
         }
-        return null;
     }
 
     public int checkWarehouseExist(String wUniqueNum){
@@ -139,9 +136,8 @@ public class WarehouseDao {
             cs.execute();
             return cs.getInt(2); //있으면 1, 아니면 0
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 창고 존재 확인 중 문제가 발생했습니다.", e);
         }
-        return -1; //에러발생
     }
 
     public List<Warehouse> getAddressWarehouse(int doIdx){
@@ -168,9 +164,8 @@ public class WarehouseDao {
                 return warehouseList;
             }
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 소재지별 창고 조회 중 문제가 발생했습니다.", e);
         }
-        return null;
     }
 
     public List<Warehouse> getTypeWarehouse(int wtIdx){
@@ -197,8 +192,7 @@ public class WarehouseDao {
                 return warehouseList;
             }
         }catch (SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 창고타입별 창고 조회 중 문제가 발생했습니다.", e);
         }
-        return null;
     }
 }

@@ -5,6 +5,7 @@ import domain.CheckLog;
 import domain.EntityStatus;
 import domain.Stock;
 import domain.Warehouse;
+import exception.DaoException;
 
 import java.util.*;
 import java.sql.*;
@@ -45,13 +46,12 @@ public class StockDao {
 
             return stockList;
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e.printStackTrace();}
+            throw new DaoException("[DB] 전체 재고 조회 도중 문제가 발생했습니다.", e);
         }
-        return null;    //query문 작성할 때 바코드번호로 order by
     }
 
     //카테고리는 procedure 작성할 때 해당 카테고리가 존재하는지 확인해줘야함!!!!
-    public List<Stock> getPrimaryCategoryStockList(String cName){
+    public List<Stock> getPrimaryCategoryStockList(String cName) throws DaoException {
         conn = DBUtil.getConnection();
 
         int result = checkCategoryExist(cName, 2);
@@ -81,15 +81,14 @@ public class StockDao {
 
                 return stockList;
             }catch(SQLException e){
-                try{conn.rollback();}catch(SQLException e1){e.printStackTrace();}
+                throw new DaoException("[DB] 대분류별 재고 조회 도중 문제가 발생했습니다.", e);
             }
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e.printStackTrace();}
+            throw new DaoException("[DB] 대분류별 재고 조회 도중 문제가 발생했습니다.", e);
         }
-        return null;
     }
 
-    public List<Stock> getSecondaryCategoryStockList(String cName){
+    public List<Stock> getSecondaryCategoryStockList(String cName) throws DaoException{
         conn = DBUtil.getConnection();
 
         int result = checkCategoryExist(cName, 3);
@@ -119,15 +118,14 @@ public class StockDao {
 
                 return stockList;
             }catch(SQLException e){
-                try{conn.rollback();}catch(SQLException e1){e.printStackTrace();}
+                throw new DaoException("[DB] 중분류별 재고 조회 도중 문제가 발생했습니다.", e);
             }
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e.printStackTrace();}
+            throw new DaoException("[DB] 중분류별 재고 조회 도중 문제가 발생했습니다.", e);
         }
-        return null;
     }
 
-    public List<Stock> getTertiaryCategoryStockList(String cName){
+    public List<Stock> getTertiaryCategoryStockList(String cName) throws DaoException{
         conn = DBUtil.getConnection();
 
         int result = checkCategoryExist(cName, 4);
@@ -157,12 +155,11 @@ public class StockDao {
 
                 return stockList;
             }catch(SQLException e){
-                try{conn.rollback();}catch(SQLException e1){e.printStackTrace();}
+                throw new DaoException("[DB] 소분류별 재고 조회 도중 문제가 발생했습니다.", e);
             }
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e.printStackTrace();}
+            throw new DaoException("[DB] 소분류별 재고 조회 도중 문제가 발생했습니다.", e);
         }
-        return null;
     }
 
     public List<Stock> getProductStockList(String pIdx){
@@ -193,12 +190,11 @@ public class StockDao {
                 return stockList;
                 //만약 stockList.size()가 0이면 해당 바코드번호가 없음
             }catch(SQLException e){
-                try{conn.rollback();}catch(SQLException e1){e.printStackTrace();}
+                throw new DaoException("[DB] 바코드 번호에 대한 재고 조회 도중 예외가 발생했습니다.", e);
             }
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e.printStackTrace();}
+            throw new DaoException("[DB] 바코드 번호에 대한 재고 조회 도중 예외가 발생했습니다.", e);
         }
-        return null;
     }
 
     private int checkCategoryExist(String cName, int num){
@@ -216,9 +212,8 @@ public class StockDao {
 
             return rtn;
         }catch(SQLException e){
-            e.printStackTrace();
+            throw new DaoException("[DB] 카테고리 존재 여부 확인 중 문제가 발생했습니다.", e);
         }
-        return 0;
     }
 
     public int addCheckLog(int wIdx){
@@ -236,9 +231,8 @@ public class StockDao {
 
             return rtn;
         }catch(SQLException e){
-            e.printStackTrace();
+            throw new DaoException("[DB] 재고실사가 등록 중 문제가 발생했습니다. ", e);
         }
-        return 0;
     }
 
     public CheckLog getNewCheckLog(){
@@ -260,16 +254,15 @@ public class StockDao {
 
             return checkLog;
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 등록된 재고 실사를 조회하던 중 문제가 발생했습니다. ", e);
         }
-        return null;
     }
 
-    public int removeCheckLog(int clIdx){
+    public int removeCheckLog(int clIdx) throws DaoException{
         conn = DBUtil.getConnection();
 
         int result = checkCheckLogExist(clIdx);
-        if(result == 0) return -1; //존재하지 않음
+        if(result == 0) return -2; //존재하지 않음
 
         String sql = "{call removeCheckLog(?,?)}";
 
@@ -283,9 +276,8 @@ public class StockDao {
 
             return rtn;
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 재고실사 삭제 중 문제가 발생했습니다.", e);
         }
-        return -1; //에러
     }
 
     private int checkCheckLogExist(int clIdx){
@@ -300,9 +292,8 @@ public class StockDao {
             int rtn = cs.getInt(2);
             return rtn;
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 재고 실사가 존재하는지 확인 중 문제가 발생했습니다.", e);
         }
-        return 0;
     }
 
     public List<CheckLog> getCheckLogList(int check, int wIdx){
@@ -328,12 +319,11 @@ public class StockDao {
                 }
                 return checkLogList;
             }catch (SQLException e){
-                e.printStackTrace();
+                throw new DaoException("[DB] 전체 재고 실사 조회 중 문제가 발생했습니다.", e);
             }
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 전체 재고 실사 조회 중 문제가 발생했습니다.", e);
         }
-        return null;//에러발생
     }
 
     public int checkWarehouseIsStorage(String wUniqueNum){
@@ -349,9 +339,8 @@ public class StockDao {
             int rtn = cs.getInt(2);
             return rtn; //0이면 마이크로 1이면 보관형
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 창고 타입 확인 중 문제가 발생했습니다.", e);
         }
-        return -1; //에러발생
     }
 
     public List<CheckLog> getSectionCheckLoglist(String wUniqueNum, String wsName){
@@ -377,9 +366,8 @@ public class StockDao {
                 return checkLogList;
             }
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 섹션별 재고 실사 조회 중 문제가 발생했습니다.", e);
         }
-        return null;
     }
 
     public List<CheckLog> getWarehouseCheckLogList(String wUniqueNum){
@@ -404,9 +392,8 @@ public class StockDao {
                 return checkLogList;
             }
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 창고별 재고 실사 조회 중 문제가 발생했습니다.", e);
         }
-        return null;
     }
 
     public Warehouse getWarehouseInfo(int wIdx){
@@ -423,11 +410,12 @@ public class StockDao {
                 }
 
                 return warehouse;
+            }catch(SQLException e){
+                throw new DaoException("[DB] 창고관리자가 관리하는 창고 조회 중 문제가 발생했습니다.", e);
             }
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 창고관리자가 관리하는 창고 조회 중 문제가 발생했습니다.", e);
         }
-        return null;
     }
 
     public boolean updateCheckLog(int clIdx){
@@ -438,13 +426,10 @@ public class StockDao {
         try(CallableStatement cs = conn.prepareCall(sql)){
             cs.setInt(1, clIdx);
 
-            cs.execute();
-
-            return true;
+            return cs.execute();
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 재고 실사 수정 중 문제가 발생했습니다.", e);
         }
-        return false;
     }
 
     public boolean checkUpdateCondition(int clIdx, int wIdx){
@@ -461,9 +446,8 @@ public class StockDao {
             if(rtn==1) return true;
             return false;
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 재고 실사 수정 조건을 확인하는 중 문제가 발생했습니다.", e);
         }
-        return false;
     }
 
     public boolean checkWsNameExist(String wsName){
@@ -479,9 +463,8 @@ public class StockDao {
             if(rtn==1) return true;
             return false;
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 해당 섹션명 존재 여부를 확인하는 중 문제가 발생했습니다.", e);
         }
-        return false;
     }
 
     public boolean checkWarehouseAdminCondition(int clIdx, int wIdx){
@@ -499,8 +482,7 @@ public class StockDao {
             if(rtn==1) return true;
             return false;
         }catch(SQLException e){
-            try{conn.rollback();}catch(SQLException e1){e1.printStackTrace();}
+            throw new DaoException("[DB] 해당 실사로그를 작성한 창고관리자를 확인하는 중 문제가 생겼습니다..",e);
         }
-        return false;
     }
 }
