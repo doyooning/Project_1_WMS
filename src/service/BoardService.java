@@ -23,4 +23,5 @@ public interface BoardService {
     Inquiry getInquiry(Object userInfo, int iqIdx);
 
     boolean addInquiry(Inquiry inquiry);
+    boolean modifyInquiry(Inquiry inquiry);
 }

@@ -387,6 +387,10 @@ public class BoardControllerImpl implements BoardController {
     public Boolean addInquiry(Inquiry inquiry) {
         return board.addInquiry(inquiry);
     }
+    @Override
+    public Boolean modifyInquiry(Inquiry inquiry) {
+        return board.modifyInquiry(inquiry);
+    }
 
 
     private void handleGetAnnouncementDetail() {
@@ -474,6 +478,25 @@ public class BoardControllerImpl implements BoardController {
         }
     }
     private void handleModifyInquiry(int iqIdx){
+        Inquiry inquiry = new Inquiry();
+        char type = getType();
+        String title = getTitle();
+        String content = getContent();
+
+        inquiry.setIqIdx(iqIdx);
+        inquiry.setIqType(type);
+        inquiry.setIqTitle(title);
+        inquiry.setIqContent(content);
+
+        Boolean tf = getConfirm();
+        if(tf==false) return;
+        try {
+            // API 메서드 호출
+            Boolean result = modifyInquiry(inquiry);
+            if(result == true) System.out.println("문의글이 수정되었습니다.");
+        } catch (Exception e) {
+            System.out.println("문의글 수정에 실패했습니다: " + e.getMessage());
+        }
 
     }
     private void handleRemoveInquiry(int iqIdx){
