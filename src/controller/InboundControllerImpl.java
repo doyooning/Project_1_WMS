@@ -1,6 +1,5 @@
 package controller;
 
-import dao.InboundBillVO;
 import service.InboundService;
 
 import java.io.BufferedReader;
@@ -551,14 +550,14 @@ public class InboundControllerImpl implements InOutboundController{
                 System.out.print(Messages.RETURN_MENU.getText());
             } else if (select.charAt(0) == 'Y') {
                 // 요청 정보 전송
-                InboundBillVO vo = inboundService.showReqBillData(requestId);
-                List<List<String>> list = inboundService.showItemBillData(requestId);
+                List<String> reqBillData = inboundService.showReqBillData(requestId);
+                List<List<String>> itemBillData = inboundService.showItemBillData(requestId);
 
-                if ((vo == null) || (list == null)) {
+                if ((reqBillData == null) || (itemBillData == null)) {
                     System.out.print(Errors.VO_LOAD_ERROR.getText());
                     rtn = -1;
                 } else {
-                    printBill(vo, list);
+                    printBill(reqBillData, itemBillData);
                     System.out.print(
                             Messages.PRESS_ANY_KEY.getText()
                     );
@@ -577,14 +576,14 @@ public class InboundControllerImpl implements InOutboundController{
     }
 
     // 입고고지서 양식대로 출력
-    public void printBill(InboundBillVO vo, List<List<String>> list) {
+    public void printBill(List<String> reqList, List<List<String>> itemList) {
 
         System.out.printf(
-                Messages.PRINT_BILL_REQUEST_IN.getText(), vo.getInRequestId(), outformat.format(vo.getInDate()), vo.getWId(), vo.getUName()
+                Messages.PRINT_BILL_REQUEST_IN.getText(), reqList.get(0), reqList.get(1).split(" ")[0], reqList.get(2), reqList.get(3)
         );
         int totalPrice = 0;
 
-        for (List<String> item : list) {
+        for (List<String> item : itemList) {
             System.out.printf(Messages.PRINT_BILL_ITEM.getText(), item.get(0), item.get(1), item.get(2), item.get(3)
             );
             totalPrice += (Integer.parseInt(item.get(2)) * Integer.parseInt(item.get(3)));

@@ -1,6 +1,5 @@
 package controller;
 
-import dao.OutboundBillVO;
 import service.OutboundService;
 
 import java.io.BufferedReader;
@@ -547,14 +546,14 @@ public class OutboundControllerImpl implements InOutboundController{
                 System.out.print(Messages.RETURN_MENU.getText());
             } else if (select.charAt(0) == 'Y') {
                 // 요청 정보 전송
-                OutboundBillVO vo = outboundService.showReqBillData(requestId);
+                List<String> reqBillData = outboundService.showReqBillData(requestId);
                 List<List<String>> list = outboundService.showItemBillData(requestId);
 
-                if ((vo == null) || (list == null)) {
+                if ((reqBillData == null) || (list == null)) {
                     System.out.print(Errors.VO_LOAD_ERROR.getText());
                     rtn = -1;
                 } else {
-                    printBill(vo, list);
+                    printBill(reqBillData, list);
                     System.out.print(Messages.PRESS_ANY_KEY.getText());
                     String input = br.readLine();
 
@@ -571,14 +570,14 @@ public class OutboundControllerImpl implements InOutboundController{
     }
 
     // 출고고지서 양식대로 출력
-    public void printBill(OutboundBillVO vo, List<List<String>> list) {
+    public void printBill(List<String> reqList, List<List<String>> itemList) {
 
         System.out.printf(
-                Messages.PRINT_BILL_REQUEST_OUT.getText(), vo.getOutRequestId(), outformat.format(vo.getOutDate()), vo.getWId(), vo.getUName()
+                Messages.PRINT_BILL_REQUEST_OUT.getText(), reqList.get(0), reqList.get(1).split(" ")[0], reqList.get(2), reqList.get(3)
         );
         int totalPrice = 0;
 
-        for (List<String> item : list) {
+        for (List<String> item : itemList) {
             System.out.printf(Messages.PRINT_BILL_ITEM.getText(), item.get(0), item.get(1), item.get(2), item.get(3)
             );
             totalPrice += (Integer.parseInt(item.get(2)) * Integer.parseInt(item.get(3)));

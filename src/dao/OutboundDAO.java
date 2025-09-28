@@ -171,7 +171,7 @@ public class OutboundDAO implements InOutboundDAO {
     }
 
     // Outbound 요청 정보 불러오기
-    public OutboundBillVO readOutReqBillData(int requestId) {
+    public List<String> readOutReqBillData(int requestId) {
         String sql = "{call readOutReqBillData(?, ?, ?, ?, ?)}";
 
         try(Connection conn = DBUtil.getConnection();
@@ -186,15 +186,15 @@ public class OutboundDAO implements InOutboundDAO {
 
             // 실행
             call.execute();
-            OutboundBillVO outboundBill = new OutboundBillVO();
+            List<String> requestBill = new ArrayList<>();
 
-            outboundBill.setOutRequestId(call.getInt(2));
-            outboundBill.setOutDate(call.getTimestamp(3));
-            outboundBill.setWId(call.getInt(4));
-            outboundBill.setUName(call.getString(5));
+            requestBill.add(String.valueOf(call.getInt(2)));
+            requestBill.add(String.valueOf(call.getTimestamp(3)));
+            requestBill.add(String.valueOf(call.getInt(4)));
+            requestBill.add(call.getString(5));
 
             // 리턴
-            return outboundBill;
+            return requestBill;
 
         } catch (SQLException e) {
             e.printStackTrace();

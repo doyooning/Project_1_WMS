@@ -173,7 +173,7 @@ public class InboundDAO implements InOutboundDAO {
     }
 
     // Inbound 요청 정보 불러오기
-    public InboundBillVO readInReqBillData(int requestId) {
+    public List<String> readInReqBillData(int requestId) {
         String sql = "{call readInReqBillData(?, ?, ?, ?, ?)}";
 
         try(Connection conn = DBUtil.getConnection();
@@ -188,15 +188,15 @@ public class InboundDAO implements InOutboundDAO {
 
             // 실행
             call.execute();
-            InboundBillVO inboundBill = new InboundBillVO();
+            List<String> requestBill = new ArrayList<>();
 
-            inboundBill.setInRequestId(call.getInt(2));
-            inboundBill.setInDate(call.getTimestamp(3));
-            inboundBill.setWId(call.getInt(4));
-            inboundBill.setUName(call.getString(5));
+            requestBill.add(String.valueOf(call.getInt(2)));
+            requestBill.add(String.valueOf(call.getTimestamp(3)));
+            requestBill.add(String.valueOf(call.getInt(4)));
+            requestBill.add(call.getString(5));
 
             // 리턴
-            return inboundBill;
+            return requestBill;
 
         } catch (SQLException e) {
             e.printStackTrace();

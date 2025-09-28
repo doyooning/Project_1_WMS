@@ -1,11 +1,7 @@
 package service;
 
-import dao.InboundBillVO;
 import dao.InboundDAO;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -91,17 +87,17 @@ public class InboundService implements InOutboundService{
     }
 
     @Override
-    public InboundBillVO showReqBillData(int requestId) {
-        InboundBillVO vo = inboundDao.readInReqBillData(requestId);
+    public List<String> showReqBillData(int requestId) {
+        List<String> reqBillData = inboundDao.readInReqBillData(requestId);
 
-        return vo;
+        return reqBillData;
     }
 
     @Override
     public List<List<String>> showItemBillData(int requestId) {
-        List<List<String>> list = inboundDao.readInItemBillData(requestId);
+        List<List<String>> itemBillData = inboundDao.readInItemBillData(requestId);
 
-        return list;
+        return itemBillData;
     }
 
     @Override
