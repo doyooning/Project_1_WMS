@@ -119,17 +119,6 @@ public class OutboundControllerImpl implements InOutboundController{
                     }
 
                 }
-                if (status == -1) {
-                    System.out.println(Errors.DATA_INPUT_ERROR.getText());
-                } else {
-                    System.out.printf(
-                            """
-                            ============================================================
-                            출고 요청이 등록되었습니다. 회원님의 요청 번호는 [%d] 입니다.
-                            ============================================================
-                            """, status
-                    );
-                }
             }
             case 2 -> {
                 // 2. 출고 요청 수정
@@ -464,7 +453,6 @@ public class OutboundControllerImpl implements InOutboundController{
 
             // 실행 결과 오류 검증
             if (requestStatus == -1) {
-                System.out.println(Errors.DATA_INPUT_ERROR.getText());
                 return -1;
             }
 
@@ -488,7 +476,6 @@ public class OutboundControllerImpl implements InOutboundController{
 
                 // 실행 결과 오류 검증
                 if (itemStatus == -1) {
-                    System.out.println(Errors.DATA_INPUT_ERROR.getText());
                     return -1;
                 }
 
@@ -534,7 +521,7 @@ public class OutboundControllerImpl implements InOutboundController{
             System.out.print(
                     """
                     ============================================================
-                    입고기한(8자리 숫자로 입력) :\s"""
+                    출고기한(8자리 숫자로 입력) :\s"""
             );
             String dueDate = br.readLine();
             Date date = informat.parse(dueDate);
@@ -768,11 +755,11 @@ public class OutboundControllerImpl implements InOutboundController{
             System.out.printf(
                     """
                     ============================================================
-                     요청번호 |  출고기한  | 창고 |      요청일자     |
-                      %4s       %10s     %3s        %15s
+                     요청번호 |  출고기한  | 창고번호 |      요청일자      |
+                      %4s   %-10s   %3s     %-19s
                     
-                                                  |  요청상태  |     출고일자     |
-                                                     %10s          %15s
+                                               |  요청상태  |      출고일자       |
+                                                 %-8s   %-19s
                     
                     """,  requests.get(0), requests.get(1), requests.get(2),
                     requests.get(3),  requests.get(4), requests.get(5)
@@ -785,8 +772,8 @@ public class OutboundControllerImpl implements InOutboundController{
             System.out.printf(
                     """
                     ============================================================
-                     요청번호 | 순번 | 물품번호 |      물품명     |  수량  | 창고번호 |
-                      %4s    %4s    %3s        %20s      %4s   %2s
+                    요청번호|순번|    물품번호   |      물품명      | 수량 |창고번호|
+                     %3s    %-2s  %13s  %-15s  %3s   %2s
                     
                     """,  items.get(0), items.get(1), items.get(2),
                     items.get(3),  items.get(4), items.get(5)

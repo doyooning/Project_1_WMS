@@ -65,8 +65,7 @@ public class OutboundDAO implements InOutboundDAO {
             int rtn = call.getInt(4);
             return rtn;
 
-        } catch (
-                SQLException e) {
+        } catch (SQLException e) {
             return -1;
         }
     }
