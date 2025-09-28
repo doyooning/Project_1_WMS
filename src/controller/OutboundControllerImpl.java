@@ -42,22 +42,12 @@ public class OutboundControllerImpl implements InOutboundController{
         // 권한 구분 임의 구현..
         if (userData[1] == 1) {
             System.out.print(
-                    """
-                    ============================================================
-                    1. 출고 요청 승인		  2. 출고 요청 수정		 3. 출고 요청 취소
-                    4. 출고고지서 출력	      5. 출고 현황 조회		 6. 나가기
-                    ============================================================
-                    메뉴를 고르세요 :\s"""
+                    Messages.ADMIN_MAIN_MENU_OUT.getText()
             );
 
         } else if (userData[1] == 2) {
             System.out.print(
-                    """
-                    ============================================================
-                    1. 출고 요청 		  2. 출고 요청 수정		 3. 출고 요청 취소
-                    4. 출고고지서 출력	      5. 출고 현황 조회		 6. 나가기
-                    ============================================================
-                    메뉴를 고르세요 :\s"""
+                    Messages.USER_MAIN_MENU_OUT.getText()
             );
         }
         try {
@@ -94,11 +84,7 @@ public class OutboundControllerImpl implements InOutboundController{
 
                     } else {
                         System.out.printf(
-                                """
-                                ============================================================
-                                요청번호 [%d] 출고 요청 승인이 완료되었습니다.
-                                ============================================================
-                                """, status
+                                Messages.REQUEST_APPROVED_OUT.getText(), status
                         );
                     }
 
@@ -110,11 +96,7 @@ public class OutboundControllerImpl implements InOutboundController{
 
                     } else {
                         System.out.printf(
-                                """
-                                ============================================================
-                                출고 요청이 등록되었습니다. 회원님의 요청 번호는 [%d] 입니다.
-                                ============================================================
-                                """, status
+                                Messages.REQUEST_REGISTERED_OUT.getText(), status
                         );
                     }
 
@@ -133,11 +115,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     System.out.println(Errors.DATA_INPUT_ERROR.getText());
                 } else {
                     System.out.print(
-                            """
-                            ============================================================
-                            출고 요청 취소가 완료되었습니다.
-                            ============================================================
-                            """
+                            Messages.REQUEST_CANCELED_OUT.getText()
                     );
                 }
 
@@ -150,11 +128,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     System.out.println(Errors.DATA_INPUT_ERROR.getText());
                 } else {
                     System.out.print(
-                            """
-                            .
-                            .
-                            .
-                            """
+                            Messages.DISPLAY_ADJUST.getText()
                     );
                 }
             }
@@ -181,13 +155,7 @@ public class OutboundControllerImpl implements InOutboundController{
     public void showUpdateMenu() {
         int status = 0;
         System.out.print(
-                """
-                ============================================================
-                ####################### 출고 요청 수정 #######################
-                ============================================================
-                1. 요청 정보 수정 	    2. 물품 정보 수정           3. 뒤로가기
-                ============================================================
-                메뉴를 고르세요 :\s"""
+                Messages.UPDATE_MENU_OUT.getText()
         );
         try {
             int menuNum = Integer.parseInt(br.readLine());
@@ -220,9 +188,7 @@ public class OutboundControllerImpl implements InOutboundController{
                 case 1 -> {
                     // 요청 번호 입력
                     System.out.print(
-                            """
-                            ============================================================
-                            수정할 출고요청 번호를 입력해주세요 :\s"""
+                            Messages.ENTER_REQUEST_ID_UPDATE_OUT.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
                     status = InputRequestDataUpdate(requestId);
@@ -234,9 +200,7 @@ public class OutboundControllerImpl implements InOutboundController{
                 case 2 -> {
                     // 요청 번호 입력
                     System.out.print(
-                            """
-                            ============================================================
-                            수정할 출고요청 번호를 입력해주세요 :\s"""
+                            Messages.ENTER_REQUEST_ID_UPDATE_OUT.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
                     status = InputRequestItemUpdate(requestId);
@@ -260,22 +224,15 @@ public class OutboundControllerImpl implements InOutboundController{
     public void showInfoMenu(int uId) {
         int status = 0;
         System.out.print(
-                """
-                ============================================================
-                ####################### 출고 현황 조회 #######################
-                ============================================================
-                1. 출고 요청 조회		    2. 요청 상품 리스트	      3. 뒤로가기
-                ============================================================
-                메뉴를 고르세요. :\s"""
+                Messages.USER_INFO_MENU_OUT.getText()
         );
         try {
             int menuNum = Integer.parseInt(br.readLine());
             status = selectInfoMenu(menuNum, uId);
             if (status == 1) {
-                System.out.println("============================================================");
-                System.out.println(".");
-                System.out.println(".");
-                System.out.println(".");
+                System.out.print(
+                        Messages.DISPLAY_ADJUST.getText()
+                );
                 showInfoMenu(uId);
             } else if (status == -1) {
                 System.out.println(Errors.DATA_INPUT_ERROR.getText());
@@ -296,22 +253,15 @@ public class OutboundControllerImpl implements InOutboundController{
     public void showAdminInfoMenu() {
         int status = 0;
         System.out.print(
-                """
-                ============================================================
-                ####################### 출고 현황 조회 #######################
-                ============================================================
-                1. 미승인 요청 조회		2. 기간별 출고 현황	      3. 뒤로가기
-                ============================================================
-                메뉴를 고르세요. :\s"""
+                Messages.ADMIN_INFO_MENU_OUT.getText()
         );
         try {
             int menuNum = Integer.parseInt(br.readLine());
             status = selectAdminInfoMenu(menuNum);
             if (status == 1) {
-                System.out.println("============================================================");
-                System.out.println(".");
-                System.out.println(".");
-                System.out.println(".");
+                System.out.print(
+                        Messages.DISPLAY_ADJUST.getText()
+                );
                 showAdminInfoMenu();
             } else if (status == -1) {
                 System.out.println(Errors.DATA_INPUT_ERROR.getText());
@@ -342,10 +292,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     }
                     printRequestList(requestList);
                     System.out.print(
-                            """
-                            ============================================================
-                            아무 키나 누르면 메뉴 화면으로 이동합니다.
-                            :\s"""
+                            Messages.PRESS_ANY_KEY.getText()
                     );
                     String input = br.readLine();
 
@@ -358,10 +305,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     }
                     printRequestItemList(requestItemList);
                     System.out.print(
-                            """
-                            ============================================================
-                            아무 키나 누르면 메뉴 화면으로 이동합니다.
-                            :\s"""
+                            Messages.PRESS_ANY_KEY.getText()
                     );
                     String input = br.readLine();
 
@@ -389,30 +333,21 @@ public class OutboundControllerImpl implements InOutboundController{
                     }
                     printPendingRequest(pRequestList);
                     System.out.print(
-                            """
-                            ============================================================
-                            아무 키나 누르면 메뉴 화면으로 이동합니다.
-                            :\s"""
+                            Messages.PRESS_ANY_KEY.getText()
                     );
                     String input = br.readLine();
                 }
                 // 기간별 출고 현황
                 case 2 -> {
                     System.out.print(
-                            """
-                            ============================================================
-                                                   [기간별 출고 현황]
-                            ============================================================
-                            시작 날짜를 입력하세요(8자리 숫자로 입력) :\s"""
+                            Messages.ENTER_START_DATE_OUT.getText()
                     );
                     String startDate = br.readLine();
                     Date date = informat.parse(startDate);
                     String newStartDate = outformat.format(date);
 
                     System.out.print(
-                            """
-                            ============================================================
-                            종료 날짜를 입력하세요(8자리 숫자로 입력) :\s"""
+                            Messages.ENTER_END_DATE.getText()
                     );
                     String endDate = br.readLine();
                     date = informat.parse(endDate);
@@ -424,10 +359,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     }
                     printRequestByPeriod(requestList);
                     System.out.print(
-                            """
-                            ============================================================
-                            아무 키나 누르면 메뉴 화면으로 이동합니다.
-                            :\s"""
+                            Messages.PRESS_ANY_KEY.getText()
                     );
                     String input = br.readLine();
 
@@ -443,27 +375,17 @@ public class OutboundControllerImpl implements InOutboundController{
         return status;
     }
 
-    /*
-     * ---------------------서브 메서드----------------------
-     * */
 
     public int InputRequestData(int uId) {
         int rtn = 0;
         try {
             System.out.print(
-                    """
-                    ============================================================
-                    ######################### 출고 요청 #########################
-                    ============================================================
-                    요청 정보를 작성해주세요.
-                    출고위치(창고번호) :\s"""
+                    Messages.ENTER_REQUEST_ID_OUT.getText()
             );
             int wId = Integer.parseInt(br.readLine());
 
             System.out.print(
-                    """
-                    ============================================================
-                    출고기한(8자리 숫자로 입력) :\s"""
+                    Messages.ENTER_DUE_DATE_OUT.getText()
             );
             String dueDate = br.readLine();
             Date date = informat.parse(dueDate);
@@ -478,17 +400,12 @@ public class OutboundControllerImpl implements InOutboundController{
 
             while (true) {
                 System.out.print(
-                        """
-                        ============================================================
-                        물품 정보를 작성해주세요.
-                        물품번호 :\s"""
+                        Messages.ENTER_ITEM_ID.getText()
                 );
                 String productId = br.readLine();
 
                 System.out.print(
-                        """
-                        ============================================================
-                        물품개수 :\s"""
+                        Messages.ENTER_ITEM_QUANTITY.getText()
                 );
                 int productQuantity = Integer.parseInt(br.readLine());
                 // 물품 정보 전송
@@ -500,13 +417,7 @@ public class OutboundControllerImpl implements InOutboundController{
                 }
 
                 System.out.print(
-                        """
-                        ============================================================
-                        물품 정보가 정상적으로 입력되었습니다.
-                        ============================================================
-                        Q를 입력하면 메뉴 화면으로 이동하며,
-                        물품 정보를 추가로 입력하려면 Q를 제외한 아무 키나 입력하십시오.
-                        :\s"""
+                        Messages.ITEM_REGISTERED.getText()
                 );
                 String select = br.readLine();
                 if (select.charAt(0) == 'Q' || select.charAt(0) == 'q') {
@@ -531,17 +442,12 @@ public class OutboundControllerImpl implements InOutboundController{
 
         try {
             System.out.print(
-                    """
-                    ============================================================
-                    수정할 내용을 입력해주세요.
-                    창고번호 :\s"""
+                    Messages.ENTER_WARE_ID.getText()
             );
             int wId = Integer.parseInt(br.readLine());
 
             System.out.print(
-                    """
-                    ============================================================
-                    출고기한(8자리 숫자로 입력) :\s"""
+                    Messages.ENTER_DUE_DATE_OUT.getText()
             );
             String dueDate = br.readLine();
             Date date = informat.parse(dueDate);
@@ -565,25 +471,17 @@ public class OutboundControllerImpl implements InOutboundController{
 
         try {
             System.out.print(
-                    """
-                    ============================================================
-                    물품 순번을 입력해주세요.
-                    순번 :\s"""
+                    Messages.ENTER_ITEM_NUM.getText()
             );
             int itemId = Integer.parseInt(br.readLine());
 
             System.out.print(
-                    """
-                    ============================================================
-                    물품 정보를 작성해주세요.
-                    물품번호 :\s"""
+                    Messages.ENTER_ITEM_ID.getText()
             );
             String productId = br.readLine();
 
             System.out.print(
-                    """
-                    ============================================================
-                    물품개수 :\s"""
+                    Messages.ENTER_ITEM_QUANTITY.getText()
             );
             int productQuantity = Integer.parseInt(br.readLine());
 
@@ -604,27 +502,17 @@ public class OutboundControllerImpl implements InOutboundController{
         int rtn = 0;
         try {
             System.out.print(
-                    """
-                    ============================================================
-                    취소할 출고요청 번호를 입력해주세요.
-                    요청번호 :\s"""
+                    Messages.ENTER_CANCEL_REQUEST_ID_OUT.getText()
             );
             int requestId = Integer.parseInt(br.readLine());
 
             // 취소 확인
             System.out.print(
-                    """
-                    ============================================================
-                    출고 요청을 취소하시겠습니까?
-                    (Y/N 입력) :\s"""
+                    Messages.ENTER_CANCEL_CONFIRM_OUT.getText()
             );
             String select = br.readLine().toUpperCase();
             if (select.charAt(0) == 'N') {
-                System.out.print("""
-                    ============================================================
-                    메뉴 화면으로 이동합니다.
-                    ============================================================
-                    """);
+                System.out.print(Messages.RETURN_MENU.getText());
             } else if (select.charAt(0) == 'Y') {
                 // 요청 정보 전송
                 int requestStatus = outboundService.cancelRequest(requestId);
@@ -646,29 +534,17 @@ public class OutboundControllerImpl implements InOutboundController{
         int rtn = 0;
         try {
             System.out.print(
-                    """
-                    ============================================================
-                    ####################### 출고고지서 출력 #######################
-                    ============================================================
-                    출력할 출고요청 번호를 입력해주세요.
-                    요청번호 :\s"""
+                    Messages.ENTER_PRINT_REQUEST_ID_OUT.getText()
             );
             int requestId = Integer.parseInt(br.readLine());
 
             // 출력 확인
             System.out.print(
-                    """
-                    ============================================================
-                    해당 출고요청의 출고고지서를 출력하시겠습니까?
-                    (Y/N 입력) :\s"""
+                    Messages.ENTER_PRINT_CONFIRM_OUT.getText()
             );
             String select = br.readLine().toUpperCase();
             if (select.charAt(0) == 'N') {
-                System.out.print("""
-                    ============================================================
-                    메뉴 화면으로 이동합니다.
-                    ============================================================
-                    """);
+                System.out.print(Messages.RETURN_MENU.getText());
             } else if (select.charAt(0) == 'Y') {
                 // 요청 정보 전송
                 OutboundBillVO vo = outboundService.showReqBillData(requestId);
@@ -679,10 +555,7 @@ public class OutboundControllerImpl implements InOutboundController{
                     rtn = -1;
                 } else {
                     printBill(vo, list);
-                    System.out.print("""
-                    ============================================================
-                    아무 키나 누르면 입고 관리 메뉴로 돌아갑니다.
-                    :\s""");
+                    System.out.print(Messages.PRESS_ANY_KEY.getText());
                     String input = br.readLine();
 
                 }
@@ -701,57 +574,34 @@ public class OutboundControllerImpl implements InOutboundController{
     public void printBill(OutboundBillVO vo, List<List<String>> list) {
 
         System.out.printf(
-                """
-                ============================================================
-                 요청번호 |  출고일자  | 창고위치 |  요청자  |
-                   %-3d  %-10s  %-3d   %-8s
-                
-                """, vo.getOutRequestId(), outformat.format(vo.getOutDate()), vo.getWId(), vo.getUName()
+                Messages.PRINT_BILL_REQUEST_OUT.getText(), vo.getOutRequestId(), outformat.format(vo.getOutDate()), vo.getWId(), vo.getUName()
         );
         int totalPrice = 0;
 
         for (List<String> item : list) {
-            System.out.printf("""
-                 순번 |       물품이름       |  수량  |    단가    |
-                  %-3s  %-16s  %-4s    %-8s
-                """, item.get(0), item.get(1), item.get(2), item.get(3)
+            System.out.printf(Messages.PRINT_BILL_ITEM.getText(), item.get(0), item.get(1), item.get(2), item.get(3)
             );
             totalPrice += (Integer.parseInt(item.get(2)) * Integer.parseInt(item.get(3)));
         }
 
-        System.out.printf("""
-                                                   |   총 금액  |
-                                                        %-8d
-                """, totalPrice);
+        System.out.printf(Messages.PRINT_BILL_TOTAL.getText(), totalPrice);
     }
 
     public int approveRequest() {
         int rtn = 0;
         try {
             System.out.print(
-                    """
-                    ============================================================
-                    ####################### 출고 요청 승인 #######################
-                    ============================================================
-                    승인할 출고요청 번호를 입력해주세요.
-                    요청번호 :\s"""
+                    Messages.ENTER_APPROVE_REQUEST_OUT.getText()
             );
             int requestId = Integer.parseInt(br.readLine());
 
             // 승인 확인
             System.out.print(
-                    """
-                    ============================================================
-                    해당 출고요청을 승인하시겠습니까?
-                    (Y/N 입력) :\s"""
+                    Messages.ENTER_APPROVE_CONFIRM_OUT.getText()
             );
             String select = br.readLine().toUpperCase();
             if (select.charAt(0) == 'N') {
-                System.out.print("""
-                    ============================================================
-                    메뉴 화면으로 이동합니다.
-                    ============================================================
-                    """);
+                System.out.print(Messages.RETURN_MENU.getText());
             } else if (select.charAt(0) == 'Y') {
                 // 승인 정보 전송
                 int approveStatus = outboundService.approveRequest(requestId);
@@ -773,15 +623,7 @@ public class OutboundControllerImpl implements InOutboundController{
     public void printRequestList(List<List<String>> list) {
         for (List<String> requests : list) {
             System.out.printf(
-                    """
-                    ============================================================
-                     요청번호 |  출고기한  | 창고번호 |      요청일자      |
-                      %4s   %-10s   %3s     %-19s
-                    
-                                               |  요청상태  |      출고일자       |
-                                                 %-8s   %-19s
-                    
-                    """,  requests.get(0), requests.get(1), requests.get(2),
+                    Messages.PRINT_REQUEST_LIST_OUT.getText(),  requests.get(0), requests.get(1), requests.get(2),
                     requests.get(3),  requests.get(4), requests.get(5)
             );
         }
@@ -790,12 +632,7 @@ public class OutboundControllerImpl implements InOutboundController{
     public void printRequestItemList(List<List<String>> list) {
         for (List<String> items : list) {
             System.out.printf(
-                    """
-                    ============================================================
-                    요청번호|순번|    물품번호   |      물품명      | 수량 |창고번호|
-                     %3s    %-2s  %13s  %-15s  %3s   %2s
-                    
-                    """,  items.get(0), items.get(1), items.get(2),
+                    Messages.PRINT_REQUEST_ITEM_LIST.getText(),  items.get(0), items.get(1), items.get(2),
                     items.get(3),  items.get(4), items.get(5)
             );
         }
@@ -804,13 +641,7 @@ public class OutboundControllerImpl implements InOutboundController{
     public void printPendingRequest(List<List<String>> list) {
         for (List<String> requests : list) {
             System.out.printf(
-                    """
-                    ============================================================
-                    요청번호 %3s , %4s 님의 출고 요청이 대기중입니다.
-                    창고ID | 상품건수 |   출고기한   |        요청일자
-                      %-2s     %-3s     %-10s     %-19s
-                    
-                    """,  requests.get(0), requests.get(2), requests.get(1),
+                    Messages.PRINT_PENDING_LIST_OUT.getText(),  requests.get(0), requests.get(2), requests.get(1),
                     requests.get(3),  requests.get(4), requests.get(5)
             );
         }
@@ -821,13 +652,7 @@ public class OutboundControllerImpl implements InOutboundController{
         for (List<String> requests : list) {
             count++;
             System.out.printf(
-                    """
-                    ============================================================
-                    [%d] 요청번호 %-3s
-                      요청자 | 창고ID |     입고물품     |        입고일자
-                     %-6s    %-2s    %-15s%-19s
-                    
-                    """, count, requests.get(0), requests.get(2), requests.get(1),
+                    Messages.PRINT_REQUEST_LIST_PERIOD_OUT.getText(), count, requests.get(0), requests.get(2), requests.get(1),
                     requests.get(3), requests.get(4)
             );
         }

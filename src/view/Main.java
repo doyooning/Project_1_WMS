@@ -16,12 +16,12 @@ public class Main {
         InboundControllerImpl incontrol = InboundControllerImpl.getInstance();
         OutboundControllerImpl outcontrol = OutboundControllerImpl.getInstance();
 
-        InOutboundController inoutcontrol = outcontrol;
+        InOutboundController inoutcontrol = incontrol;
         // 관리자 : 1, 일반회원 : 2
         // 회원번호 필요
         int[] userData = new int[2];
         // 임시 유저 데이터 (회원번호, 권한구분)
-        userData[0] = 5;
+        userData[0] = 3;
         userData[1] = 2;
 
         inoutcontrol.showMenu(userData);
