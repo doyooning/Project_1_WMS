@@ -7,14 +7,16 @@ import java.sql.Timestamp;
 @Data
 public class Stock {
     private String pIdx;
-    private String wIdx;
+    private String pName;
+    private int wIdx;
+    private String wUniqueNum;
     private int wsIdx;
+    private int sAvail;
     private int sWhole;
     private int sNotAvail;
     private int sSafe;
-    private String pName;
-    private String PriCategory;
-    private String SecCategory;
-    private String TerCategory;
+    private String pCategory;
+    private String sCategory;
+    private String tCategory;
     private Timestamp updatedAt;
 }

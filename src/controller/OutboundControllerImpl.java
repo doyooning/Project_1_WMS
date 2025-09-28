@@ -341,6 +341,13 @@ public class OutboundControllerImpl implements InOutboundController{
                         return -1;
                     }
                     printRequestList(requestList);
+                    System.out.print(
+                            """
+                            ============================================================
+                            아무 키나 누르면 메뉴 화면으로 이동합니다.
+                            :\s"""
+                    );
+                    String input = br.readLine();
 
                 }
                 // 요청 상품 리스트
@@ -350,6 +357,13 @@ public class OutboundControllerImpl implements InOutboundController{
                         return -1;
                     }
                     printRequestItemList(requestItemList);
+                    System.out.print(
+                            """
+                            ============================================================
+                            아무 키나 누르면 메뉴 화면으로 이동합니다.
+                            :\s"""
+                    );
+                    String input = br.readLine();
 
                 }
                 case 3 -> {
@@ -374,7 +388,13 @@ public class OutboundControllerImpl implements InOutboundController{
                         return -1;
                     }
                     printPendingRequest(pRequestList);
-
+                    System.out.print(
+                            """
+                            ============================================================
+                            아무 키나 누르면 메뉴 화면으로 이동합니다.
+                            :\s"""
+                    );
+                    String input = br.readLine();
                 }
                 // 기간별 출고 현황
                 case 2 -> {
@@ -683,8 +703,8 @@ public class OutboundControllerImpl implements InOutboundController{
         System.out.printf(
                 """
                 ============================================================
-                 요청번호 |  출고일자  |  창고위치  |                 |  요청자  |
-                   %8d       %11s       %10d                          %8s
+                 요청번호 |  출고일자  | 창고위치 |  요청자  |
+                   %-3d  %-10s  %-3d   %-8s
                 
                 """, vo.getOutRequestId(), outformat.format(vo.getOutDate()), vo.getWId(), vo.getUName()
         );
@@ -692,16 +712,16 @@ public class OutboundControllerImpl implements InOutboundController{
 
         for (List<String> item : list) {
             System.out.printf("""
-                 순번 |             물품이름               |  수량  |   단가   |
-                 %4s  \t\t\t\t\t      %35s      \t\t\t\t\t      %3s \t   %10s
+                 순번 |       물품이름       |  수량  |    단가    |
+                  %-3s  %-16s  %-4s    %-8s
                 """, item.get(0), item.get(1), item.get(2), item.get(3)
             );
             totalPrice += (Integer.parseInt(item.get(2)) * Integer.parseInt(item.get(3)));
         }
 
         System.out.printf("""
-                                                                 | 총 금액  |
-                                                                    %10d
+                                                   |   총 금액  |
+                                                        %-8d
                 """, totalPrice);
     }
 

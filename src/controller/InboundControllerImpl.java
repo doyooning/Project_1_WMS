@@ -352,7 +352,13 @@ public class InboundControllerImpl implements InOutboundController{
                         return -1;
                     }
                     printRequestList(requestList);
-
+                    System.out.print(
+                            """
+                            ============================================================
+                            아무 키나 누르면 메뉴 화면으로 이동합니다.
+                            :\s"""
+                    );
+                    String input = br.readLine();
                 }
                 // 요청 상품 리스트
                 case 2 -> {
@@ -361,7 +367,13 @@ public class InboundControllerImpl implements InOutboundController{
                         return -1;
                     }
                     printRequestItemList(requestItemList);
-
+                    System.out.print(
+                            """
+                            ============================================================
+                            아무 키나 누르면 메뉴 화면으로 이동합니다.
+                            :\s"""
+                    );
+                    String input = br.readLine();
                 }
                 case 3 -> {
                     // 뒤로가기
