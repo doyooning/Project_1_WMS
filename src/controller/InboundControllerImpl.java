@@ -227,16 +227,20 @@ public class InboundControllerImpl implements InOutboundController{
                             Messages.ENTER_REQUEST_ID_UPDATE_IN.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
-                    boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
-                    if (accessStatus == false) {
-                        System.out.print(
-                                Errors.INACCESSIBLE_REQUEST_ERROR.getText()
-                        );
-                        return -1;
+                    if (authority == 1) {
+
+                    } else if (authority == 3) {
+                        boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
+                        if (accessStatus == false) {
+                            System.out.print(
+                                    Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                            );
+                            return -1;
+                        }
                     }
 
                     status = InputRequestDataUpdate(requestId);
-                    if (status == -1) {
+                    if (status < 0) {
                         return -1;
                     }
                 }
@@ -247,16 +251,20 @@ public class InboundControllerImpl implements InOutboundController{
                             Messages.ENTER_REQUEST_ID_UPDATE_IN.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
-                    boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
-                    if (accessStatus == false) {
-                        System.out.print(
-                                Errors.INACCESSIBLE_REQUEST_ERROR.getText()
-                        );
-                        return -1;
+                    if (authority == 1) {
+
+                    } else if (authority == 3) {
+                        boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
+                        if (accessStatus == false) {
+                            System.out.print(
+                                    Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                            );
+                            return -1;
+                        }
                     }
 
                     status = InputRequestItemUpdate(requestId);
-                    if (status == -1) {
+                    if (status < 0) {
                         return -1;
                     }
 
@@ -541,9 +549,7 @@ public class InboundControllerImpl implements InOutboundController{
 
             // 요청 정보 전송
             int requestStatus = inboundService.updateRequest(requestId, wId, newDueDate);
-            if (requestStatus == -1) {
-                rtn = -1;
-            }
+            rtn = requestStatus;
 
         } catch (IOException | NumberFormatException e) {
             System.out.print(
@@ -581,9 +587,7 @@ public class InboundControllerImpl implements InOutboundController{
 
             // 요청 정보 전송
             int requestStatus = inboundService.updateItem(requestId, itemId, productId, productQuantity);
-            if (requestStatus == -1) {
-                rtn = -1;
-            }
+            rtn = requestStatus;
 
         } catch (IOException | NumberFormatException e) {
             System.out.print(
