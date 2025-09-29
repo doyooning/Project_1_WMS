@@ -12,7 +12,6 @@ public class Stock {
     private String wUniqueNum;
     private int wsIdx;
     private int sAvail;
-    private int sWhole;
     private int sNotAvail;
     private int sSafe;
     private String pCategory;
