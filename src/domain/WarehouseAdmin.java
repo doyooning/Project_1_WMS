@@ -18,3 +18,4 @@ public class WarehouseAdmin {
     private int taIdx;
     private int wIdx;
 }
+
