@@ -131,6 +131,7 @@ public class FinanceServiceImpl implements FinanceService {
         SubApproval prevSub = financeDao.getPrevSub(subApproval.getUIdx());
         if (prevSub != null) {
             SubApproval newSub = new SubApproval();
+            newSub.setWaIdx(subApproval.getWaIdx());
             newSub.setUIdx(subApproval.getUIdx());
             newSub.setSmIdx(subApproval.getSmIdx());
 
