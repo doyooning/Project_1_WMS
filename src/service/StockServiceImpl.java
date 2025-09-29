@@ -184,6 +184,7 @@ public class StockServiceImpl implements StockService {
     }
 
     public Warehouse getWarehouseInfo(int wIdx){
+        //현재 WarehouseController에서는 창고관리자가 배당받은 wIdx만 알 수 있기 때문에 정보를 불러와서, 해당 창고타입을 체크하기 위함
         try {
             if(stockDao == null) stockDao = StockDao.getInstance();
 
@@ -199,9 +200,10 @@ public class StockServiceImpl implements StockService {
         try {
             if(stockDao == null) stockDao = StockDao.getInstance();
 
-            boolean result = stockDao.updateCheckLog(clIdx);
-            if(!result) throw new ExceptionManager(Errors.NO_CHECKLOG_UPDATE.getText());
-            return result;
+            int result = stockDao.updateCheckLog(clIdx);
+            if(result == -1) throw new ExceptionManager(Errors.NO_CHECKLOG_UPDATE.getText());
+            else if(result == 0) throw new ExceptionManager(Errors.CHECKLOG_UPDATE_WRONG.getText());
+            return true;
         } catch (DaoException e) {
             System.out.println(e.getMessage());
             return false;
