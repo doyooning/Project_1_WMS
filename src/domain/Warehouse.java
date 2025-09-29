@@ -21,3 +21,4 @@ public class Warehouse {
     private String wtName;
     private String wUniqueNum;
 }
+

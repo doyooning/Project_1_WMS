@@ -13,5 +13,5 @@ public class Outbound {
     private Timestamp outRequestDate;
     private int uIdx;
     private Timestamp outboundDate;
-    private String wIdx;
+    private int wIdx;
 }

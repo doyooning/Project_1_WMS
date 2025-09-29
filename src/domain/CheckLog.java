@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 public class CheckLog {
     private int clIdx;
     private String pIdx;
-    private String wIdx;
+    private String wUniqueNum;
     private String wName;
     private int wsIdx;
     private String wsName;
