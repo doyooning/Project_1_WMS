@@ -103,6 +103,10 @@ public class OutboundControllerImpl implements InOutboundController{
                     if (status == -1) {
                         System.out.println(Errors.DATA_INPUT_ERROR.getText());
 
+                    } else if (status == -2) {
+                        System.out.print(
+                                Messages.RETURN_MENU.getText()
+                        );
                     } else {
                         System.out.printf(
                                 Messages.REQUEST_APPROVED_OUT.getText(), status
@@ -703,6 +707,11 @@ public class OutboundControllerImpl implements InOutboundController{
                 if (approveStatus == -1) {
                     System.out.print(Errors.VO_LOAD_ERROR.getText());
                     rtn = -1;
+                } else if (approveStatus == -2) {
+                    System.out.print(
+                            Errors.CANNOT_APPROVE_ERROR.getText()
+                    );
+                    rtn = -2;
                 } else {
                     rtn = approveStatus;
                 }

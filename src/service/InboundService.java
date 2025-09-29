@@ -25,9 +25,7 @@ public class InboundService implements InOutboundService{
     @Override
     public int approveRequest(int requestId) {
         int status = inboundDao.approveRequest(requestId);
-        if(status <= 0){
-            return -1;
-        }
+
         return status;
     }
 
