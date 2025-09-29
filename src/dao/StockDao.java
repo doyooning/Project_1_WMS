@@ -1,5 +1,6 @@
 package dao;
 
+import exception.ExceptionManager;
 import util.DBUtil;
 import common.Errors;
 import domain.CheckLog;
@@ -419,7 +420,7 @@ public class StockDao {
         }
     }
 
-    public boolean updateCheckLog(int clIdx){
+    public int updateCheckLog(int clIdx){
         conn = DBUtil.getConnection();
 
         String sql = "{call updateCheckLog(?,?)}";
@@ -432,8 +433,7 @@ public class StockDao {
 
             int result = cs.getInt(2);
 
-            if(result == 1) return false;
-            return true;
+            return result;
         }catch(SQLException e){
             throw new DaoException(Errors.DB_CHECKLOG_UPDATE_ERROR.getText(), e);
         }

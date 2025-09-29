@@ -199,9 +199,10 @@ public class StockServiceImpl implements StockService {
         try {
             if(stockDao == null) stockDao = StockDao.getInstance();
 
-            boolean result = stockDao.updateCheckLog(clIdx);
-            if(!result) throw new ExceptionManager(Errors.NO_CHECKLOG_UPDATE.getText());
-            return result;
+            int result = stockDao.updateCheckLog(clIdx);
+            if(result == -1) throw new ExceptionManager(Errors.NO_CHECKLOG_UPDATE.getText());
+            else if(result == 0) throw new ExceptionManager(Errors.CHECKLOG_UPDATE_WRONG.getText());
+            return true;
         } catch (DaoException e) {
             System.out.println(e.getMessage());
             return false;
