@@ -156,15 +156,19 @@ public class WarehouseAdminDao {
     }
 
     public boolean setWIdxToWarehouseAdmin(Connection connection, int wIdx, int waIdx) throws SQLException {
-        String sql = "{call setWIdxToWarehouseAdmin(?,?)}";
+        String sql = "{call setWIdxToWarehouseAdmin(?,?,?)}";
 
         try(CallableStatement cs = connection.prepareCall(sql)) {
             cs.setInt(1, wIdx);
             cs.setInt(2, waIdx);
+            cs.registerOutParameter(3, Types.INTEGER);
 
             cs.execute();
 
-            return true;
+            int result = cs.getInt(3);
+
+            if(result == 1) return true;
+            return false;
         }
     }
 

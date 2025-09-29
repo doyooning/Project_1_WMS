@@ -461,6 +461,7 @@ public class Main {
                     break;
                 case "9":
                     showWarehouseAllocationMenu();
+                    break;
                 default:
                     System.out.println("올바른 메뉴를 선택하세요.");
             }
@@ -595,6 +596,9 @@ public class Main {
             boolean result = memberControl.setWIdxToWarehouseAdmin(wareIdx, warehouseAdminIdx);
             if(result){
                 System.out.println("창고관리자에게 창고 관리 권한을 부여했습니다.");
+            }else{
+                System.out.println("회원가입이 승인 안된 상태이거나 거부된 상태입니다.");
+                return false;
             }
         }catch(RuntimeException e){
             util.ErrorHandler.displayAndLog("창고 관리 권한을 부여하는 중 문제가 발생했습니다.", e);
