@@ -7,7 +7,6 @@ import exception.DaoException;
 
 import java.util.*;
 import java.sql.*;
-import java.util.concurrent.Callable;
 
 public class WarehouseDao {
     private static WarehouseDao warehouseDao;
@@ -194,6 +193,27 @@ public class WarehouseDao {
             }
         }catch (SQLException e){
             throw new DaoException(Errors.DB_WAREHOUSESEARCH_TYPE_ERROR.getText(), e);
+        }
+    }
+
+    public List<Warehouse> getNotAssignedWarehouses(){
+        conn = DBUtil.getConnection();
+
+        warehouseList = new ArrayList<>();
+        String sql = "{call getNotAssignedWarehouses()}";
+
+        try(CallableStatement cs = conn.prepareCall(sql); ResultSet rs = cs.executeQuery()){
+            while(rs.next()){
+                Warehouse warehouse = new Warehouse();
+                warehouse.setWIdx(rs.getInt(1));
+                warehouse.setWUniqueNum(rs.getString(2));
+                warehouse.setWName(rs.getString(3));
+
+                warehouseList.add(warehouse);
+            }
+            return warehouseList;
+        }catch(SQLException e){
+            throw new RuntimeException(e);
         }
     }
 }

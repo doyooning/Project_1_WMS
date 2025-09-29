@@ -4,6 +4,7 @@ import domain.WarehouseAdmin;
 import util.PasswordUtil;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class WarehouseAdminDao {
 
@@ -133,6 +134,58 @@ public class WarehouseAdminDao {
             ps.setString(1, hashedPassword);
             ps.setString(2, adminId);
             return ps.executeUpdate() > 0;
+        }
+    }
+
+    public java.util.List<WarehouseAdmin> getNotAssignedWarehouseAdmins(Connection connection) throws SQLException {
+        String sql = "{call getNotAssignedWarehouseAdmins()}";
+
+        java.util.List<WarehouseAdmin> warehouseAdmins = new ArrayList<>();
+        try(CallableStatement cs = connection.prepareCall(sql); ResultSet rs = cs.executeQuery()) {
+            while(rs.next()) {
+                WarehouseAdmin admin = new WarehouseAdmin();
+                admin.setWaIdx(rs.getInt(1));
+                admin.setWaName(rs.getString(2));
+                admin.setWaPhone(rs.getString(3));
+                admin.setWaEmail(rs.getString(4));
+
+                warehouseAdmins.add(admin);
+            }
+            return warehouseAdmins;
+        }
+    }
+
+    public boolean setWIdxToWarehouseAdmin(Connection connection, int wIdx, int waIdx) throws SQLException {
+        String sql = "{call setWIdxToWarehouseAdmin(?,?,?)}";
+
+        try(CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setInt(1, wIdx);
+            cs.setInt(2, waIdx);
+            cs.registerOutParameter(3, Types.INTEGER);
+
+            cs.execute();
+
+            int result = cs.getInt(3);
+
+            if(result == 1) return true;
+            return false;
+        }
+    }
+
+    public int getWarehouseAdminWIdx(Connection connection, String waId) throws SQLException {
+        String sql = "{call getWarehouseAdminWIdx(?,?)}";
+
+        try(CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, waId);
+            cs.registerOutParameter(2, Types.INTEGER);
+
+            cs.execute();
+
+            int id = cs.getInt(2);
+            if(cs.wasNull()) {
+                return 0;
+            }
+            return id;
         }
     }
 }

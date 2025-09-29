@@ -18,6 +18,9 @@ public interface MemberController {
     Object getUserInfo(String userId);
     boolean updateUserInfo(String userId, String name, String phone);
     boolean updateUserPassword(String userId, String currentPassword, String newPassword);
+    java.util.List<domain.WarehouseAdmin> getNotAssignedWarehouseAdmins();
+    boolean setWIdxToWarehouseAdmin(int wIdx, int waIdx);
+    int getWarehouseAdminWIdx(String waId);
 
     // Approvals
     java.util.List<domain.PendingUserApproval> getPendingUserApprovals();

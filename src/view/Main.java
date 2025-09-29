@@ -2,11 +2,12 @@ package view;
 
 import controller.*;
 
+import domain.WarehouseAdmin;
+import service.WarehouseServiceImpl;
 import util.ErrorHandler;
 import java.util.Scanner;
 
 public class Main {
-    // Controller 연결 선언
     private MemberController memberControl;
     private FinanceController financeControl;
     private BoardController boardControl;
@@ -17,9 +18,9 @@ public class Main {
     private String currentUserType; // 현재 로그인한 사용자 유형 저장
     private String currentUserId; // 현재 로그인한 사용자 ID 저장
     private String currentUserName; // 현재 로그인한 사용자 이름 저장
+    private WarehouseAdmin warehouseAdmin; //재고관리 - 실사로그에서 이 객체 자체가 필요
 
     public Main() {
-        // Controller 인스턴스 생성
         memberControl = MemberControllerImpl.getInstance();
         financeControl = FinanceControllerImpl.getInstance();
         boardControl = BoardControllerImpl.getInstance();
@@ -194,7 +195,6 @@ public class Main {
             // 사용자 이름 가져오기
             try {
                 Object userInfo = memberControl.getUserInfo(loginId);
-                // 로그인 후 User 정보 가져오기
                 financeControl.setLoggedInUser(userInfo);
                 boardControl.setLoggedInUser(userInfo);
                 inboundControl.setLoggedInUser(userInfo);
@@ -204,6 +204,9 @@ public class Main {
                     currentUserName = ((domain.User) userInfo).getUName();
                 } else if (userInfo instanceof domain.WarehouseAdmin) {
                     currentUserName = ((domain.WarehouseAdmin) userInfo).getWaName();
+                    warehouseAdmin = (domain.WarehouseAdmin) userInfo; //창고관리자 승인되면 객체 저장해주기
+                    int wIdx = memberControl.getWarehouseAdminWIdx(warehouseAdmin.getWaId());
+                    if(wIdx != 0){warehouseAdmin.setWIdx(wIdx);}// 0이면 현재 배당받은 창고가 없음
                 } else if (userInfo instanceof domain.TotalAdmin) {
                     currentUserName = ((domain.TotalAdmin) userInfo).getTaName();
                 }
@@ -295,10 +298,13 @@ public class Main {
                     }
                     break;
                 case "6":
-                    System.out.println("창고현황리스트 조회 기능은 추후 구현 예정입니다.");
+                    WarehouseController warehouseController = WarehouseControllerImpl.getInstance();
+                    warehouseController.showAllWarehouseList();
                     break;
                 case "7":
-                    System.out.println("재고조회 기능은 추후 구현 예정입니다.");
+                    StockController stockController = StockControllerImpl.getInstance();
+                    stockController.setCurrentUser(currentUserType, null);
+                    stockController.showStockSearchMenu();
                     break;
                 default:
                     System.out.println("올바른 메뉴를 선택하세요.");
@@ -351,10 +357,13 @@ public class Main {
                     }
                     break;
                 case "2":
-                    System.out.println("창고관리 기능은 추후 구현 예정입니다.");
+                    WarehouseController warehouseController = WarehouseControllerImpl.getInstance();
+                    warehouseController.showWarehouseSearchMenu();
                     break;
                 case "3":
-                    System.out.println("재고관리 기능은 추후 구현 예정입니다.");
+                    StockController stockController = StockControllerImpl.getInstance();
+                    stockController.setCurrentUser(currentUserType, warehouseAdmin);
+                    stockController.showStockMenu();
                     break;
                 case "4":
                     // financeControl.showFinanceMenu()의 반환값에 따라 로그아웃 처리
@@ -448,10 +457,13 @@ public class Main {
                     outboundControl.showMenu();
                     break;
                 case "6":
-                    System.out.println("창고관리 기능은 추후 구현 예정입니다.");
+                    WarehouseController warehouseController = WarehouseControllerImpl.getInstance();
+                    warehouseController.showWarehouseMenu();
                     break;
                 case "7":
-                    System.out.println("재고관리 기능은 추후 구현 예정입니다.");
+                    StockController stockController = StockControllerImpl.getInstance();
+                    stockController.setCurrentUser(currentUserType, null);
+                    stockController.showStockMenu();
                     break;
                 case "8":
                     // boardControl.showBoardMenu()의 반환값에 따라 로그아웃 처리
@@ -462,6 +474,9 @@ public class Main {
                         financeControl.logoutUser();
                         inDashboard = false;
                     }
+                    break;
+                case "9":
+                    showWarehouseAllocationMenu();
                     break;
                 default:
                     System.out.println("올바른 메뉴를 선택하세요.");
@@ -485,11 +500,127 @@ public class Main {
         System.out.println("4. 입고관리");
         System.out.println("5. 출고관리");
         System.out.println("6. 창고관리");
-        System.out.println("7. 재고관리 - 재고실사등록/재고실사수정 제외");
+        System.out.println("7. 재고관리");
         System.out.println("8. 고객센터");
+        System.out.println("9. 창고배정");
         System.out.println();
         System.out.println("============================================================");
         System.out.print("선택: ");
+    }
+
+   //총관리자는 창고관리자의 창고를 배정해줄 수 있음
+    private boolean showWarehouseAllocationMenu(){
+        System.out.println();
+        System.out.println("============================================================");
+        System.out.println("<창고 배정 화면>");
+        System.out.println("============================================================");
+
+        java.util.List<domain.Warehouse> notAssignedWarehouses;
+        java.util.List<domain.WarehouseAdmin> notAssignedWarehouseAdmins;
+
+        try {
+            notAssignedWarehouseAdmins = memberControl.getNotAssignedWarehouseAdmins();
+            notAssignedWarehouses = WarehouseServiceImpl.getInstance().getNotAssignedWarehouses();
+        } catch (RuntimeException e) {
+            util.ErrorHandler.displayAndLog("목록을 불러오는 중 오류가 발생했습니다.", e);
+            return false;
+        }
+
+        System.out.println("============================================================");
+        System.out.println("[창고관리자가 없는 창고] - 총 " + (notAssignedWarehouses == null ? 0 : notAssignedWarehouses.size()) + "명");
+        System.out.println("============================================================");
+
+        if (notAssignedWarehouses != null && !notAssignedWarehouses.isEmpty()) {
+            for (domain.Warehouse w : notAssignedWarehouses) {
+                System.out.println("창고번호: " + w.getWIdx() + ", 창고이름: " + w.getWName()
+                        + ", 창고고유번호: " +w.getWUniqueNum());
+            }
+        } else {
+            System.out.println("창고가 없습니다");
+            return false;
+        }
+
+        System.out.println("============================================================");
+        System.out.println("[창고번호를 할당받아야할 창고관리자] - 총 " + (notAssignedWarehouseAdmins== null ? 0 : notAssignedWarehouseAdmins.size()) + "명");
+        System.out.println("============================================================");
+
+        if (notAssignedWarehouseAdmins != null && !notAssignedWarehouseAdmins.isEmpty()) {
+            for (domain.WarehouseAdmin wa: notAssignedWarehouseAdmins) {
+                System.out.println("창고관리자 번호: " + wa.getWaIdx() + ", 이름: " + wa.getWaName()
+                        + ", 연락처: " +wa.getWaPhone()+", 이메일: "+wa.getWaEmail());
+            }
+        } else {
+            System.out.println("창고관리자가 없습니다.");
+            return false;
+        }
+
+        System.out.println("============================================================");
+        System.out.println("창고관리자를 할당할 창고번호를 선택해주세요.(종료시 exit를 입력해주세요)");
+        System.out.print("선택: ");
+        String input = scan.nextLine().trim();
+        if (input.equals("exit")) {return false;}
+
+        int wareIdx;
+        try {
+             wareIdx = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            System.out.println("숫자를 입력해야합니다.");
+            return false;
+        }
+
+        boolean flag = false;
+        for(domain.Warehouse w : notAssignedWarehouses){
+            if(w.getWIdx() == wareIdx){
+                flag = true;
+                break;
+            }
+        }
+
+        if(!flag){
+            System.out.println("리스트에 제시된 창고번호를 입력해야합니다.");
+            return false;
+        }
+
+        System.out.println("============================================================");
+        System.out.println("창고 관리자 번호를 선택해주세요.(종료시 exit를 입력해주세요)");
+        System.out.print("선택: ");
+        String input2 = scan.nextLine().trim();
+        if (input2.equals("exit")) {return false;}
+
+        int warehouseAdminIdx;
+        try{
+            warehouseAdminIdx = Integer.parseInt(input2);
+        }catch(NumberFormatException e){
+            System.out.println("숫자를 입력해야 합니다.");
+            return false;
+        }
+
+        flag = false;
+        for(domain.WarehouseAdmin wa : notAssignedWarehouseAdmins){
+            if(wa.getWaIdx() == warehouseAdminIdx){
+                flag = true;
+                break;
+            }
+        }
+        if(!flag){
+            System.out.println("리스트에 제시된 창고관리자 번호를 입력하셔야 합니다.");
+            return false;
+        }
+        System.out.println("============================================================");
+
+        try{
+            boolean result = memberControl.setWIdxToWarehouseAdmin(wareIdx, warehouseAdminIdx);
+            if(result){
+                System.out.println("창고관리자에게 창고 관리 권한을 부여했습니다.");
+            }else{
+                System.out.println("회원가입이 승인 안된 상태이거나 거부된 상태입니다.");
+                return false;
+            }
+        }catch(RuntimeException e){
+            util.ErrorHandler.displayAndLog("창고 관리 권한을 부여하는 중 문제가 발생했습니다.", e);
+            return false;
+        }
+        return true;
     }
 
     // 총관리자: 회원관리(승인) 화면 및 처리
