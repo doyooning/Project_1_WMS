@@ -200,6 +200,7 @@ public class BoardControllerImpl implements BoardController {
         } catch (IOException e){
             System.out.println("입력이 잘못됐습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return "continue";
     }
@@ -218,9 +219,11 @@ public class BoardControllerImpl implements BoardController {
         } catch (IOException e) {
             System.out.println("입력이 잘못됐습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (Exception e) {
             System.out.println("오류가 발생했습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return "continue";
     }
@@ -239,9 +242,11 @@ public class BoardControllerImpl implements BoardController {
         } catch (IOException e) {
             System.out.println("입력이 잘못됐습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (Exception e) {
             System.out.println("오류가 발생했습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return "continue";
     }
@@ -260,9 +265,11 @@ public class BoardControllerImpl implements BoardController {
         } catch (IOException e) {
             System.out.println("입력이 잘못됐습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         } catch (Exception e) {
             System.out.println("오류가 발생했습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return "continue";
     }
@@ -278,6 +285,7 @@ public class BoardControllerImpl implements BoardController {
         } catch (IOException e) {
             System.out.println("입력이 잘못됐습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
     private void selectAnMenu(){
@@ -291,6 +299,7 @@ public class BoardControllerImpl implements BoardController {
         } catch (IOException e) {
             System.out.println("입력이 잘못됐습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
     private void selectAnMgMenu(int anIdx){
@@ -305,6 +314,7 @@ public class BoardControllerImpl implements BoardController {
         } catch (IOException e) {
             System.out.println("입력이 잘못됐습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
     private void selectIqUserMenu(){
@@ -319,6 +329,7 @@ public class BoardControllerImpl implements BoardController {
         } catch (IOException e) {
             System.out.println("입력이 잘못됐습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
     private void selectIqMenu() {
@@ -332,6 +343,7 @@ public class BoardControllerImpl implements BoardController {
         } catch (IOException e) {
             System.out.println("입력이 잘못됐습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
     private void selectIqMgMenu(Inquiry inquiry) {
@@ -346,6 +358,7 @@ public class BoardControllerImpl implements BoardController {
         } catch (IOException e) {
             System.out.println("입력이 잘못됐습니다.");
             //throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
     private void selectRsMgMenu(Inquiry inquiry) {
@@ -360,6 +373,7 @@ public class BoardControllerImpl implements BoardController {
             } catch (IOException e) {
                 System.out.println("입력이 잘못됐습니다.");
                 //throw new RuntimeException(e);
+                e.printStackTrace();
             }
         } else{
             try {
@@ -373,6 +387,7 @@ public class BoardControllerImpl implements BoardController {
             } catch (IOException e) {
                 System.out.println("입력이 잘못됐습니다.");
                 //throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
     }
@@ -464,6 +479,7 @@ public class BoardControllerImpl implements BoardController {
             if(result == true) System.out.println("공지사항이 등록되었습니다.");
         } catch (Exception e) {
             System.out.println("공지사항 등록에 실패했습니다.");
+            e.printStackTrace();
         }
     }
     private void handleModifyAnnouncement(int anIdx) {
@@ -486,6 +502,7 @@ public class BoardControllerImpl implements BoardController {
             if(result == true) System.out.println("공지사항이 수정되었습니다.");
         } catch (Exception e) {
             System.out.println("공지사항 수정에 실패했습니다.");
+            e.printStackTrace();
         }
     }
     private void handleRemoveAnnouncement(int anIdx) {
@@ -499,6 +516,7 @@ public class BoardControllerImpl implements BoardController {
             if(result == true) System.out.println("공지사항이 삭제되었습니다.");
         } catch (Exception e) {
             System.out.println("공지사항 삭제에 실패했습니다.");
+            e.printStackTrace();
         }
     }
     private void handleGetInquiryDetail() {
@@ -538,6 +556,7 @@ public class BoardControllerImpl implements BoardController {
             if(result == true) System.out.println("문의글이 수정되었습니다.");
         } catch (Exception e) {
             System.out.println("문의글 수정에 실패했습니다.");
+            e.printStackTrace();
         }
 
     }
@@ -550,6 +569,7 @@ public class BoardControllerImpl implements BoardController {
             if(result == true) System.out.println("문의글이 삭제되었습니다.");
         } catch (Exception e) {
             System.out.println("문의글 삭제에 실패했습니다.");
+            e.printStackTrace();
         }
     }
     private void handleAddInquiry(){
@@ -572,6 +592,7 @@ public class BoardControllerImpl implements BoardController {
             if(result == true) System.out.println("문의글이 등록되었습니다.");
         } catch (Exception e) {
             System.out.println("문의글 등록에 실패했습니다.");
+            e.printStackTrace();
         }
     }
     private void handleAddResponse(int iqIdx){
@@ -590,6 +611,7 @@ public class BoardControllerImpl implements BoardController {
             if(result == true) System.out.println("문의 답변이 등록되었습니다.");
         } catch (Exception e) {
             System.out.println("문의 답변 등록에 실패했습니다.");
+            e.printStackTrace();
         }
     }
     private void handleModifyResponse(int iqIdx){
@@ -607,6 +629,7 @@ public class BoardControllerImpl implements BoardController {
             if(result == true) System.out.println("문의 답변이 수정되었습니다.");
         } catch (Exception e) {
             System.out.println("문의 답변 수정에 실패했습니다.");
+            e.printStackTrace();
         }
     }
     private void handleRemoveResponse(int iqIdx){
@@ -661,6 +684,7 @@ public class BoardControllerImpl implements BoardController {
             if(result == true) System.out.println("문의글이 등록되었습니다.");
         } catch (Exception e) {
             System.out.println("문의글 등록에 실패했습니다.");
+            e.printStackTrace();
         }
     }
 
@@ -745,9 +769,11 @@ public class BoardControllerImpl implements BoardController {
             } catch (NumberFormatException e) {
                 //throw new RuntimeException(e);
                 System.out.println("숫자를 입력해주세요.");
+                e.printStackTrace();
             } catch (Exception e) {
                 //throw new RuntimeException(e);
                 System.out.println("오류가 발생했습니다.");
+                e.printStackTrace();
             }
         }
     }
@@ -794,10 +820,12 @@ public class BoardControllerImpl implements BoardController {
                 return anIdx;
             } catch (NumberFormatException e) {
                 System.out.println("숫자를 입력해주세요.");
+                e.printStackTrace();
                 //throw new RuntimeException(e);
             } catch (Exception e) {
                 //throw new RuntimeException(e);
                 System.out.println("오류가 발생했습니다.");
+                e.printStackTrace();
             }
         }
     }
@@ -840,6 +868,7 @@ public class BoardControllerImpl implements BoardController {
         } catch (IOException e) {
             //throw new RuntimeException(e);
             System.out.println("입력이 잘못되었습니다.");
+            e.printStackTrace();
         }
         return null;
     }
