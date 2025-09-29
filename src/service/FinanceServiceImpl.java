@@ -134,6 +134,7 @@ public class FinanceServiceImpl implements FinanceService {
             newSub.setWaIdx(subApproval.getWaIdx());
             newSub.setUIdx(subApproval.getUIdx());
             newSub.setSmIdx(subApproval.getSmIdx());
+            newSub.setSaPayment(subApproval.getSaPayment());
 
             // 새 구독 시작일을 현재 구독 종료일 다음 날로 설정
             Calendar calendar = Calendar.getInstance();
