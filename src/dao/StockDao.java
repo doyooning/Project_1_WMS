@@ -413,7 +413,7 @@ public class StockDao {
 
                 return warehouse;
             }catch(SQLException e){
-                throw new DaoException(, e);
+                throw new DaoException(Errors.DB_WAREHOUSESEARCH_IF_WA_MANAGE_ERROR.getText(), e);
             }
         }catch(SQLException e){
             throw new DaoException(Errors.DB_WAREHOUSESEARCH_IF_WA_MANAGE_ERROR.getText(), e);
