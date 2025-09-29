@@ -524,7 +524,7 @@ public class BoardControllerImpl implements BoardController {
         Inquiry inquiry = getInquiry(userInfo, ipIdx);
         if (inquiry == null) {
             System.out.println("찾으신 문의글이 존재하지 않습니다.");
-        } else if (totalAdmin == null){
+        } else if (totalAdmin == null && whAdmin == null){
             if(inquiry.getIqType() == '0' && inquiry.getUIdx() != user.getUIdx()){
                 System.out.println("1:1 문의글입니다.");
             } else {
@@ -532,7 +532,13 @@ public class BoardControllerImpl implements BoardController {
                 if(inquiry.getUIdx() == user.getUIdx())
                 showIqMgMenu(inquiry);
             }
-        } else {
+        } else if(whAdmin != null){
+            if(inquiry.getIqType() == '0'){
+                System.out.println("1:1 문의글입니다.");
+            } else {
+                printInquiryDetail(inquiry);
+            }
+        }else {
             printInquiryDetail(inquiry);
             showRsMgMenu(inquiry);
         }

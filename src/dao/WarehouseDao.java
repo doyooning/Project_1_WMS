@@ -32,12 +32,12 @@ public class WarehouseDao {
                 warehouse.setWName(rs.getString(2));
                 warehouse.setDoName(rs.getString(3));
                 warehouse.setWtName(rs.getString(4));
-                warehouse.setCreatedAt(Timestamp.valueOf(rs.getString(5)));
+                warehouse.setCreatedAt(rs.getTimestamp(5));
 
                 warehouseList.add(warehouse);
             }
 
-            return warehouseList; //warehouseList가 0이면 창고없음
+            return warehouseList;
         }catch(SQLException e){
             throw new DaoException("[DB] 전체 현황 리스트를 불러오는 중 오류가 발생했습니다.", e);
         }
