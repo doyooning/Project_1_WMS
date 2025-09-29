@@ -192,6 +192,9 @@ public class OutboundDAO implements InOutboundDAO {
 
             // 실행
             call.execute();
+            if (call.getInt(2) == 0) {
+                return null;
+            }
             List<String> requestBill = new ArrayList<>();
 
             requestBill.add(String.valueOf(call.getInt(2)));
