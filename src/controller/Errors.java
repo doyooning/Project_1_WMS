@@ -37,6 +37,12 @@ public enum Errors {
                     
                     """),
 
+    CANNOT_APPROVE_ERROR("""
+                    
+                    [오류] 가용 재고가 부족하여 승인할 수 없습니다.
+                    
+                    """),
+
     INACCESSIBLE_REQUEST_ERROR("""
                     
                     [요청 접근 불가] 회원님의 요청번호가 맞는지 확인하십시오.
