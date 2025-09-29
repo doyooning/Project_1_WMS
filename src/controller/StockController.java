@@ -1,5 +1,7 @@
 package controller;
 
+import common.Errors;
+import common.Menu;
 import domain.CheckLog;
 import domain.Stock;
 import domain.Warehouse;
@@ -38,16 +40,7 @@ public class StockController {
         //총관리자, 창고관리자만 볼 수 있음
         //회원은 바로 재고 조회 메뉴로 넘어가게 구성
         while(true){
-            System.out.println(
-                    """
-                    ============================================================
-                    ========================재고 전체 메뉴=========================
-                    이용할 서비스를 선택해주세요.
-                    1. 재고 조회
-                    2. 재고 실사
-                    ------------------------------------------------------------
-                    """
-            );
+            System.out.println(Menu.STOCKTOPMENU.getText());
             boolean flag = selectStockMenu();
             if(!flag) break;
         }
@@ -60,10 +53,12 @@ public class StockController {
                 System.out.print("> ");
                 String input = reader.readLine();
 
+                if(input.trim().toLowerCase().equals("exit")) return false;
+
                 if(!input.trim().matches("[12]")) {
-                    System.out.println("1-2까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요. ");
+                    System.out.println(Errors.INVALID_INPUT_12.getText());
                     continue;
-                }else if(input.trim().toLowerCase().equals("exit")) return false;
+                }
 
                 stockService = StockService.getInstance();
                 switch(input.trim()){
@@ -72,10 +67,10 @@ public class StockController {
                 }
 
                 break;
+            } catch(ExceptionManager e){
+                System.out.println(e.getMessage());
             }catch(IOException e){
-                e.printStackTrace();
-            }catch(ExceptionManager e){
-                System.err.println(e.getMessage());
+                System.out.println(Errors.STOCK_TOPMENU_SELECT_IOEXCEPION.getText());
             }
         }
         return true;
@@ -83,17 +78,7 @@ public class StockController {
 
     public void showStockSearchMenu(){
         //총관리자, 창고관리자, 회원
-        String menu = """
-                ============================================================
-                ==========================재고 조회==========================
-                재고 조회 메뉴를 선택해주세요.
-                1. 전체 재고 조회
-                2. 대분류별 재고 조회
-                3. 중분류별 재고 조회
-                4. 소분류별 재고 조회
-                5. 품목 현황 조회
-                ------------------------------------------------------------
-                """;
+        String menu = Menu.STOCKSEARCHMENU.getText();
 
         if(currentUser.equals("User")){//회원은 이 화면부터 시작하므로..
             while(true){
@@ -114,9 +99,11 @@ public class StockController {
                System.out.print("> ");
                String input = reader.readLine();
 
+               if(input.trim().toLowerCase().equals("exit")) return false;
+
                if(!input.trim().matches("[1-5]")) {
-                   System.out.println("1-5까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요.");
-               }else if(input.trim().toLowerCase().equals("exit")) return false;
+                   System.out.println(Errors.INVALID_INPUT_15.getText());
+               }
 
                switch(input.trim()){
                    case "1" -> showAllStockList();
@@ -129,49 +116,50 @@ public class StockController {
            }catch(ExceptionManager e){
                System.err.println(e.getMessage());
            }catch(IOException e){
-               throw new ExceptionManager("재고 조회 메뉴 선택 중 입출력 예외가 발생하였습니다.");
+               throw new ExceptionManager(Errors.STOCK_SEARCHMENU_SELECT_IOEXCEPTION.getText());
            }
         }
         return true;
     }
 
-    private void showAllStockList() throws ExceptionManager{
-        //총관리자, 창고관리자, 회원 조회 가능
-        //바코드별로 한 페이지 차지 하게끔 구현
-        System.out.println(
-                """
-                ============================================================
-                ========================전체 재고 조회=======================
-                """
-        );
-        List<Stock> stockList = stockService.getAllStockList();
-        if(stockList == null) return;
+    private void showAllStockList(){
+        try {
+            //총관리자, 창고관리자, 회원 조회 가능
+            //바코드별로 한 페이지 차지 하게끔 구현
+            System.out.println(Menu.STOCKALLSEARCHMENU.getText());
+            stockService  = StockService.getInstance();
+            List<Stock> stockList = stockService.getAllStockList();
+            if(stockList == null) return;
 
-        printStockList(stockList, 1);
+            printStockList(stockList, 1);
+        } catch (ExceptionManager e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    private void showCategoryStockList(int num) throws ExceptionManager{
-        //총관리자, 창고관리자, 회원 조회 가능
-        String menu = null;
-        switch(num){
-            case 2 -> menu = "대분류";
-            case 3 -> menu = "중분류";
-            case 4 -> menu = "소분류";
+    private void showCategoryStockList(int num){
+        try {
+            //총관리자, 창고관리자, 회원 조회 가능
+            String menu = null;
+            switch(num){
+                case 2 -> menu = "대분류";
+                case 3 -> menu = "중분류";
+                case 4 -> menu = "소분류";
+            }
+
+            System.out.printf(Menu.STOCKCATEGORYSEARCHMENU.getText(), menu);
+            System.out.printf("조회하실 %s를 입력해주세요.\n", menu);
+            String category = getCategory();
+            if(category.equals("exit")) return;
+
+            stockService  = StockService.getInstance();
+            List<Stock> stockList = stockService.getCategoryStockList(num, category);
+            if(stockList == null) return;
+
+            printStockList(stockList, num);
+        } catch (ExceptionManager e) {
+            System.out.println(e.getMessage());
         }
-
-        System.out.printf("""
-                ============================================================
-                =======================%s별 재고 조회=====================
-                """, menu
-        );
-        System.out.printf("조회하실 %s를 입력해주세요.\n", menu);
-        String category = getCategory();
-        if(category.equals("exit")) return;
-
-        List<Stock> stockList = stockService.getCategoryStockList(num, category);
-        if(stockList == null) return;
-
-        printStockList(stockList, num);
     }
 
     private String getCategory(){
@@ -181,33 +169,34 @@ public class StockController {
                 System.out.print("> ");
                 input = reader.readLine();
 
+                if(input.trim().toLowerCase().equals("exit")) return "exit";
+
                 if(!input.trim().matches("^[가-힣\\s]+$")){
-                    System.out.println("카테고리 이름 형식에 맞지 않습니다. 다시 입력해주세요.");
+                    System.out.println(Errors.INVALID_INPUT_CATEGORY.getText());
                     continue;
-                }else if(input.trim().toLowerCase().equals("exit")) return "exit";
+                }
                 break;
             }catch(IOException e){
-                throw new ExceptionManager("카테고리를 입력받는 중 입출력 예외가 발생했습니다.");
+                throw new ExceptionManager(Errors.STOCK_CATEGORY_GET_IOEXCEPTION.getText());
             }
         }
         return input;
     }
 
-    private void showProductStockList() throws ExceptionManager{
-        //총관리자, 창고관리자, 회원 조회 가능
-        System.out.println(
-                """
-                ============================================================
-                =====================품목별 재고현황 조회=====================
-                """
-        );
+    private void showProductStockList() {
+        try {
+            //총관리자, 창고관리자, 회원 조회 가능
+            System.out.println(Menu.STOCKPRODUCTSEARCHMENU.getText());
+            stockService  = StockService.getInstance();
+            String pIdx = getPIdx();
+            if(pIdx.equals("exit")) return;
+            List<Stock> stockList = stockService.getProductStockList(pIdx);
+            if(stockList == null) return;
 
-        String pIdx = getPIdx();
-        if(pIdx.equals("exit")) return;
-        List<Stock> stockList = stockService.getProductStockList(pIdx);
-        if(stockList == null) return;
-
-        printStockList(stockList, 5);
+            printStockList(stockList, 5);
+        } catch (ExceptionManager e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private String getPIdx(){
@@ -217,14 +206,16 @@ public class StockController {
                 System.out.print("> ");
                 String input = reader.readLine();
 
-                if(!input.trim().matches("^[1-9][0-9]{12}$")){
-                    System.out.println("바코드 번호 형식에 맞지 않습니다. 다시 입력해주세요.");
-                    continue;
-                }else if(input.trim().toLowerCase().equals("exit")) return "exit";
+                if(input.trim().toLowerCase().equals("exit")) return "exit";
 
-                return input;
+                if(!input.trim().matches("^[1-9][0-9]{12}$")){
+                    System.out.println(Errors.INVALID_INPUT_PIDX.getText());
+                    continue;
+                }
+
+                return input.trim();
             }catch(IOException e){
-                throw new ExceptionManager("바코드 번호 입력 중 입출력 예외가 발생했습니다.");
+                throw new ExceptionManager(Errors.STOCK_PIDX_GET_IOEXCEPTION.getText());
             }
         }
     }
@@ -234,34 +225,16 @@ public class StockController {
      * 재고 실사
      */
 
-    private void showStockChecklogMenu() throws ExceptionManager{
+    private void showStockChecklogMenu(){
         //재고실사는 총관리자와 창고관리자만 메뉴에 접근할 수 있지만, 보여지는 메뉴가 다름
         String menu = null;
         if(currentUser.equals("TotalAdmin")) {
             //총관리자
-            menu =  """
-                ============================================================
-                ==========================재고 실사==========================
-                재고 실사 메뉴를 선택해주세요.
-                1. 재고 실사 삭제
-                2. 재고 실사 조회
-                ------------------------------------------------------------
-                """ ;
+            menu = Menu.CHECKLOG_TOTALADMIN_MENU.getText() ;
         }
         else if(currentUser.equals("WarehouseAdmin")) {
-            menu = """
-                ============================================================
-                ==========================재고 실사==========================
-                재고 실사 메뉴를 선택해주세요.
-                1. 재고 실사 등록
-                2. 재고 실사 삭제
-                3. 재고 실사 조회
-                4. 재고 실사 수정
-                ------------------------------------------------------------
-                """ ;
+            menu = Menu.CHECKLOG_WAREHOUSEADMIN_MENU.getText() ;
         }
-
-        //메뉴 출력
         System.out.println(menu);
         selecStockChecklogMenu();
     }
@@ -275,10 +248,12 @@ public class StockController {
                 switch(currentUser){
                     case "TotalAdmin" -> {
                         //총관리자일 때는 메뉴가 2개까지 밖에 없으니
+
+                        if(input.trim().toLowerCase().equals("exit")) return;
                         if(!input.trim().matches("[12]")) {
-                            System.out.println("1-2까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요. ");
+                            System.out.println(Errors.INVALID_INPUT_12.getText());
                             continue;
-                        }else if(input.trim().toLowerCase().equals("exit")) return;
+                        }
 
                         stockService = StockService.getInstance();
                         switch(input.trim()){
@@ -289,10 +264,11 @@ public class StockController {
 
                     case "WarehouseAdmin" -> {
                         //창고관리자 일때는 메뉴가 4개임
+                        if(input.trim().toLowerCase().equals("exit")) return;
                         if(!input.trim().matches("[1-4]")){
-                            System.out.println("1-4까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요. ");
+                            System.out.println(Errors.INVALID_INPUT_14.getText());
                             continue;
-                        }else if(input.trim().toLowerCase().equals("exit")) return;
+                        }
 
                         stockService = StockService.getInstance();
                         switch(input.trim()){
@@ -304,65 +280,62 @@ public class StockController {
                     }
                 }
                 break;
-            }catch(IOException e){
-                throw new ExceptionManager("재고 실사 메뉴 선택 중 입출력 예외가 발생했습니다.");
+            }catch(ExceptionManager e){
+                System.out.println(e.getMessage());
+            }catch(IOException e) {
+                System.out.println(Errors.CHECKLOG_TOPMENU_SELECT_IOEXCEPTION.getText());
             }
         }
     }
 
-    private void showAddChecklogMenu() throws ExceptionManager{
-        //창고관리자만
-        System.out.println(
-                """
-                ============================================================
-                ========================재고 실사 등록========================
-                """
-        );
-        //창고관리자가 관리하는 창고에 대해서만 재고실사를 등록하므로 입력받을 필요 없음
-        System.out.println("재고 실사 등록 중....\n");
-        CheckLog checkLog = stockService.addCheckLog(warehouseAdmin.getWIdx());
-        if(checkLog == null) return;
+    private void showAddChecklogMenu() {
+        try {
+            //창고관리자만
+            System.out.println(Menu.CHECKLOG_ADD_MENU);
+            //창고관리자가 관리하는 창고에 대해서만 재고실사를 등록하므로 입력받을 필요 없음
+            System.out.println("재고 실사 등록 중....\n");
+            stockService = StockService.getInstance();
+            CheckLog checkLog = stockService.addCheckLog(warehouseAdmin.getWIdx());
+            if(checkLog == null) return;
 
 
-        System.out.println("[등록된 재고 실사]");
-        String menu = String.format("%-8s%-8s%-10s%-10s%-10s", "실사로그번호", "창고번호", "창고명", "일치여부", "등록일");
-        System.out.println(menu);
-        System.out.println("------------------------------------------------------------");
-        String list = String.format("%-8d%-8s%-10s%-8s%-10s",
-                                    checkLog.getClIdx(), checkLog.getWUniqueNum(), checkLog.getWName(), checkLog.getClCorrect(), sdf.format(checkLog.getCreatedAt()));
-        System.out.println(list);
-        System.out.println();
+            System.out.println("[등록된 재고 실사]");
+            String menu = String.format("%-8s%-8s%-10s%-10s%-10s", "실사로그번호", "창고번호", "창고명", "일치여부", "등록일");
+            System.out.println(menu);
+            System.out.println("------------------------------------------------------------");
+            String list = String.format("%-8d%-8s%-10s%-8s%-10s",
+                                        checkLog.getClIdx(), checkLog.getWUniqueNum(), checkLog.getWName(), checkLog.getClCorrect(), sdf.format(checkLog.getCreatedAt()));
+            System.out.println(list);
+            System.out.println();
+        } catch (ExceptionManager e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    private void showDeleteChecklogMenu() throws ExceptionManager{
-        //총관리자, 창고관리자
-        //창고관리자인 경우, 자신이 관리하는 창고에 대한 재고실사만 지울 수 있음
+    private void showDeleteChecklogMenu(){
+        try {
+            //총관리자, 창고관리자
+            //창고관리자인 경우, 자신이 관리하는 창고에 대한 재고실사만 지울 수 있음
 
-        System.out.println(
-                """
-                ============================================================
-                ========================재고 실사 삭제========================
-                """
-        );
-        System.out.println("삭제할 재고 실사로그번호를 입력해주세요.");
-        int clIdx = getChecklogIdx();
-        if(clIdx == -1) return; //exit
+            System.out.println(Menu.CHECKLOG_DELETE_MENU.getText());
+            System.out.println("삭제할 재고 실사로그번호를 입력해주세요.");
+            int clIdx = getChecklogIdx();
+            if(clIdx == -1) return; //exit
 
-        int result;
-        if(currentUser.equals("TotalAdmin")) { //총관리자는 모든 실사로그 지울 수 있음
-            result = stockService.removeCheckLog(clIdx, 0, false);
-        }else{ //창고관리자는 자신의 창고에 대해서만..
-            result = stockService.removeCheckLog(clIdx, warehouseAdmin.getWIdx(), true);
+            int result;
+            stockService = StockService.getInstance();
+            if(currentUser.equals("TotalAdmin")) { //총관리자는 모든 실사로그 지울 수 있음
+                result = stockService.removeCheckLog(clIdx, 0, false);
+            }else{ //창고관리자는 자신의 창고에 대해서만..
+                result = stockService.removeCheckLog(clIdx, warehouseAdmin.getWIdx(), true);
+            }
+
+            if(result == -1) return;
+
+            System.out.println("성공적으로 삭제되었습니다.");
+        } catch (ExceptionManager e) {
+            System.out.println(e.getMessage());
         }
-
-        if(result == -1) return;
-        else if(result == 0){
-            throw new ExceptionManager("해당 실사로그가 존재하지 않습니다.");
-        }else if(result == -2){
-            throw new ExceptionManager("현재 관리하는 창고의 재고실사로그가 아닙니다.");
-        }
-
-        System.out.println("성공적으로 삭제되었습니다.");
     }
 
     private int getChecklogIdx(){
@@ -372,44 +345,37 @@ public class StockController {
                 System.out.print("> ");
                 String input = reader.readLine();
 
-                if(!input.trim().matches("\\d+")){
-                    System.out.println("실사로그번호는 숫자만 입력 가능합니다. 다시 입력해주세요.");
-                    continue;
-                }else if(input.trim().toLowerCase().equals("exit")) return -1;
+                if(input.trim().toLowerCase().equals("exit")) return -1;
 
+                if(!input.trim().matches("\\d+")){
+                    System.out.println(Errors.INVALID_INPUT_CHECKLOG.getText());
+                    continue;
+                }
                 return Integer.parseInt(input);
             }catch(IOException e){
-                throw new ExceptionManager("실사로그번호 입력 중 입출력 예외가 발생했습니다.");
+                throw new ExceptionManager(Errors.CHECKLOG_GET_IOEXCEPTION.getText());
             }
         }
     }
 
-    private void showChecklogSearchMenu() throws ExceptionManager{
+    private void showChecklogSearchMenu(){
         //총관리자와 창고관리자만 가능함
-        System.out.println(
-                """
-                 ============================================================
-                 ==========================창고 조회===========================
-                 재고 실사 조회 메뉴를 선택해주세요. 
-                 1. 전체 재고 실사 조회
-                 2. 색션별 재고 실사 조회
-                 3. 창고별 재고 실사 조회
-                 ------------------------------------------------------------
-                 """
-        );
+        System.out.println(Menu.CHECKLOG_SEARCH_MENU.getText());
         selectChecklogSearchMenu();
     }
 
-    private void selectChecklogSearchMenu() throws ExceptionManager{
+    private void selectChecklogSearchMenu() {
         while(true){
             try{
                 System.out.print("> ");
                 String input = reader.readLine();
 
+                if(input.trim().toLowerCase().equals("exit")) return;
+
                 if(!input.trim().matches("[1-3]")){
-                    System.out.println("1-3까지의 숫자만 입력할 수 있습니다. 다시 입력해주세요.");
+                    System.out.println(Errors.INVALID_INPUT_13.getText());
                     continue;
-                }else if(input.trim().toLowerCase().equals("exit")) return;
+                }
 
                 switch(input.trim()){
                     case "1" -> showChecklogList(1);//전체 재고 실사 조회
@@ -417,94 +383,99 @@ public class StockController {
                     case "3" -> showChecklogList(3);//창고별 재고 실사 조회
                 }
                 break;
-            } catch (IOException e) {
-                throw new ExceptionManager("재고 실사 조회 메뉴 입력 중 입출력 예외가 발생했습니다.");
+            } catch(ExceptionManager e){
+                System.out.println(e.getMessage());
+            }catch (IOException e) {
+                System.out.println(Errors.CHECKLOG_SEARCHMENU_SELECT_IOEXCEPTION.getText());
             }
         }
     }
 
-    private void showChecklogList(int num) throws ExceptionManager{
+    private void showChecklogList(int num) {
         //enum으로 뺄거임
+        stockService = StockService.getInstance();
         List<CheckLog> checkLogList = null;
         switch(num){
             case 1 -> {
-                System.out.println( """
-                ============================================================
-                =======================전체 재고 실사 조회=====================
-                """);
+                try {
+                    System.out.println(Menu.CHECKLOG_ALL_SEARCH_MENU.getText());
 
-                switch(currentUser){
-                    //총관리자의 경우
-                    case "TotalAdmin" -> {checkLogList = stockService.getCheckLogList(0);}
-                    case "WarehouseAdmin" -> {checkLogList = stockService.getCheckLogList(warehouseAdmin.getWIdx());}
+                    switch(currentUser){
+                        //총관리자의 경우
+                        case "TotalAdmin" -> {checkLogList = stockService.getCheckLogList(0);}
+                        case "WarehouseAdmin" -> {checkLogList = stockService.getCheckLogList(warehouseAdmin.getWIdx());}
+                    }
+
+                    if(checkLogList == null) return;
+
+                    printCheckLogList(checkLogList);
+                } catch (ExceptionManager e) {
+                    System.out.println(e.getMessage());
                 }
-
-                if(checkLogList == null) return;
-
-                printCheckLogList(checkLogList);
             }
 
             case 2 -> {
-                System.out.println( """
-                ============================================================
-                ======================섹션별 재고 실사 조회====================
-                """);
+                try {
+                    System.out.println(Menu.CHECKLOG_SECTION_SEARCH_MENU.getText());
 
-                if(currentUser.equals("TotalAdmin")){
-                    //총관리자인 경우 (창고번호 입력 + 섹션 입력)
-                    System.out.println("조회할 창고번호를 입력해주세요.");
-                    String wUniqueNum = getWarehouseUniqueNum();
-                    if(wUniqueNum.equals("exit")) return;
-
-                    System.out.println("창고의 조회할 섹션을 입력해주세요.");
-                    String wsName = getWarehouseSectionName();
-                    if(wsName.equals("exit")) return;
-
-                    checkLogList = stockService.getSectionCheckLogList(wUniqueNum, wsName);
-                    if(checkLogList == null) return;
-
-                }else{
-
-                    //창고관리자인 경우 (창고관리자가 관리하는 창고에 대해서만... + 섹션입력)
-                    //먼저 창고관리자가 관리하는 창고가 보관형인지 확인
-                    Warehouse warehouse = stockService.getWarehouseInfo(warehouseAdmin.getWIdx()); //창고관리자 wIdx 넣기
-                    if(warehouse.getWtIdx() != 1){
-                        throw new ExceptionManager("현재 관리하는 창고는 보관형 창고가 아닙니다.");
-                    }
-
-                    System.out.println("창고의 조회할 섹션을 입력해주세요.");
-                    String wsName2 = getWarehouseSectionName();
-                    if(wsName2.equals("exit")) return;
-                    checkLogList = stockService.getSectionCheckLogList(warehouse.getWUniqueNum(), wsName2);
-
-                    if(checkLogList == null) return;
-                }
-                printCheckLogList(checkLogList);
-            }
-
-            case 3 -> {
-                System.out.println( """
-                ============================================================
-                ======================창고별 재고 실사 조회====================
-                """);
-
-                switch(currentUser){
-                    case "TotalAdmin" -> {//총관리자인 경우 (창고번호 입력받기)
+                    if(currentUser.equals("TotalAdmin")){
+                        //총관리자인 경우 (창고번호 입력 + 섹션 입력)
                         System.out.println("조회할 창고번호를 입력해주세요.");
                         String wUniqueNum = getWarehouseUniqueNum();
                         if(wUniqueNum.equals("exit")) return;
-                        checkLogList = stockService.getWarehouseCheckLogList(wUniqueNum);
+
+                        System.out.println("창고의 조회할 섹션을 입력해주세요.");
+                        String wsName = getWarehouseSectionName();
+                        if(wsName.equals("exit")) return;
+
+                        checkLogList = stockService.getSectionCheckLogList(wUniqueNum, wsName);
                         if(checkLogList == null) return;
 
-                    }
-                    case "WarehouseAdmin" -> {
-                        //창고관리자인 경우 (창고관리자가 관리하는 창고에 대해서 바로 출력) -> wUniqueNum 받아야함
+                    }else{
+
+                        //창고관리자인 경우 (창고관리자가 관리하는 창고에 대해서만... + 섹션입력)
+                        //먼저 창고관리자가 관리하는 창고가 보관형인지 확인
                         Warehouse warehouse = stockService.getWarehouseInfo(warehouseAdmin.getWIdx()); //창고관리자 wIdx 넣기
-                        checkLogList = stockService.getWarehouseCheckLogList(warehouse.getWUniqueNum());
+                        if(warehouse.getWtIdx() != 1){
+                            throw new ExceptionManager(Errors.NO_STORAGE_WAREHOUSETYPE.getText());
+                        }
+
+                        System.out.println("창고의 조회할 섹션을 입력해주세요.");
+                        String wsName2 = getWarehouseSectionName();
+                        if(wsName2.equals("exit")) return;
+                        checkLogList = stockService.getSectionCheckLogList(warehouse.getWUniqueNum(), wsName2);
+
                         if(checkLogList == null) return;
                     }
+                    printCheckLogList(checkLogList);
+                } catch (ExceptionManager e) {
+                    System.out.println(e.getMessage());
                 }
-                printCheckLogList(checkLogList);
+            }
+
+            case 3 -> {
+                try {
+                    System.out.println(Menu.CHECKLOG_WAREHOUSE_SEARCH_MENU.getText());
+                    switch(currentUser){
+                        case "TotalAdmin" -> {//총관리자인 경우 (창고번호 입력받기)
+                            System.out.println("조회할 창고번호를 입력해주세요.");
+                            String wUniqueNum = getWarehouseUniqueNum();
+                            if(wUniqueNum.equals("exit")) return;
+                            checkLogList = stockService.getWarehouseCheckLogList(wUniqueNum);
+                            if(checkLogList == null) return;
+
+                        }
+                        case "WarehouseAdmin" -> {
+                            //창고관리자인 경우 (창고관리자가 관리하는 창고에 대해서 바로 출력) -> wUniqueNum 받아야함
+                            Warehouse warehouse = stockService.getWarehouseInfo(warehouseAdmin.getWIdx()); //창고관리자 wIdx 넣기
+                            checkLogList = stockService.getWarehouseCheckLogList(warehouse.getWUniqueNum());
+                            if(checkLogList == null) return;
+                        }
+                    }
+                    printCheckLogList(checkLogList);
+                } catch (ExceptionManager e) {
+                    System.out.println(e.getMessage());
+                }
             }
         }
     }
@@ -515,14 +486,16 @@ public class StockController {
                 System.out.print("> ");
                 String input = reader.readLine();
 
+                if(input.trim().toLowerCase().equals("exit")) return "exit";
+
                 if(!input.trim().replaceAll("\\s+", "").startsWith("ware")) {
-                    System.out.println("창고번호 양식에 맞지 않습니다. 다시 입력해주세요.");
+                    System.out.println(Errors.WAREHOUSE_UNIQUENUM_FORMAT_ERROR.getText());
                     continue;
-                }else if(input.trim().toLowerCase().equals("exit")) return "exit";
+                }
 
                 return input;
             }catch(IOException e){
-                throw new ExceptionManager("창고번호를 입력 받는 중 입출력 예외가 발생했습니다.");
+                throw new ExceptionManager(Errors.WAREHOUSEIDX_GET_IOEXCEPTION.getText());
             }
         }
     }
@@ -534,37 +507,38 @@ public class StockController {
                 System.out.print("> ");
                 String input = reader.readLine();
 
+                if(input.trim().toLowerCase().equals("exit")) return "exit";
+
                 if(!input.trim().replaceAll("\\s+", "").startsWith("섹션")){
-                    System.out.println("섹션명의 양식이 맞지 않습니다. 다시 입력해주세요.");
+                    System.out.println();
                     continue;
-                }else if(input.trim().toLowerCase().equals("exit")) return "exit";
+                }
 
                 return input.trim().replaceAll("\\s+", "");
             } catch (IOException e) {
-                throw new ExceptionManager("창고섹션명을 입력 받는 중 입출력 예외가 발생했습니다.");
+                throw new ExceptionManager(Errors.INVALID_INPUT_SECTIONNAME.getText());
             }
         }
     }
 
     private void showUpdateChecklogMenu(){
-        //창고관리자만
-        System.out.println( """
-                ============================================================
-                ========================재고 실사 수정=======================
-                """);
-        System.out.println("수정하고자 하는 실사로그번호를 입력해주세요.");
-        int clIdx = getChecklogIdx();
-        if(clIdx == -1) return;
+        try {
+            //창고관리자만
+            stockService = StockService.getInstance();
+            System.out.println(Menu. CHECKLOG_UPDATE_MENU.getText());
+            System.out.println("수정하고자 하는 실사로그번호를 입력해주세요.");
+            int clIdx = getChecklogIdx();
+            if(clIdx == -1) return;
 
-        boolean result = stockService.checkUpdateCondition(clIdx, warehouseAdmin.getWIdx()); //창고관리자 wIdx 넣기
-        if(!result){
-            throw new ExceptionManager("실사로그를 수정할 수 없습니다.");
+            stockService.checkUpdateCondition(clIdx, warehouseAdmin.getWIdx()); //창고관리자 wIdx 넣기
+
+            boolean updateResult = stockService.updateCheckLog(clIdx);
+            if(!updateResult) return;
+
+            System.out.println("성공적으로 수정되었습니다.");
+        } catch (ExceptionManager e) {
+            System.out.println(e.getMessage());
         }
-
-        boolean updateResult = stockService.updateCheckLog(clIdx);
-        if(!updateResult) return;
-
-        System.out.println("성공적으로 수정되었습니다.");
     }
 
     private void printStockList(List<Stock> stockList, int menu) {
@@ -595,7 +569,7 @@ public class StockController {
             System.out.println(menu2);
             System.out.println("------------------------------------------------------------");
 
-            while(stockList.get(index).getPIdx().equals(currentPIdx)){
+            while(index < stockList.size() && stockList.get(index).getPIdx().equals(currentPIdx)){
                 String format = String.format("%-8s%-6d%-6d%-6d%-7s%-10s",
                         stockList.get(index).getWUniqueNum(), stockList.get(index).getSAvail(), stockList.get(index).getSNotAvail(), stockList.get(index).getSSafe(),
                         data, sdf.format(stockList.get(index).getUpdatedAt()));
@@ -603,7 +577,8 @@ public class StockController {
 
                 index++;
             }
-            if(index == stockList.size()) break; //리스트 끝에 도달하면 페이지 넘기기 출력할 필요없음
+            System.out.println();
+            if(index == stockList.size()) return; //리스트 끝에 도달하면 페이지 넘기기 출력할 필요없음
 
             boolean result = showPageOfList(page);
             if(!result) return;
@@ -648,7 +623,7 @@ public class StockController {
                 return false;
             }
         } catch (IOException e) {
-            throw new ExceptionManager("페이지 넘김 확인 중 입출력 예외가 발생했습니다.");
+            throw new ExceptionManager(Errors.INVALID_INPUT_PAGE.getText());
         }
     }
 

@@ -1,5 +1,6 @@
 package service;
 
+import common.Errors;
 import dao.WarehouseDao;
 import domain.Warehouse;
 import exception.DaoException;
@@ -27,12 +28,12 @@ public class WarehouseService {
             List<Warehouse> warehouseList = warehouseDao.getWarehouseList();
 
             if(warehouseList.size() == 0) {
-                throw new ExceptionManager("창고 리스트에 창고가 존재하지 않습니다.");
+                throw new ExceptionManager(Errors.NO_WAREHOUSE_IN_LIST.getText());
             }
 
             return warehouseList;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -44,7 +45,7 @@ public class WarehouseService {
 
             for (Warehouse warehouse : list) {
                 if(warehouse.getWUniqueNum().equals(temp.getWUniqueNum())) {
-                    throw new ExceptionManager("이미 존재하는 창고입니다. 창고 등록에 실패하였습니다.");
+                    throw new ExceptionManager(Errors.WAREHOUSE_ALREADY_EXIST.getText());
                 }
             }
 
@@ -52,19 +53,19 @@ public class WarehouseService {
             temp.setWStock(0);
             String[] spiltAddress = temp.getWAddr().split(" ");
             int doIdx = warehouseDao.getDoIdx(spiltAddress[0]);
-            if(doIdx == 0){}
+            if(doIdx == 0){throw new ExceptionManager(Errors.NO_DONAME_IN_DOADDRESS.getText());}
 
             temp.setDoIdx(doIdx);
             temp.setDoName(spiltAddress[0]);
             int wtIdx = warehouseDao.getWtIdx(temp.getWtName());
-            if(wtIdx == 0){}
+            if(wtIdx == 0){throw new ExceptionManager(Errors.NO_WAREHOUSETYPE_IN_WAREHOUSETYPE.getText());}
 
             temp.setWtIdx(wtIdx);
             boolean result = warehouseDao.addWarehouse(temp);
 
             return result;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return false;
         }
     }
@@ -74,34 +75,36 @@ public class WarehouseService {
             warehouseDao = WarehouseDao.getInstance();
             int check = warehouseDao.checkWarehouseExist(wUniqueNum); // count 이용해서 해당 창고 존재하는지 확인
 
-            if(check == 0) throw new ExceptionManager("해당 창고는 존재하지 않습니다.");
+            if(check == 0) throw new ExceptionManager(Errors.NO_WAREHOUSE.getText());
 
             Warehouse warehouse = warehouseDao.getWarehouse(wUniqueNum);
             return warehouse;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
 
     public List<Warehouse> getAddressWarehouse(int doIdx){
         try {
+            warehouseDao  = WarehouseDao.getInstance();
             List<Warehouse> addrWarehouseList = warehouseDao.getAddressWarehouse(doIdx);
 
             return addrWarehouseList;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
 
     public List<Warehouse> getTypeWarehouse(int wtIdx){
         try {
+            warehouseDao  = WarehouseDao.getInstance();
             List<Warehouse> typeWarehouseList = warehouseDao.getTypeWarehouse(wtIdx);
 
             return typeWarehouseList;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }

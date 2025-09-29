@@ -1,6 +1,7 @@
 package dao;
 
 import Util.DBUtil;
+import common.Errors;
 import domain.Warehouse;
 import exception.DaoException;
 
@@ -57,9 +58,9 @@ public class WarehouseDao {
             cs.setString(6, warehouse.getWUniqueNum());
 
             boolean result = cs.execute();
-            return result;
+            return true;
         }catch(SQLException e){
-            throw new DaoException("[DB] 창고 등록 도중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_ADDWAREHOUSE_ERROR.getText(), e);
         }
     }
 
@@ -77,7 +78,7 @@ public class WarehouseDao {
             }
             return 0; //해당 doName이 존재하지 않음
         }catch(SQLException e){
-            throw new DaoException("[DB] 도주소번호를 조회하던 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_DOIDX_ERROR.getText(), e);
         }
     }
 
@@ -95,7 +96,7 @@ public class WarehouseDao {
             }
             return 0; //해당 wtName이 존재하지 않음
         }catch(SQLException e){
-            throw new DaoException("[DB] 창고타입번호를 조회하던 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_WAREHOUSETYPEIDX_ERROR.getText(), e);
         }
     }
 
@@ -121,7 +122,7 @@ public class WarehouseDao {
                 return warehouse;
             }
         }catch(SQLException e){
-            throw new DaoException("[DB] 창고 번호로 창고를 조회하던 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_WAREHOUSESEARCH_WIDX_ERROR.getText(), e);
         }
     }
 
@@ -136,7 +137,7 @@ public class WarehouseDao {
             cs.execute();
             return cs.getInt(2); //있으면 1, 아니면 0
         }catch(SQLException e){
-            throw new DaoException("[DB] 창고 존재 확인 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_WAREHOUSE_EXIST_ERROR.getText(), e);
         }
     }
 
@@ -164,7 +165,7 @@ public class WarehouseDao {
                 return warehouseList;
             }
         }catch(SQLException e){
-            throw new DaoException("[DB] 소재지별 창고 조회 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_WAREHOUSESEARCH_ADDR_ERROR.getText(), e);
         }
     }
 
@@ -192,7 +193,7 @@ public class WarehouseDao {
                 return warehouseList;
             }
         }catch (SQLException e){
-            throw new DaoException("[DB] 창고타입별 창고 조회 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_WAREHOUSESEARCH_TYPE_ERROR.getText(), e);
         }
     }
 }

@@ -1,5 +1,6 @@
 package service;
 
+import common.Errors;
 import dao.StockDao;
 import dao.WarehouseDao;
 import domain.CheckLog;
@@ -26,11 +27,11 @@ public class StockService {
 
             List<Stock> stockList = stockDao.getAllStockList();
             if(stockList.isEmpty()){
-                throw new ExceptionManager("현재 재고가 존재하지 않습니다.");
+                throw new ExceptionManager(Errors.NO_STOCK.getText());
             }
             return stockList;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -41,19 +42,19 @@ public class StockService {
 
             List<Stock> stockList = null;
             switch(num){
-                case 2 -> stockList = stockDao.getPrimaryCategoryStockList(cName);
-                case 3 -> stockList = stockDao.getSecondaryCategoryStockList(cName);
-                case 4 -> stockList = stockDao.getTertiaryCategoryStockList(cName);
+                case 2 -> stockList = stockDao.getPrimaryCategoryStockList(cName.trim());
+                case 3 -> stockList = stockDao.getSecondaryCategoryStockList(cName.trim());
+                case 4 -> stockList = stockDao.getTertiaryCategoryStockList(cName.trim());
             }
             if(stockList == null){
-                throw new ExceptionManager("해당 카테고리가 존재하지 않습니다.");
+                throw new ExceptionManager(Errors.NO_CATEGORY.getText());
             }else if(stockList.isEmpty()){
-                throw new ExceptionManager("현재 재고가 존재하지 않습니다.");
+                throw new ExceptionManager(Errors.NO_STOCK.getText());
             }
 
             return stockList;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -64,11 +65,11 @@ public class StockService {
 
             List<Stock> stockList = stockDao.getProductStockList(pIdx);
             if(stockList.isEmpty()){
-                throw new ExceptionManager("현재 재고가 존재하지 않습니다.");
+                throw new ExceptionManager(Errors.NO_STOCK.getText());
             }
             return stockList;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -79,13 +80,13 @@ public class StockService {
 
             int result = stockDao.addCheckLog(wIdx);
             if(result != 1) {
-                throw new ExceptionManager("재고 실사가 등록되지 않았습니다.");
+                throw new ExceptionManager(Errors.NO_CHECKLOG_ADD.getText());
             }
 
             CheckLog newCheckLog = stockDao.getNewCheckLog();
             return newCheckLog;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -96,13 +97,17 @@ public class StockService {
 
             if(status){
                 boolean check = stockDao.checkWarehouseAdminCondition(clIdx, wIdx);
-                if(!check) return -2; //창고관리자가 관리하는 창고가 아님!
+                if(!check) throw new ExceptionManager(Errors.NO_ADMISSION_WAREHOUSE.getText()); //창고관리자가 관리하는 창고가 아님!
             }
 
             int result = stockDao.removeCheckLog(clIdx);
+            if(result == -2) throw new ExceptionManager(Errors.CHECKLOG_ALREADY_DELETE.getText());
+            else if(result == 0) throw new ExceptionManager(Errors.NO_ADMISSION_WAREHOUSE.getText());
+            else if(result == -1) throw new ExceptionManager(Errors.NO_CHECKLOG_EXIST.getText());
+
             return result;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return -1;
         }
     }
@@ -120,12 +125,12 @@ public class StockService {
             }
 
             if(checkLogList.isEmpty()) {
-                throw new ExceptionManager("재고 실사로그가 등록되지 않았습니다.");
+                throw new ExceptionManager(Errors.NO_CHECKLOG_ADD.getText());
             }
 
             return checkLogList;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -136,23 +141,23 @@ public class StockService {
 
             boolean result = stockDao.checkWsNameExist(wsName);
             if(!result) {
-                throw new ExceptionManager("입력하신 창고 섹션은 존재하지 않습니다.");
+                throw new ExceptionManager(Errors.NO_WAREHOUSESECTION.getText());
             }
 
             int result2 = stockDao.checkWarehouseIsStorage(wUniqueNum);
 
             if(result2 == 0){
-                throw new ExceptionManager("해당 창고는 마이크로풀필먼트입니다.");
+                throw new ExceptionManager(Errors.CURRENT_WAREHOUSE_IS_MF.getText());
             }
 
             List<CheckLog> checkLogList = stockDao.getSectionCheckLoglist(wUniqueNum, wsName);
 
             if(checkLogList.isEmpty()){
-                System.out.println("해당 창고 섹션이 존재하지 않습니다.");
+                throw new ExceptionManager(Errors.NO_CHECKLOG_ADD.getText());
             }
             return checkLogList;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -164,16 +169,16 @@ public class StockService {
             WarehouseDao temp = WarehouseDao.getInstance();
             int result = temp.checkWarehouseExist(wUniqueNum);
             if(result == 0) {
-                throw new ExceptionManager("해당 창고는 존재하지 않습니다.");
+                throw new ExceptionManager(Errors.NO_WAREHOUSE.getText());
             }
 
             List<CheckLog> checkLogList = stockDao.getWarehouseCheckLogList(wUniqueNum);
             if(checkLogList.isEmpty()){
-                throw new ExceptionManager("해당 창고번호가 존재하지 않습니다. ");
+                throw new ExceptionManager(Errors.NO_CHECKLOG_ADD.getText());
             }
             return checkLogList;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -185,7 +190,7 @@ public class StockService {
             Warehouse warehouse = stockDao.getWarehouseInfo(wIdx);
             return warehouse;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -195,9 +200,10 @@ public class StockService {
             if(stockDao == null) stockDao = StockDao.getInstance();
 
             boolean result = stockDao.updateCheckLog(clIdx);
+            if(!result) throw new ExceptionManager(Errors.NO_CHECKLOG_UPDATE.getText());
             return result;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return false;
         }
     }
@@ -207,9 +213,10 @@ public class StockService {
             if(stockDao == null) stockDao = StockDao.getInstance();
 
             boolean result = stockDao.checkUpdateCondition(clIdx, wIdx);
+            if(!result) throw new ExceptionManager(Errors. NO_ADMISSION_UPDATE_CHECKLOG.getText());
             return result;
         } catch (DaoException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
             return false;
         }
     }
