@@ -148,6 +148,12 @@ public class InboundControllerImpl implements InOutboundController{
                 // 6. 나가기
                 return 0;
             }
+
+            default -> {
+                System.out.print(
+                        Errors.INVALID_INPUT_ERROR.getText()
+                );
+            }
         }
 
         return 1;
@@ -163,7 +169,9 @@ public class InboundControllerImpl implements InOutboundController{
             int menuNum = Integer.parseInt(br.readLine());
             status = selectUpdateMenu(menuNum);
             if (status == 1) {
-                System.out.print(Messages.REQUEST_UPDATED.getText());
+                System.out.print(
+                        Messages.REQUEST_UPDATED.getText()
+                );
                 showUpdateMenu();
             } else if (status == -1) {
                 System.out.println(Errors.DATA_INPUT_ERROR.getText());
@@ -171,12 +179,15 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException | NumberFormatException e) {
-            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            System.out.print(
+                    Errors.INVALID_INPUT_ERROR.getText()
+            );
             showUpdateMenu();
 
         } catch (Exception e) {
-            System.out.println(Errors.UNEXPECTED_ERROR.getText());
-            e.printStackTrace();
+            System.out.print(
+                    Errors.UNEXPECTED_ERROR.getText()
+            );
             showUpdateMenu();
         }
     }
@@ -217,7 +228,9 @@ public class InboundControllerImpl implements InOutboundController{
                 }
             }
         } catch (IOException e) {
-            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            System.out.print(
+                    Errors.INVALID_INPUT_ERROR.getText()
+            );
         }
         return 1;
     }
@@ -242,12 +255,15 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException | NumberFormatException e) {
-            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            System.out.print(
+                    Errors.INVALID_INPUT_ERROR.getText()
+            );
             showInfoMenu(uId);
 
         } catch (Exception e) {
-            System.out.println(Errors.UNEXPECTED_ERROR.getText());
-            e.printStackTrace();
+            System.out.print(
+                    Errors.UNEXPECTED_ERROR.getText()
+            );
             showInfoMenu(uId);
         }
     }
@@ -271,12 +287,15 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException | NumberFormatException e) {
-            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            System.out.print(
+                    Errors.INVALID_INPUT_ERROR.getText()
+            );
             showAdminInfoMenu();
 
         } catch (Exception e) {
-            System.out.println(Errors.UNEXPECTED_ERROR.getText());
-            e.printStackTrace();
+            System.out.print(
+                    Errors.UNEXPECTED_ERROR.getText()
+            );
             showAdminInfoMenu();
         }
     }
@@ -316,7 +335,9 @@ public class InboundControllerImpl implements InOutboundController{
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.print(
+                    Errors.UNEXPECTED_ERROR.getText()
+            );
         }
         return status;
     }
@@ -341,16 +362,22 @@ public class InboundControllerImpl implements InOutboundController{
                 // 기간별 입고 현황
                 case 2 -> {
                     System.out.print(
-                        Messages.ENTER_START_DATE_IN.getText()
+                            Messages.ENTER_START_DATE_IN.getText()
                     );
                     String startDate = br.readLine();
+                    if (startDate.isBlank() || startDate.length() != 8) {
+                        throw new IOException();
+                    }
                     Date date = informat.parse(startDate);
                     String newStartDate = outformat.format(date);
 
                     System.out.print(
-                        Messages.ENTER_END_DATE.getText()
+                            Messages.ENTER_END_DATE.getText()
                     );
                     String endDate = br.readLine();
+                    if (endDate.isBlank() || endDate.length() != 8) {
+                        throw new IOException();
+                    }
                     date = informat.parse(endDate);
                     String newEndDate = outformat.format(date);
 
@@ -370,8 +397,14 @@ public class InboundControllerImpl implements InOutboundController{
                     return 0;
                 }
             }
+        } catch (IOException e) {
+            System.out.print(
+                    Errors.INVALID_INPUT_ERROR.getText()
+            );
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.print(
+                    Errors.UNEXPECTED_ERROR.getText()
+            );
         }
         return status;
     }
@@ -391,6 +424,9 @@ public class InboundControllerImpl implements InOutboundController{
                     Messages.ENTER_DUE_DATE_IN.getText()
             );
             String dueDate = br.readLine();
+            if (dueDate.isBlank() || dueDate.length() != 8) {
+                throw new IOException();
+            }
             Date date = informat.parse(dueDate);
             String newDueDate = outformat.format(date);
             // 요청 정보 전송
@@ -431,9 +467,14 @@ public class InboundControllerImpl implements InOutboundController{
 
         } catch (IOException e) {
             // 입력오류
-            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            System.out.print(
+                    Errors.INVALID_INPUT_ERROR.getText()
+            );
+            InputRequestData(uId);
         } catch (ParseException e) {
-            e.printStackTrace();
+            System.out.print(
+                    Errors.DATE_INPUT_ERROR.getText()
+            );
             InputRequestData(uId);
         }
         return rtn;
@@ -453,6 +494,9 @@ public class InboundControllerImpl implements InOutboundController{
                     Messages.ENTER_DUE_DATE_IN.getText()
             );
             String dueDate = br.readLine();
+            if (dueDate.isBlank() || dueDate.length() != 8) {
+                throw new IOException();
+            }
             Date date = informat.parse(dueDate);
             String newDueDate = outformat.format(date);
 
@@ -462,8 +506,16 @@ public class InboundControllerImpl implements InOutboundController{
                 rtn = -1;
             }
 
-        } catch (IOException | NumberFormatException | ParseException e) {
-            return -1;
+        } catch (IOException | NumberFormatException e) {
+            System.out.print(
+                    Errors.INVALID_INPUT_ERROR.getText()
+            );
+            InputRequestDataUpdate(requestId);
+        } catch (ParseException e) {
+            System.out.print(
+                    Errors.DATE_INPUT_ERROR.getText()
+            );
+            InputRequestDataUpdate(requestId);
         }
         return rtn;
     }
@@ -495,7 +547,10 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException | NumberFormatException e) {
-            return -1;
+            System.out.print(
+                    Errors.INVALID_INPUT_ERROR.getText()
+            );
+            InputRequestItemUpdate(requestId);
         }
 
         return rtn;
@@ -527,8 +582,10 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException e) {
-            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
-            return -1;
+            System.out.print(
+                    Errors.INVALID_INPUT_ERROR.getText()
+            );
+            cancelRequest();
         }
         return rtn;
     }
@@ -569,8 +626,10 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException e) {
-            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
-            return -1;
+            System.out.print(
+                    Errors.INVALID_INPUT_ERROR.getText()
+            );
+            showRequestInfo();
         }
         return rtn;
     }
@@ -620,7 +679,10 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.print(
+                    Errors.INVALID_INPUT_ERROR.getText()
+            );
+            approveRequest();
         }
         return rtn;
     }
