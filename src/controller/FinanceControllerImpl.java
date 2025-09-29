@@ -190,9 +190,11 @@ public class FinanceControllerImpl implements FinanceController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("오류가 발생했습니다.");
+            //throw new RuntimeException(e);
         }
         return "continue";
     }
@@ -210,9 +212,11 @@ public class FinanceControllerImpl implements FinanceController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("오류가 밸생했습니다.");
+            //throw new RuntimeException(e);
         }
         return "continue";
     }
@@ -228,9 +232,11 @@ public class FinanceControllerImpl implements FinanceController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("오류가 발생했습니다.");
+            //throw new RuntimeException(e);
         }
         return "continue";
     }
@@ -244,7 +250,8 @@ public class FinanceControllerImpl implements FinanceController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
     }
     private void selectNonSubUserMenu(){
@@ -256,7 +263,8 @@ public class FinanceControllerImpl implements FinanceController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
     }
     private void selectSubUserMenu(){
@@ -269,7 +277,8 @@ public class FinanceControllerImpl implements FinanceController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
     }
     private void selectSubWhMenu(){
@@ -281,7 +290,8 @@ public class FinanceControllerImpl implements FinanceController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
     }
     private void selectSubWhMgMenu(){
@@ -293,7 +303,8 @@ public class FinanceControllerImpl implements FinanceController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
     }
 
@@ -350,7 +361,7 @@ public class FinanceControllerImpl implements FinanceController {
             Boolean result = addExpense(expense);
             if(result == true) System.out.println("지출 내역이 등록되었습니다.");
         } catch (Exception e) {
-            System.out.println("지출 내역 등록에 실패했습니다: " + e.getMessage());
+            System.out.println("지출 내역 등록에 실패했습니다.");
         }
     }
     private void handleModifyExpense() {
@@ -381,7 +392,7 @@ public class FinanceControllerImpl implements FinanceController {
             Boolean result = modifyExpense(expense);
             if(result == true) System.out.println("지출 내역이 수정되었습니다.");
         } catch (Exception e) {
-            System.out.println("지출 내역 수정에 실패했습니다: " + e.getMessage());
+            System.out.println("지출 내역 수정에 실패했습니다.");
         }
     }
     private void handleRemoveExpense() {
@@ -402,7 +413,7 @@ public class FinanceControllerImpl implements FinanceController {
             Boolean result = removeExpense(eIdx, wIdx);
             if(result == true) System.out.println("지출 내역이 삭제되었습니다.");
         } catch (Exception e) {
-            System.out.println("지출 내역 삭제에 실패했습니다: " + e.getMessage());
+            System.out.println("지출 내역 삭제에 실패했습니다.");
         }
     }
     private void handleAddSubscription() {
@@ -429,7 +440,7 @@ public class FinanceControllerImpl implements FinanceController {
             Boolean result = addSubscription(subApproval);
             if(result == true) System.out.println("구독이 신청되었습니다.");
         } catch (Exception e) {
-            System.out.println("구독 신청에 실패했습니다: " + e.getMessage());
+            System.out.println("구독 신청에 실패했습니다.");
         }
     }
     private void handleModifySubscription() {
@@ -457,7 +468,7 @@ public class FinanceControllerImpl implements FinanceController {
             Boolean result = modifySubscription(subApproval);
             if(result == true) System.out.println("구독 변경이 신청되었습니다. 담당자 승인시 종료일 이후 선택하신 모델로 변경됩니다.");
         } catch (Exception e) {
-            System.out.println("구독 변경 신청에 실패했습니다: " + e.getMessage());
+            System.out.println("구독 변경 신청에 실패했습니다.");
         }
     }
     private void handleCancelSubscription() {
@@ -470,7 +481,7 @@ public class FinanceControllerImpl implements FinanceController {
             Boolean result = cancelSubscription(uIdx);
             if(result == true) System.out.println("구독이 취소되었습니다. 종료일 이후 갱신되지 않습니다.");
         } catch (Exception e) {
-            System.out.println("구독 취소에 실패했습니다: " + e.getMessage());
+            System.out.println("구독 취소에 실패했습니다.");
         }
     }
     private void handleWhSubscription(){
@@ -487,7 +498,7 @@ public class FinanceControllerImpl implements FinanceController {
             else result = approveSubscription(saIdx);
             if(result == true) System.out.println("구독 신청이 처리되었습니다.");
         } catch (Exception e) {
-            System.out.println("구독 신청 처리에 실패했습니다: " + e.getMessage());
+            System.out.println("구독 신청 처리에 실패했습니다.");
         }
     }
 
@@ -785,9 +796,11 @@ public class FinanceControllerImpl implements FinanceController {
                 System.out.println("=".repeat(60));
                 return wIdx;
             } catch (NumberFormatException e) {
-                throw new RuntimeException(e);
+                System.out.println("숫자를 입력해주세요.");
+                //throw new RuntimeException(e);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                System.out.println("오류가 밸생했습니다.");
+                //throw new RuntimeException(e);
             }
         }
     }
@@ -827,7 +840,8 @@ public class FinanceControllerImpl implements FinanceController {
                 java.util.Date date = format.parse(dateStr);  // java.util.Date
                 return date;
             } catch (ParseException e) {
-                throw new RuntimeException(e);
+                System.out.println("입력이 잘못됐습니다.");
+                //throw new RuntimeException(e);
             }
         }
 
@@ -853,22 +867,33 @@ public class FinanceControllerImpl implements FinanceController {
     }
     private int getExpenseId(){
         System.out.println("=".repeat(60));
-        return Integer.parseInt(inputNum("수정할 지출번호>  "));
+        while(true){
+            int num = Integer.parseInt(inputNum("수정할 지출번호>  "));
+            if(num != 0) return num;
+        }
     }
     private int getSubModelId(){
         System.out.println("=".repeat(60));
-        return Integer.parseInt(inputNum("구독할 모델번호>  "));
+        while(true){
+            int num = Integer.parseInt(inputNum("구독할 모델번호>  "));
+            if(num != 0) return num;
+        }
     }
     private int getWarehouseId(){
         System.out.println("=".repeat(60));
         List<Warehouse> list = getWarehouseList();
         printWarehouseList(list);
-
-        return Integer.parseInt(inputNum("창고번호 선택>  "));
+        while(true) {
+            int num = Integer.parseInt(inputNum("창고번호 선택>  "));
+            if(num != 0) return num;
+        }
     }
     private String getPayment(){
         System.out.println("=".repeat(60));
-        return inputNum("결제방법 입력>  ");
+        while(true){
+            String num = inputNum("결제방법 입력>  ");
+            if(num != null) return num;
+        }
     }
     private int getSubApprovalId(){
         return Integer.parseInt(inputNum("검토할 번호 입력>  "));
@@ -898,8 +923,10 @@ public class FinanceControllerImpl implements FinanceController {
         try {
             return input.readLine();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
+        return null;
     }
 
 

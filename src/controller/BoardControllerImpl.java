@@ -198,7 +198,8 @@ public class BoardControllerImpl implements BoardController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e){
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
         return "continue";
     }
@@ -215,9 +216,11 @@ public class BoardControllerImpl implements BoardController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("오류가 발생했습니다.");
+            //throw new RuntimeException(e);
         }
         return "continue";
     }
@@ -234,9 +237,11 @@ public class BoardControllerImpl implements BoardController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("오류가 발생했습니다.");
+            //throw new RuntimeException(e);
         }
         return "continue";
     }
@@ -253,9 +258,11 @@ public class BoardControllerImpl implements BoardController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("오류가 발생했습니다.");
+            //throw new RuntimeException(e);
         }
         return "continue";
     }
@@ -269,7 +276,8 @@ public class BoardControllerImpl implements BoardController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
     }
     private void selectAnMenu(){
@@ -281,7 +289,8 @@ public class BoardControllerImpl implements BoardController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
     }
     private void selectAnMgMenu(int anIdx){
@@ -294,7 +303,8 @@ public class BoardControllerImpl implements BoardController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
     }
     private void selectIqUserMenu(){
@@ -307,7 +317,8 @@ public class BoardControllerImpl implements BoardController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
     }
     private void selectIqMenu() {
@@ -319,7 +330,8 @@ public class BoardControllerImpl implements BoardController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
     }
     private void selectIqMgMenu(Inquiry inquiry) {
@@ -332,7 +344,8 @@ public class BoardControllerImpl implements BoardController {
                 default -> System.out.println("번호를 잘못 입력했습니다.");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("입력이 잘못됐습니다.");
+            //throw new RuntimeException(e);
         }
     }
     private void selectRsMgMenu(Inquiry inquiry) {
@@ -345,7 +358,8 @@ public class BoardControllerImpl implements BoardController {
                     default -> System.out.println("번호를 잘못 입력했습니다.");
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.out.println("입력이 잘못됐습니다.");
+                //throw new RuntimeException(e);
             }
         } else{
             try {
@@ -357,7 +371,8 @@ public class BoardControllerImpl implements BoardController {
                     default -> System.out.println("번호를 잘못 입력했습니다.");
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.out.println("입력이 잘못됐습니다.");
+                //throw new RuntimeException(e);
             }
         }
     }
@@ -448,7 +463,7 @@ public class BoardControllerImpl implements BoardController {
             Boolean result = addAnnouncement(announcement);
             if(result == true) System.out.println("공지사항이 등록되었습니다.");
         } catch (Exception e) {
-            System.out.println("공지사항 등록에 실패했습니다: " + e.getMessage());
+            System.out.println("공지사항 등록에 실패했습니다.");
         }
     }
     private void handleModifyAnnouncement(int anIdx) {
@@ -470,7 +485,7 @@ public class BoardControllerImpl implements BoardController {
             Boolean result = modifyAnnouncement(announcement);
             if(result == true) System.out.println("공지사항이 수정되었습니다.");
         } catch (Exception e) {
-            System.out.println("공지사항 수정에 실패했습니다: " + e.getMessage());
+            System.out.println("공지사항 수정에 실패했습니다.");
         }
     }
     private void handleRemoveAnnouncement(int anIdx) {
@@ -483,7 +498,7 @@ public class BoardControllerImpl implements BoardController {
             Boolean result = removeAnnouncement(anIdx);
             if(result == true) System.out.println("공지사항이 삭제되었습니다.");
         } catch (Exception e) {
-            System.out.println("공지사항 삭제에 실패했습니다: " + e.getMessage());
+            System.out.println("공지사항 삭제에 실패했습니다.");
         }
     }
     private void handleGetInquiryDetail() {
@@ -522,7 +537,7 @@ public class BoardControllerImpl implements BoardController {
             Boolean result = modifyInquiry(inquiry);
             if(result == true) System.out.println("문의글이 수정되었습니다.");
         } catch (Exception e) {
-            System.out.println("문의글 수정에 실패했습니다: " + e.getMessage());
+            System.out.println("문의글 수정에 실패했습니다.");
         }
 
     }
@@ -534,7 +549,7 @@ public class BoardControllerImpl implements BoardController {
             Boolean result = removeInquiry(iqIdx);
             if(result == true) System.out.println("문의글이 삭제되었습니다.");
         } catch (Exception e) {
-            System.out.println("문의글 삭제에 실패했습니다: " + e.getMessage());
+            System.out.println("문의글 삭제에 실패했습니다.");
         }
     }
     private void handleAddInquiry(){
@@ -556,7 +571,7 @@ public class BoardControllerImpl implements BoardController {
             Boolean result = addInquiry(inquiry);
             if(result == true) System.out.println("문의글이 등록되었습니다.");
         } catch (Exception e) {
-            System.out.println("문의글 등록에 실패했습니다: " + e.getMessage());
+            System.out.println("문의글 등록에 실패했습니다.");
         }
     }
     private void handleAddResponse(int iqIdx){
@@ -574,7 +589,7 @@ public class BoardControllerImpl implements BoardController {
             Boolean result = addResponse(response);
             if(result == true) System.out.println("문의 답변이 등록되었습니다.");
         } catch (Exception e) {
-            System.out.println("문의 답변 등록에 실패했습니다: " + e.getMessage());
+            System.out.println("문의 답변 등록에 실패했습니다.");
         }
     }
     private void handleModifyResponse(int iqIdx){
@@ -591,7 +606,7 @@ public class BoardControllerImpl implements BoardController {
             Boolean result = modifyResponse(response);
             if(result == true) System.out.println("문의 답변이 수정되었습니다.");
         } catch (Exception e) {
-            System.out.println("문의 답변 수정에 실패했습니다: " + e.getMessage());
+            System.out.println("문의 답변 수정에 실패했습니다.");
         }
     }
     private void handleRemoveResponse(int iqIdx){
@@ -602,7 +617,7 @@ public class BoardControllerImpl implements BoardController {
             Boolean result = removeResponse(iqIdx);
             if(result == true) System.out.println("문의 답변이 삭제되었습니다.");
         } catch (Exception e) {
-            System.out.println("문의 답변 삭제에 실패했습니다: " + e.getMessage());
+            System.out.println("문의 답변 삭제에 실패했습니다.");
         }
     }
     private void handleNonUserGetIqDetail() {
@@ -645,7 +660,7 @@ public class BoardControllerImpl implements BoardController {
             Boolean result = addInquiry(inquiry);
             if(result == true) System.out.println("문의글이 등록되었습니다.");
         } catch (Exception e) {
-            System.out.println("문의글 등록에 실패했습니다: " + e.getMessage());
+            System.out.println("문의글 등록에 실패했습니다.");
         }
     }
 
@@ -728,18 +743,23 @@ public class BoardControllerImpl implements BoardController {
                 System.out.println("=".repeat(60));
                 return anIdx;
             } catch (NumberFormatException e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
+                System.out.println("숫자를 입력해주세요.");
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
+                System.out.println("오류가 발생했습니다.");
             }
         }
     }
     private String getTitle(){
-        return inputNum("title>  ");
+        while (true){
+            String password = inputNum("title>  ");
+            if(password != null) return password;
+        }
     }
     private String getContent(){
         StringBuffer text = new StringBuffer();
-        System.out.println("[q 입력 시 작성 완료] content>  ");
+        System.out.println("[q 입력 시 작성 완료] content");
         while(true){
             String content = inputNum(">  ");
             if(content.toLowerCase().equals("q")) break;
@@ -773,9 +793,11 @@ public class BoardControllerImpl implements BoardController {
                 System.out.println("=".repeat(60));
                 return anIdx;
             } catch (NumberFormatException e) {
-                throw new RuntimeException(e);
+                System.out.println("숫자를 입력해주세요.");
+                //throw new RuntimeException(e);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
+                System.out.println("오류가 발생했습니다.");
             }
         }
     }
@@ -798,10 +820,16 @@ public class BoardControllerImpl implements BoardController {
         }
     }
     private String getWriter(){
-        return inputNum("작성자> ");
+        while (true){
+            String password = inputNum("작성자> ");
+            if(password != null) return password;
+        }
     }
     private String getPassword(){
-        return inputNum("비밀번호> ");
+        while (true){
+            String password = inputNum("비밀번호> ");
+            if(password != null) return password;
+        }
     }
 
 
@@ -810,7 +838,9 @@ public class BoardControllerImpl implements BoardController {
         try {
             return input.readLine();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
+            System.out.println("입력이 잘못되었습니다.");
         }
+        return null;
     }
 }
