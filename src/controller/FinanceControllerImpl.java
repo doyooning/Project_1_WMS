@@ -643,7 +643,7 @@ public class FinanceControllerImpl implements FinanceController {
                     System.out.println("-".repeat(60));
 
                     for (Expense e : expenseList) {
-                        System.out.printf("%5d | %10s | %15,d | %21s \n",
+                        System.out.printf("%5d | %10s | %15d | %21s \n",
                                 e.getEIdx(), e.getEType(), e.getEAmount(), e.getEDate());
                         //System.out.printf("- [%s] %s: %,d원\n", e.getEDate(), e.getEType(), e.getEAmount());
                     }
@@ -664,11 +664,11 @@ public class FinanceControllerImpl implements FinanceController {
 
                     for (String month : monthlySummary.keySet()) {
                         Map<String, Long> data = monthlySummary.get(month);
-                        System.out.printf("%10s | %14,d \n", month, data.get("sales"));
+                        System.out.printf("%10s | %14d \n", month, data.get("sales"));
                         //System.out.printf("%s월: 매출 %,d원\n", month, data.get("sales"));
                     }
                     System.out.println("-".repeat(60));
-                    System.out.println("\n총 매출: " + String.format("%,d원", totalSales));
+                    System.out.println("\n총 매출: " + String.format("%d원", totalSales));
                 } else {
                     List<Sales> salesList = (List<Sales>) result.get("salesList");
                     long totalSales = (long) result.get("totalSales");
@@ -684,7 +684,7 @@ public class FinanceControllerImpl implements FinanceController {
                     }
 
                     System.out.println("-".repeat(60));
-                    System.out.println("\n총 매출: " + String.format("%,d원", totalSales));
+                    System.out.println("\n총 매출: " + String.format("%d원", totalSales));
                 }
             }
 
@@ -698,11 +698,11 @@ public class FinanceControllerImpl implements FinanceController {
 
                     for (String month : monthlySummary.keySet()) {
                         Map<String, Long> data = monthlySummary.get(month);
-                        System.out.printf("%10s | %14,d \n", month, data.get("expense"));
+                        System.out.printf("%10s | %14d \n", month, data.get("expense"));
                         //System.out.printf("%s월: 매출 %,d원\n", month, data.get("sales"));
                     }
                     System.out.println("-".repeat(60));
-                    System.out.println("\n총 지출: " + String.format("%,d원", totalExpense));
+                    System.out.println("\n총 지출: " + String.format("%d원", totalExpense));
                 } else {
                     List<Expense> expenseList = (List<Expense>) result.get("expenseList");
                     long totalExpense = (long) result.get("totalExpense");
@@ -712,13 +712,13 @@ public class FinanceControllerImpl implements FinanceController {
                     System.out.println("-".repeat(60));
 
                     for (Expense e : expenseList) {
-                        System.out.printf("%5d | %10s | %15,d | %21s \n",
+                        System.out.printf("%5d | %10s | %15d | %21s \n",
                                 e.getEIdx(), e.getEType(), e.getEAmount(), e.getEDate());
                         //System.out.printf("- [%s] %s: %,d원\n", e.getEDate(), e.getEType(), e.getEAmount());
                     }
 
                     System.out.println("-".repeat(60));
-                    System.out.println("\n총 지출: " + String.format("%,d원", totalExpense));
+                    System.out.println("\n총 지출: " + String.format("%d원", totalExpense));
                 }
             }
         }
