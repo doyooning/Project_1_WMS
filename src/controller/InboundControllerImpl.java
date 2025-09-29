@@ -104,6 +104,10 @@ public class InboundControllerImpl implements InOutboundController{
                     if (status == -1) {
                         System.out.println(Errors.DATA_INPUT_ERROR.getText());
 
+                    } else if (status == -2) {
+                        System.out.print(
+                                Messages.RETURN_MENU.getText()
+                        );
                     } else {
                         System.out.printf(
                                 Messages.REQUEST_APPROVED_IN.getText(), status
@@ -223,7 +227,7 @@ public class InboundControllerImpl implements InOutboundController{
                             Messages.ENTER_REQUEST_ID_UPDATE_IN.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
-                    boolean accessStatus = isAccessibleRequest(requestId);
+                    boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
                     if (accessStatus == false) {
                         System.out.print(
                                 Errors.INACCESSIBLE_REQUEST_ERROR.getText()
@@ -243,7 +247,7 @@ public class InboundControllerImpl implements InOutboundController{
                             Messages.ENTER_REQUEST_ID_UPDATE_IN.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
-                    boolean accessStatus = isAccessibleRequest(requestId);
+                    boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
                     if (accessStatus == false) {
                         System.out.print(
                                 Errors.INACCESSIBLE_REQUEST_ERROR.getText()
@@ -598,7 +602,7 @@ public class InboundControllerImpl implements InOutboundController{
                     Messages.ENTER_CANCEL_REQUEST_ID_IN.getText()
             );
             int requestId = Integer.parseInt(br.readLine());
-            boolean status = isAccessibleRequest(requestId);
+            boolean status = isAccessibleRequest(requestId, user.getUIdx());
             if (status == false) {
                 System.out.print(
                         Errors.INACCESSIBLE_REQUEST_ERROR.getText()
@@ -639,7 +643,7 @@ public class InboundControllerImpl implements InOutboundController{
                     Messages.ENTER_PRINT_REQUEST_ID_IN.getText()
             );
             int requestId = Integer.parseInt(br.readLine());
-            boolean status = isAccessibleRequest(requestId);
+            boolean status = isAccessibleRequest(requestId, user.getUIdx());
             if (status == false) {
                 System.out.print(
                         Errors.INACCESSIBLE_REQUEST_ERROR.getText()
@@ -722,6 +726,11 @@ public class InboundControllerImpl implements InOutboundController{
                 if (approveStatus == -1) {
                     System.out.print(Errors.VO_LOAD_ERROR.getText());
                     rtn = -1;
+                } else if (approveStatus == -2) {
+                    System.out.print(
+                            Errors.CANNOT_APPROVE_ERROR.getText()
+                    );
+                    rtn = -2;
                 } else {
                     rtn = approveStatus;
                 }
@@ -776,10 +785,10 @@ public class InboundControllerImpl implements InOutboundController{
         }
     }
     // 자신의 요청건에만 접근 가능하게 확인
-    public boolean isAccessibleRequest(int requestId) {
+    public boolean isAccessibleRequest(int requestId, int uIdx) {
         int status = 0;
-        status = inboundService.isAccessibleRequest(requestId, user.getUIdx());
-        if (status <= 0) {
+        status = inboundService.isAccessibleRequest(requestId, uIdx);
+        if (status < 0) {
             return false;
         }
         return true;
