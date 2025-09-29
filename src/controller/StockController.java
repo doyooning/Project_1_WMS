@@ -291,7 +291,7 @@ public class StockController {
     private void showAddChecklogMenu() {
         try {
             //창고관리자만
-            System.out.println(Menu.CHECKLOG_ADD_MENU);
+            System.out.println(Menu.CHECKLOG_ADD_MENU.getText());
             //창고관리자가 관리하는 창고에 대해서만 재고실사를 등록하므로 입력받을 필요 없음
             System.out.println("재고 실사 등록 중....\n");
             stockService = StockService.getInstance();
@@ -303,7 +303,7 @@ public class StockController {
             String menu = String.format("%-8s%-8s%-10s%-10s%-10s", "실사로그번호", "창고번호", "창고명", "일치여부", "등록일");
             System.out.println(menu);
             System.out.println("------------------------------------------------------------");
-            String list = String.format("%-8d%-8s%-10s%-8s%-10s",
+            String list = String.format("%-11d%-10s%-16s%-10s%-10s",
                                         checkLog.getClIdx(), checkLog.getWUniqueNum(), checkLog.getWName(), checkLog.getClCorrect(), sdf.format(checkLog.getCreatedAt()));
             System.out.println(list);
             System.out.println();
@@ -570,7 +570,7 @@ public class StockController {
             System.out.println("------------------------------------------------------------");
 
             while(index < stockList.size() && stockList.get(index).getPIdx().equals(currentPIdx)){
-                String format = String.format("%-8s%-6d%-6d%-6d%-7s%-10s",
+                String format = String.format("%-11s%-9d%-9d%-9d%-10s%-10s",
                         stockList.get(index).getWUniqueNum(), stockList.get(index).getSAvail(), stockList.get(index).getSNotAvail(), stockList.get(index).getSSafe(),
                         data, sdf.format(stockList.get(index).getUpdatedAt()));
                 System.out.println(format);
@@ -601,7 +601,7 @@ public class StockController {
                 page++;
             }
             CheckLog current = checkLogList.get(index);
-            String format = String.format("%-8d%-8s%-10s%-10s%-10s",
+            String format = String.format("%-11d%-9s%-12s%-12s%-10s",
                                             current.getClIdx(), current.getWUniqueNum(), current.getWsName(), current.getClCorrect(), sdf.format(current.getCreatedAt()));
             System.out.println(format);
             index++;

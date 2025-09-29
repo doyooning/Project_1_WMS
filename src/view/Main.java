@@ -7,12 +7,13 @@ import domain.WarehouseAdmin;
 
 public class Main {
     public static void main(String[] args) {
-        StockController stockController = StockController.getInstance();
+        //StockController stockController = StockController.getInstance();
 
-        WarehouseAdmin warehouseAdmin = new WarehouseAdmin();
-        warehouseAdmin.setWIdx(1);
-        stockController.setCurrentUser("WarehouseAdmin", warehouseAdmin);
+        //stockController.setCurrentUser("User", null);
 
-        stockController.showStockMenu();
+        //stockController.showStockSearchMenu();
+
+        WarehouseController warehouseController = WarehouseController.getInstance();
+        warehouseController.showWarehouseSearchMenu();
     }
 }
