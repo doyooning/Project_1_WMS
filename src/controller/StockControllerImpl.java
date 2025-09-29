@@ -302,10 +302,10 @@ public class StockControllerImpl implements StockController {
 
 
             System.out.println("[등록된 재고 실사]");
-            String menu = String.format("%-8s%-8s%-10s%-10s%-10s", "실사로그번호", "창고번호", "창고명", "일치여부", "등록일");
+            String menu = String.format("%-8s%-8s%-14s%-10s%-10s", "실사로그번호", "창고번호", "창고명", "일치여부", "등록일");
             System.out.println(menu);
             System.out.println("------------------------------------------------------------");
-            String list = String.format("%-11d%-10s%-16s%-10s%-10s",
+            String list = String.format("%-11d%-10s%-15s%-10s%-10s",
                                         checkLog.getClIdx(), checkLog.getWUniqueNum(), checkLog.getWName(), checkLog.getClCorrect(), sdf.format(checkLog.getCreatedAt()));
             System.out.println(list);
             System.out.println();
@@ -518,13 +518,13 @@ public class StockControllerImpl implements StockController {
                 if(input.trim().toLowerCase().equals("exit")) return "exit";
 
                 if(!input.trim().replaceAll("\\s+", "").startsWith("섹션")){
-                    System.out.println();
+                    System.out.println(Errors.INVALID_INPUT_SECTIONNAME.getText());
                     continue;
                 }
 
                 return input.trim().replaceAll("\\s+", "");
             } catch (IOException e) {
-                throw new ExceptionManager(Errors.INVALID_INPUT_SECTIONNAME.getText());
+                throw new ExceptionManager(Errors.CHECKLOG_SECTIONNAME_IOEXCEPTION.getText());
             }
         }
     }

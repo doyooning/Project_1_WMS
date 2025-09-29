@@ -99,6 +99,10 @@ public class WarehouseControllerImpl implements WarehouseController {
             System.out.print("창고 종류: ");
             String wtName = reader.readLine();
 
+            if(!wIdx.trim().startsWith("ware")){
+                throw new ExceptionManager(Errors.WAREHOUSE_UNIQUENUM_ERROR.getText());
+            }
+
             if (!wtName.trim().matches("보관형\\s*창고|마이크로\\s*풀필먼트")) {
                 throw new ExceptionManager(Errors.WAREHOUSE_TYPE_ERROR.getText());
             }
@@ -122,7 +126,7 @@ public class WarehouseControllerImpl implements WarehouseController {
                     throw new ExceptionManager(Errors.WAREHOUSE_STORAGE_MAXAMOUNT_ERROR.getText());
                 }
             } else if (wtName.equals("마이크로풀필먼트")) {
-                if (Integer.parseInt(wMaxAmount) < 80 || Integer.parseInt(wMaxAmount) > 100) {
+                if (Integer.parseInt(wMaxAmount) < 100 || Integer.parseInt(wMaxAmount) > 300) {
                     throw new ExceptionManager(Errors.WAREHOUSE_MF_MAXAMOUNT_ERROR.getText());
                 }
             }
