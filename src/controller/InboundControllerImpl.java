@@ -227,7 +227,6 @@ public class InboundControllerImpl implements InOutboundController{
                             Messages.ENTER_REQUEST_ID_UPDATE_IN.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
-                    System.out.println(user.getUIdx());
                     boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
                     if (accessStatus == false) {
                         System.out.print(
