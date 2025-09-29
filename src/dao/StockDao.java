@@ -1,6 +1,7 @@
 package dao;
 
 import Util.DBUtil;
+import common.Errors;
 import domain.CheckLog;
 import domain.EntityStatus;
 import domain.Stock;
@@ -28,25 +29,24 @@ public class StockDao {
         List<Stock> stockList = new ArrayList<>();
 
         try(CallableStatement cs = conn.prepareCall(sql); ResultSet rs = cs.executeQuery()){
-            conn.setAutoCommit(false);
-            // select s.pIdx, p.pName, s.wIdx, (s.sWhole-s.sSafe-s.sNotAvail) as sAvail, s.sNotAvail, s.sSafe, pc.cName, s.updatedAt
+            // select s.pIdx, p.pName, w.wUniqueNum, (s.sWhole-s.sSafe-s.sNotAvail) as sAvail, s.sNotAvail, s.sSafe, pc.cName, s.updatedAt
             while(rs.next()){
                 Stock stock = new Stock();
                 stock.setPIdx(rs.getString(1));
                 stock.setPName(rs.getString(2));
-                stock.setWIdx(rs.getInt(3));
+                stock.setWUniqueNum(rs.getString(3));
                 stock.setSAvail(rs.getInt(4));
                 stock.setSNotAvail(rs.getInt(5));
                 stock.setSSafe(rs.getInt(6));
                 stock.setPCategory(rs.getString(7));
-                stock.setUpdatedAt(Timestamp.valueOf(rs.getString(8)));
+                stock.setUpdatedAt(rs.getTimestamp(8));
 
                 stockList.add(stock);
             }
 
             return stockList;
         }catch(SQLException e){
-            throw new DaoException("[DB] 전체 재고 조회 도중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_STOCKSEARCH_ALL_ERROR.getText(), e);
         }
     }
 
@@ -69,7 +69,7 @@ public class StockDao {
                     Stock stock = new Stock();
                     stock.setPIdx(rs.getString(1));
                     stock.setPName(rs.getString(2));
-                    stock.setWIdx(rs.getInt(3));
+                    stock.setWUniqueNum(rs.getString(3));
                     stock.setSAvail(rs.getInt(4));
                     stock.setSNotAvail(rs.getInt(5));
                     stock.setSSafe(rs.getInt(6));
@@ -81,10 +81,10 @@ public class StockDao {
 
                 return stockList;
             }catch(SQLException e){
-                throw new DaoException("[DB] 대분류별 재고 조회 도중 문제가 발생했습니다.", e);
+                throw new DaoException(Errors.DB_STOCKSEARCH_PRICATE_ERROR.getText(), e);
             }
         }catch(SQLException e){
-            throw new DaoException("[DB] 대분류별 재고 조회 도중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_STOCKSEARCH_PRICATE_ERROR.getText(), e);
         }
     }
 
@@ -106,7 +106,7 @@ public class StockDao {
                     Stock stock = new Stock();
                     stock.setPIdx(rs.getString(1));
                     stock.setPName(rs.getString(2));
-                    stock.setWIdx(rs.getInt(3));
+                    stock.setWUniqueNum(rs.getString(3));
                     stock.setSAvail(rs.getInt(4));
                     stock.setSNotAvail(rs.getInt(5));
                     stock.setSSafe(rs.getInt(6));
@@ -118,10 +118,10 @@ public class StockDao {
 
                 return stockList;
             }catch(SQLException e){
-                throw new DaoException("[DB] 중분류별 재고 조회 도중 문제가 발생했습니다.", e);
+                throw new DaoException(Errors.DB_STOCKSEARCH_SECCATE_ERROR.getText(), e);
             }
         }catch(SQLException e){
-            throw new DaoException("[DB] 중분류별 재고 조회 도중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_STOCKSEARCH_SECCATE_ERROR.getText(), e);
         }
     }
 
@@ -143,7 +143,7 @@ public class StockDao {
                     Stock stock = new Stock();
                     stock.setPIdx(rs.getString(1));
                     stock.setPName(rs.getString(2));
-                    stock.setWIdx(rs.getInt(3));
+                    stock.setWUniqueNum(rs.getString(3));
                     stock.setSAvail(rs.getInt(4));
                     stock.setSNotAvail(rs.getInt(5));
                     stock.setSSafe(rs.getInt(6));
@@ -155,10 +155,10 @@ public class StockDao {
 
                 return stockList;
             }catch(SQLException e){
-                throw new DaoException("[DB] 소분류별 재고 조회 도중 문제가 발생했습니다.", e);
+                throw new DaoException(Errors.DB_STOCKSEARCH_TERCATE_ERROR.getText(), e);
             }
         }catch(SQLException e){
-            throw new DaoException("[DB] 소분류별 재고 조회 도중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_STOCKSEARCH_TERCATE_ERROR.getText(), e);
         }
     }
 
@@ -177,7 +177,7 @@ public class StockDao {
                     Stock stock = new Stock();
                     stock.setPIdx(rs.getString(1));
                     stock.setPName(rs.getString(2));
-                    stock.setWIdx(rs.getInt(3));
+                    stock.setWUniqueNum(rs.getString(3));
                     stock.setSAvail(rs.getInt(4));
                     stock.setSNotAvail(rs.getInt(5));
                     stock.setSSafe(rs.getInt(6));
@@ -190,10 +190,10 @@ public class StockDao {
                 return stockList;
                 //만약 stockList.size()가 0이면 해당 바코드번호가 없음
             }catch(SQLException e){
-                throw new DaoException("[DB] 바코드 번호에 대한 재고 조회 도중 예외가 발생했습니다.", e);
+                throw new DaoException(Errors.DB_STOCKSEARCH_PRODUCT_ERROR.getText(), e);
             }
         }catch(SQLException e){
-            throw new DaoException("[DB] 바코드 번호에 대한 재고 조회 도중 예외가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_STOCKSEARCH_PRODUCT_ERROR.getText(), e);
         }
     }
 
@@ -212,7 +212,7 @@ public class StockDao {
 
             return rtn;
         }catch(SQLException e){
-            throw new DaoException("[DB] 카테고리 존재 여부 확인 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_CHECKCATEGORY_ERROR.getText(), e);
         }
     }
 
@@ -231,7 +231,7 @@ public class StockDao {
 
             return rtn;
         }catch(SQLException e){
-            throw new DaoException("[DB] 재고실사가 등록 중 문제가 발생했습니다. ", e);
+            throw new DaoException(Errors.DB_ADDCHECKLOG_ERROR.getText(), e);
         }
     }
 
@@ -254,7 +254,7 @@ public class StockDao {
 
             return checkLog;
         }catch(SQLException e){
-            throw new DaoException("[DB] 등록된 재고 실사를 조회하던 중 문제가 발생했습니다. ", e);
+            throw new DaoException(Errors.DB_CHECKNEWLOG_ERROR.getText(), e);
         }
     }
 
@@ -262,7 +262,8 @@ public class StockDao {
         conn = DBUtil.getConnection();
 
         int result = checkCheckLogExist(clIdx);
-        if(result == 0) return -2; //존재하지 않음
+        if(result == 0) return -1; //존재하지 않음
+        else if(result == -1) return -2;
 
         String sql = "{call removeCheckLog(?,?)}";
 
@@ -276,7 +277,7 @@ public class StockDao {
 
             return rtn;
         }catch(SQLException e){
-            throw new DaoException("[DB] 재고실사 삭제 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_DELETECHECKLOG_ERROR.getText(), e);
         }
     }
 
@@ -292,7 +293,7 @@ public class StockDao {
             int rtn = cs.getInt(2);
             return rtn;
         }catch(SQLException e){
-            throw new DaoException("[DB] 재고 실사가 존재하는지 확인 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_CHECKLOGEXIST_ERROR.getText(), e);
         }
     }
 
@@ -319,10 +320,10 @@ public class StockDao {
                 }
                 return checkLogList;
             }catch (SQLException e){
-                throw new DaoException("[DB] 전체 재고 실사 조회 중 문제가 발생했습니다.", e);
+                throw new DaoException(Errors.DB_CHECKLOGSEARCH_ERROR.getText(), e);
             }
         }catch(SQLException e){
-            throw new DaoException("[DB] 전체 재고 실사 조회 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_CHECKLOGSEARCH_ERROR.getText(), e);
         }
     }
 
@@ -339,7 +340,7 @@ public class StockDao {
             int rtn = cs.getInt(2);
             return rtn; //0이면 마이크로 1이면 보관형
         }catch(SQLException e){
-            throw new DaoException("[DB] 창고 타입 확인 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_WAREHOUSETYPE_ERROR.getText(), e);
         }
     }
 
@@ -366,7 +367,7 @@ public class StockDao {
                 return checkLogList;
             }
         }catch(SQLException e){
-            throw new DaoException("[DB] 섹션별 재고 실사 조회 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_CHECKLOGSEARCH_SECTION_ERROR.getText(), e);
         }
     }
 
@@ -392,7 +393,7 @@ public class StockDao {
                 return checkLogList;
             }
         }catch(SQLException e){
-            throw new DaoException("[DB] 창고별 재고 실사 조회 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_CHECKLOGSEARCH_WARESHOUSE_ERROR.getText(), e);
         }
     }
 
@@ -406,29 +407,36 @@ public class StockDao {
 
             try(ResultSet rs = cs.executeQuery()){
                 if(rs.next()){
-                    warehouse.setWtIdx(rs.getInt(1));
+                    warehouse.setWUniqueNum(rs.getString(1));
+                    warehouse.setWtIdx(rs.getInt(2));
                 }
 
                 return warehouse;
             }catch(SQLException e){
-                throw new DaoException("[DB] 창고관리자가 관리하는 창고 조회 중 문제가 발생했습니다.", e);
+                throw new DaoException(, e);
             }
         }catch(SQLException e){
-            throw new DaoException("[DB] 창고관리자가 관리하는 창고 조회 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_WAREHOUSESEARCH_IF_WA_MANAGE_ERROR.getText(), e);
         }
     }
 
     public boolean updateCheckLog(int clIdx){
         conn = DBUtil.getConnection();
 
-        String sql = "{call updateCheckLog(?)";
+        String sql = "{call updateCheckLog(?,?)}";
 
         try(CallableStatement cs = conn.prepareCall(sql)){
             cs.setInt(1, clIdx);
+            cs.registerOutParameter(2, Types.INTEGER);
 
-            return cs.execute();
+            cs.execute();
+
+            int result = cs.getInt(2);
+
+            if(result == 1) return false;
+            return true;
         }catch(SQLException e){
-            throw new DaoException("[DB] 재고 실사 수정 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_CHECKLOG_UPDATE_ERROR.getText(), e);
         }
     }
 
@@ -446,7 +454,7 @@ public class StockDao {
             if(rtn==1) return true;
             return false;
         }catch(SQLException e){
-            throw new DaoException("[DB] 재고 실사 수정 조건을 확인하는 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_CHECK_UPDATECONDITION_ERROR.getText(), e);
         }
     }
 
@@ -463,7 +471,7 @@ public class StockDao {
             if(rtn==1) return true;
             return false;
         }catch(SQLException e){
-            throw new DaoException("[DB] 해당 섹션명 존재 여부를 확인하는 중 문제가 발생했습니다.", e);
+            throw new DaoException(Errors.DB_WSNAME_CHECK_ERROR.getText(), e);
         }
     }
 
@@ -482,7 +490,7 @@ public class StockDao {
             if(rtn==1) return true;
             return false;
         }catch(SQLException e){
-            throw new DaoException("[DB] 해당 실사로그를 작성한 창고관리자를 확인하는 중 문제가 생겼습니다..",e);
+            throw new DaoException(Errors.DB_WA_CHECK_ERROR.getText(),e);
         }
     }
 }
