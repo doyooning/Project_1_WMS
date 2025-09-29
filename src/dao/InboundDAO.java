@@ -40,6 +40,7 @@ public class InboundDAO implements InOutboundDAO {
             return rtn;
 
         } catch (SQLException e) {
+            System.out.println("[DB 오류]");
             return -1;
         }
     }
@@ -66,6 +67,7 @@ public class InboundDAO implements InOutboundDAO {
             return rtn;
 
         } catch (SQLException e) {
+            System.out.println("[DB 오류]");
             return -1;
         }
 
@@ -93,6 +95,7 @@ public class InboundDAO implements InOutboundDAO {
             return rtn;
 
         } catch (SQLException e) {
+            System.out.println("[DB 오류]");
             return -1;
         }
     }
@@ -119,6 +122,7 @@ public class InboundDAO implements InOutboundDAO {
             return rtn;
 
         } catch (SQLException e) {
+            System.out.println("[DB 오류]");
             return -1;
         }
     }
@@ -145,6 +149,7 @@ public class InboundDAO implements InOutboundDAO {
             return rtn;
 
         } catch (SQLException e) {
+            System.out.println("[DB 오류]");
             return -1;
         }
     }
@@ -168,6 +173,7 @@ public class InboundDAO implements InOutboundDAO {
             return rtn;
 
         } catch (SQLException e) {
+            System.out.println("[DB 오류]");
             return -1;
         }
     }
@@ -199,7 +205,7 @@ public class InboundDAO implements InOutboundDAO {
             return requestBill;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("[DB 오류]");
             return null;
         }
     }
@@ -234,7 +240,7 @@ public class InboundDAO implements InOutboundDAO {
             return inboundList;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("[DB 오류]");
             return null;
         }
     }
@@ -271,7 +277,7 @@ public class InboundDAO implements InOutboundDAO {
             return pRequestList;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("[DB 오류]");
             return null;
         }
     }
@@ -310,7 +316,7 @@ public class InboundDAO implements InOutboundDAO {
             return inRequestList;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("[DB 오류]");
             return null;
         }
     }
@@ -348,7 +354,7 @@ public class InboundDAO implements InOutboundDAO {
             return inRequestItemList;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("[DB 오류]");
             return null;
         }
     }
@@ -384,9 +390,33 @@ public class InboundDAO implements InOutboundDAO {
             return requestList;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("[DB 오류]");
             return null;
         }
+    }
+
+    public int isAccessibleRequest(int requestId, int uIdx) {
+        String sql = "{call isAccessibleRequest(?, ?, ?)}";
+
+        try(Connection conn = DBUtil.getConnection();
+            CallableStatement call =  conn.prepareCall(sql)
+        ) {
+            // 데이터
+            call.setInt(1, requestId);
+            call.setInt(2, uIdx);
+
+            // 실행
+            call.execute();
+
+            // 리턴
+            int rtn = call.getInt(3);
+            return rtn;
+
+        } catch (SQLException e) {
+            System.out.println("[DB 오류]");
+            return -1;
+        }
+
     }
 }
 
