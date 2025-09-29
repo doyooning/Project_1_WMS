@@ -5,6 +5,7 @@ public enum Errors {
     DATA_INPUT_ERROR("""
             
             [오류] 데이터 입력 중 오류가 발생하였습니다.
+                 (해당하는 정보가 없거나, 요청을 처리할 수 없습니다.)
             """),
 
     INVALID_INPUT_ERROR("""
@@ -40,7 +41,7 @@ public enum Errors {
 
     CANNOT_APPROVE_ERROR("""
                     
-                    [오류] 가용 재고가 부족하여 승인할 수 없습니다.
+                    [오류] 재고가 부족하여 승인할 수 없습니다.
                     
                     """),
 

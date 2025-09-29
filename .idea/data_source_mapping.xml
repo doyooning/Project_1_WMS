@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/250928getData.sql" value="b48528b9-b337-4851-a8ce-fc6a00f6c8b0" />
-    <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/250928inbound2.sql" value="b48528b9-b337-4851-a8ce-fc6a00f6c8b0" />
-    <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/250928outbound2.sql" value="b48528b9-b337-4851-a8ce-fc6a00f6c8b0" />
+    <file url="file://$PROJECT_DIR$/../../../../study/ssg9/sql/projectdata/250929commonprocedures.sql" value="b48528b9-b337-4851-a8ce-fc6a00f6c8b0" />
   </component>
 </project>
