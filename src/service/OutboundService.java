@@ -31,7 +31,7 @@ public class OutboundService implements InOutboundService {
 
     public int addRequest(int id, int warehouseId, String dueDate) {
         int status = outboundDao.addOutboundData(id, warehouseId, dueDate);
-        if (status <= 0) {
+        if (status < 0) {
             return -1;
         }
         return status;
@@ -39,7 +39,7 @@ public class OutboundService implements InOutboundService {
 
     public int addRequest(int id, String productId, int productQuantity) {
         int status = outboundDao.addOutboundItemData(id, productId, productQuantity);
-        if (status <= 0) {
+        if (status < 0) {
             return -1;
         }
         return status;
@@ -47,27 +47,21 @@ public class OutboundService implements InOutboundService {
 
     public int updateRequest(int requestId, int warehouseId, String dueDate) {
         int status = outboundDao.updateOutboundData(requestId, warehouseId, dueDate);
-        if (status <= 0) {
-            return -1;
-        }
-        return 0;
+
+        return status;
     }
 
     public int updateItem(int requestId, int itemId, String productId, int productQuantity) {
         int status = outboundDao.updateOutboundItemData(requestId, itemId, productId, productQuantity);
-        if (status <= 0) {
-            return -1;
-        }
-        return 0;
+
+        return status;
     }
 
     @Override
     public int cancelRequest(int requestId) {
         int status = outboundDao.cancelOutboundData(requestId);
-        if (status <= 0) {
-            return -1;
-        }
-        return 0;
+
+        return status;
     }
 
     @Override
