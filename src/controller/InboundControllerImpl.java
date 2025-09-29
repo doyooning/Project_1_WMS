@@ -1,5 +1,7 @@
 package controller;
 
+import domain.TotalAdmin;
+import domain.User;
 import service.InboundService;
 
 import java.io.BufferedReader;
@@ -18,12 +20,14 @@ import java.util.List;
 * */
 
 public class InboundControllerImpl implements InOutboundController{
+    private User user;
+    private TotalAdmin totalAdmin;
+    private int authority = 0;
+
     // statics
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static SimpleDateFormat informat = new SimpleDateFormat("yyyyMMdd");
     static SimpleDateFormat outformat = new SimpleDateFormat("yyyy-MM-dd");
-
-
 
     // 싱글턴 패턴을 위한 인스턴스 생성
     private static InboundControllerImpl inboundControllerImpl;
@@ -39,16 +43,32 @@ public class InboundControllerImpl implements InOutboundController{
 
     private InboundService inboundService = InboundService.getInstance();
 
+    public void setLoggedInUser(Object user) {
+        if (user instanceof TotalAdmin) {
+            this.totalAdmin = (TotalAdmin) user;
+            this.authority = 1;
+        } else if (user instanceof User) {
+            this.user = (User) user;
+            this.authority = 3;
+        }
+    }
+
+    public void logoutUser() {
+        this.user = null;
+        this.totalAdmin = null;
+        this.authority = 0;
+    }
+
     @Override
-    public void showMenu(int[] userData) {
+    public void showMenu() {
         int status = 0;
         // 권한 구분 임의 구현..
-        if (userData[1] == 1) {
+        if (authority == 1) {
             System.out.print(
                     Messages.ADMIN_MAIN_MENU_IN.getText()
             );
 
-        } else if (userData[1] == 2) {
+        } else if (authority == 3) {
             System.out.print(
                     Messages.USER_MAIN_MENU_IN.getText()
             );
@@ -56,28 +76,27 @@ public class InboundControllerImpl implements InOutboundController{
         try {
             // 메뉴 번호 입력받음
             int menuNum = Integer.parseInt(br.readLine());
-            status = selectMenu(userData, menuNum);
+            status = selectMenu(menuNum);
             if (status == 1) {
-                showMenu(userData);
+                showMenu();
             }
 
         } catch (IOException | NumberFormatException e) {
             System.out.println(Errors.INVALID_INPUT_ERROR.getText());
-            showMenu(userData);
+            showMenu();
 
         } catch (Exception e) {
             System.out.println(Errors.UNEXPECTED_ERROR.getText());
-            e.printStackTrace();
-            showMenu(userData);
+            showMenu();
         }
     }
 
     @Override
-    public int selectMenu(int[] userData, int menuNum) {
+    public int selectMenu(int menuNum) {
         switch (menuNum) {
             case 1 -> {
                 int status = 0;
-                if(userData[1] == 1) {
+                if(authority == 1) {
                     // 1. 입고 요청 승인
                     // 미승인된 입고요청 목록 출력
 
@@ -85,15 +104,19 @@ public class InboundControllerImpl implements InOutboundController{
                     if (status == -1) {
                         System.out.println(Errors.DATA_INPUT_ERROR.getText());
 
+                    } else if (status == -2) {
+                        System.out.print(
+                                Messages.RETURN_MENU.getText()
+                        );
                     } else {
                         System.out.printf(
                                 Messages.REQUEST_APPROVED_IN.getText(), status
                         );
                     }
 
-                } else if(userData[1] == 2) {
+                } else if(authority == 3) {
                     // 1. 입고 요청
-                    status = InputRequestData(userData[0]);
+                    status = InputRequestData(user.getUIdx());
                     if (status == -1) {
                         System.out.println(Errors.DATA_INPUT_ERROR.getText());
 
@@ -137,10 +160,10 @@ public class InboundControllerImpl implements InOutboundController{
 
             case 5 -> {
                 // 5. 입고 현황 조회
-                if(userData[1] == 1) {
+                if(authority == 1) {
                     showAdminInfoMenu();
-                } else if(userData[1] == 2) {
-                    showInfoMenu(userData[0]);
+                } else if(authority == 3) {
+                    showInfoMenu(user.getUIdx());
                 }
             }
 
@@ -204,6 +227,14 @@ public class InboundControllerImpl implements InOutboundController{
                             Messages.ENTER_REQUEST_ID_UPDATE_IN.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
+                    boolean accessStatus = isAccessibleRequest(requestId);
+                    if (accessStatus == false) {
+                        System.out.print(
+                                Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                        );
+                        return -1;
+                    }
+
                     status = InputRequestDataUpdate(requestId);
                     if (status == -1) {
                         return -1;
@@ -216,6 +247,14 @@ public class InboundControllerImpl implements InOutboundController{
                             Messages.ENTER_REQUEST_ID_UPDATE_IN.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
+                    boolean accessStatus = isAccessibleRequest(requestId);
+                    if (accessStatus == false) {
+                        System.out.print(
+                                Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                        );
+                        return -1;
+                    }
+
                     status = InputRequestItemUpdate(requestId);
                     if (status == -1) {
                         return -1;
@@ -563,6 +602,13 @@ public class InboundControllerImpl implements InOutboundController{
                     Messages.ENTER_CANCEL_REQUEST_ID_IN.getText()
             );
             int requestId = Integer.parseInt(br.readLine());
+            boolean status = isAccessibleRequest(requestId);
+            if (status == false) {
+                System.out.print(
+                        Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                );
+                return -1;
+            }
 
             // 취소 확인
             System.out.print(
@@ -597,6 +643,13 @@ public class InboundControllerImpl implements InOutboundController{
                     Messages.ENTER_PRINT_REQUEST_ID_IN.getText()
             );
             int requestId = Integer.parseInt(br.readLine());
+            boolean status = isAccessibleRequest(requestId);
+            if (status == false) {
+                System.out.print(
+                        Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                );
+                return -1;
+            }
 
             // 출력 확인
             System.out.print(
@@ -673,6 +726,11 @@ public class InboundControllerImpl implements InOutboundController{
                 if (approveStatus == -1) {
                     System.out.print(Errors.VO_LOAD_ERROR.getText());
                     rtn = -1;
+                } else if (approveStatus == -2) {
+                    System.out.print(
+                            Errors.CANNOT_APPROVE_ERROR.getText()
+                    );
+                    rtn = -2;
                 } else {
                     rtn = approveStatus;
                 }
@@ -686,6 +744,8 @@ public class InboundControllerImpl implements InOutboundController{
         }
         return rtn;
     }
+
+    // 출력 메서드
 
     public void printRequestList(List<List<String>> list) {
         for (List<String> requests : list) {
@@ -723,6 +783,15 @@ public class InboundControllerImpl implements InOutboundController{
                     requests.get(3), requests.get(4)
             );
         }
+    }
+    // 자신의 요청건에만 접근 가능하게 확인
+    public boolean isAccessibleRequest(int requestId) {
+        int status = 0;
+        status = inboundService.isAccessibleRequest(requestId, user.getUIdx());
+        if (status <= 0) {
+            return false;
+        }
+        return true;
     }
 
 }

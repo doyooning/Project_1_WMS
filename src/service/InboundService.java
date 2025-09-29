@@ -25,9 +25,7 @@ public class InboundService implements InOutboundService{
     @Override
     public int approveRequest(int requestId) {
         int status = inboundDao.approveRequest(requestId);
-        if(status <= 0){
-            return -1;
-        }
+
         return status;
     }
 
@@ -73,15 +71,15 @@ public class InboundService implements InOutboundService{
     }
 
     @Override
-    public List<List<String>> getBoundInfo(int uId) {
-        List<List<String>> list = inboundDao.getRequestById(uId);
+    public List<List<String>> getBoundInfo(int uIdx) {
+        List<List<String>> list = inboundDao.getRequestById(uIdx);
 
         return list;
     }
 
     @Override
-    public List<List<String>> getBoundItemInfo(int uId) {
-        List<List<String>> list = inboundDao.getItemsById(uId);
+    public List<List<String>> getBoundItemInfo(int uIdx) {
+        List<List<String>> list = inboundDao.getItemsById(uIdx);
 
         return list;
     }
@@ -111,5 +109,11 @@ public class InboundService implements InOutboundService{
         List<List<String>> list = inboundDao.getRequestListByPeriod(start, end);
 
         return list;
+    }
+
+    public int isAccessibleRequest(int requestId, int uIdx) {
+        int status = inboundDao.isAccessibleRequest(requestId, uIdx);
+
+        return status;
     }
 }

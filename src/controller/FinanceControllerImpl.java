@@ -218,7 +218,7 @@ public class FinanceControllerImpl implements FinanceController {
             e.printStackTrace();
             //throw new RuntimeException(e);
         } catch (Exception e) {
-            System.out.println("오류가 밸생했습니다.");
+            System.out.println("오류가 발생했습니다.");
             e.printStackTrace();
             //throw new RuntimeException(e);
         }

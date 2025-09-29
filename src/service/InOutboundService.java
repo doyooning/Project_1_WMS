@@ -17,10 +17,10 @@ public interface InOutboundService {
     int cancelRequest(int requestId);
 
     // 요청 현황 조회
-    List<List<String>> getBoundInfo(int uId);
+    List<List<String>> getBoundInfo(int uIdx);
 
     // 요청 상품 조회
-    List<List<String>> getBoundItemInfo(int uId);
+    List<List<String>> getBoundItemInfo(int uIdx);
 
     // 고지서 출력 요청정보
     Object showReqBillData(int requestId);

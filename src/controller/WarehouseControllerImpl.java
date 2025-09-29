@@ -11,7 +11,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-//이 class에서는 User 저장이 의미없음. 어짜피 각 유저마다 시작하는 메소드가 정해져있음
+//이 class에서는 User 저장이 의미없음. 어짜피 각 유저마다 시작하는 메소드가 정해져있음(Main에서 처리)
 public class WarehouseControllerImpl implements WarehouseController {
     private WarehouseService warehouseService;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

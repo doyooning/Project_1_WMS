@@ -11,6 +11,9 @@ public class Main {
     private MemberController memberControl;
     private FinanceController financeControl;
     private BoardController boardControl;
+    private InboundControllerImpl inboundControl;
+    private OutboundControllerImpl outboundControl;
+
     private Scanner scan;
     private String currentUserType; // 현재 로그인한 사용자 유형 저장
     private String currentUserId; // 현재 로그인한 사용자 ID 저장
@@ -21,6 +24,8 @@ public class Main {
         memberControl = MemberControllerImpl.getInstance();
         financeControl = FinanceControllerImpl.getInstance();
         boardControl = BoardControllerImpl.getInstance();
+        inboundControl = InboundControllerImpl.getInstance();
+        outboundControl = OutboundControllerImpl.getInstance();
         scan = new Scanner(System.in);
     }
 
@@ -192,6 +197,9 @@ public class Main {
                 Object userInfo = memberControl.getUserInfo(loginId);
                 financeControl.setLoggedInUser(userInfo);
                 boardControl.setLoggedInUser(userInfo);
+                inboundControl.setLoggedInUser(userInfo);
+                outboundControl.setLoggedInUser(userInfo);
+
                 if (userInfo instanceof domain.User) {
                     currentUserName = ((domain.User) userInfo).getUName();
                 } else if (userInfo instanceof domain.WarehouseAdmin) {
@@ -247,6 +255,8 @@ public class Main {
                 case "0":
                     financeControl.logoutUser();
                     boardControl.logoutUser();
+                    inboundControl.logoutUser();
+                    outboundControl.logoutUser();
                     System.out.println("로그아웃합니다.");
                     currentUserType = null;
                     currentUserId = null;
@@ -260,10 +270,12 @@ public class Main {
                     }
                     break;
                 case "2":
-                    System.out.println("입고관리 기능은 추후 구현 예정입니다.");
+                    // 입고관리
+                    inboundControl.showMenu();
                     break;
                 case "3":
-                    System.out.println("출고관리 기능은 추후 구현 예정입니다.");
+                    // 출고관리
+                    outboundControl.showMenu();
                     break;
                 case "4":
                     // financeControl.showFinanceMenu()의 반환값에 따라 로그아웃 처리
@@ -409,6 +421,8 @@ public class Main {
                 case "0":
                     financeControl.logoutUser();
                     boardControl.logoutUser();
+                    inboundControl.logoutUser();
+                    outboundControl.logoutUser();
                     System.out.println("로그아웃합니다.");
                     currentUserType = null;
                     currentUserId = null;
@@ -435,10 +449,12 @@ public class Main {
                     }
                     break;
                 case "4":
-                    System.out.println("입고관리 기능은 추후 구현 예정입니다.");
+                    // 입고 관리
+                    inboundControl.showMenu();
                     break;
                 case "5":
-                    System.out.println("출고관리 기능은 추후 구현 예정입니다.");
+                    // 출고 관리
+                    outboundControl.showMenu();
                     break;
                 case "6":
                     WarehouseController warehouseController = WarehouseControllerImpl.getInstance();

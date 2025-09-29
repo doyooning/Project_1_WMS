@@ -25,9 +25,7 @@ public class OutboundService implements InOutboundService {
     @Override
     public int approveRequest(int requestId) {
         int status = outboundDao.approveRequest(requestId);
-        if(status <= 0){
-            return -1;
-        }
+
         return status;
     }
 
@@ -112,5 +110,11 @@ public class OutboundService implements InOutboundService {
         List<List<String>> list = outboundDao.getRequestListByPeriod(start, end);
 
         return list;
+    }
+
+    public int isAccessibleRequest(int requestId, int uIdx) {
+        int status = outboundDao.isAccessibleRequest(requestId, uIdx);
+
+        return status;
     }
 }
