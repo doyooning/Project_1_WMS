@@ -3,10 +3,10 @@ package controller;
 public interface InOutboundController {
 
     // 메뉴 표시
-    void showMenu(int[] userData);
+    void showMenu();
 
     // 메뉴 선택
-    int selectMenu(int[] userData, int menuNum);
+    int selectMenu(int menuNum);
 
     // 수정 메뉴 표시
     void showUpdateMenu();

@@ -1,5 +1,7 @@
 package controller;
 
+import domain.TotalAdmin;
+import domain.User;
 import service.OutboundService;
 
 import java.io.BufferedReader;
@@ -16,6 +18,10 @@ import java.util.List;
  * [출고 관리]
  * */
 public class OutboundControllerImpl implements InOutboundController{
+    private User user;
+    private TotalAdmin totalAdmin;
+    private int authority = 0;
+
     // statics
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static SimpleDateFormat informat = new SimpleDateFormat("yyyyMMdd");
@@ -35,16 +41,32 @@ public class OutboundControllerImpl implements InOutboundController{
 
     private OutboundService outboundService = OutboundService.getInstance();
 
+    public void setLoggedInUser(Object user) {
+        if (user instanceof TotalAdmin) {
+            this.totalAdmin = (TotalAdmin) user;
+            this.authority = 1;
+        } else if (user instanceof User) {
+            this.user = (User) user;
+            this.authority = 3;
+        }
+    }
+
+    public void logoutUser() {
+        this.user = null;
+        this.totalAdmin = null;
+        this.authority = 0;
+    }
+
     @Override
-    public void showMenu(int[] userData) {
+    public void showMenu() {
         int status = 0;
         // 권한 구분 임의 구현..
-        if (userData[1] == 1) {
+        if (authority == 1) {
             System.out.print(
                     Messages.ADMIN_MAIN_MENU_OUT.getText()
             );
 
-        } else if (userData[1] == 2) {
+        } else if (authority == 3) {
             System.out.print(
                     Messages.USER_MAIN_MENU_OUT.getText()
             );
@@ -52,28 +74,28 @@ public class OutboundControllerImpl implements InOutboundController{
         try {
             // 메뉴 번호 입력받음
             int menuNum = Integer.parseInt(br.readLine());
-            status = selectMenu(userData, menuNum);
+            status = selectMenu(menuNum);
             if (status == 1) {
-                showMenu(userData);
+                showMenu();
             }
 
         } catch (IOException | NumberFormatException e) {
             System.out.println(Errors.INVALID_INPUT_ERROR.getText());
-            showMenu(userData);
+            showMenu();
 
         } catch (Exception e) {
             System.out.println(Errors.UNEXPECTED_ERROR.getText());
             e.printStackTrace();
-            showMenu(userData);
+            showMenu();
         }
     }
 
     @Override
-    public int selectMenu(int[] userData, int menuNum) {
+    public int selectMenu(int menuNum) {
         switch (menuNum) {
             case 1 -> {
                 int status = 0;
-                if(userData[1] == 1) {
+                if(authority == 1) {
                     // 1. 출고 요청 승인
                     // 미승인된 출고요청 목록 출력
 
@@ -87,9 +109,9 @@ public class OutboundControllerImpl implements InOutboundController{
                         );
                     }
 
-                } else if(userData[1] == 2) {
+                } else if(authority == 3) {
                     // 1. 출고 요청
-                    status = InputRequestData(userData[0]);
+                    status = InputRequestData(user.getUIdx());
                     if (status == -1) {
                         System.out.println(Errors.DATA_INPUT_ERROR.getText());
 
@@ -134,10 +156,10 @@ public class OutboundControllerImpl implements InOutboundController{
 
             case 5 -> {
                 // 5. 출고 현황 조회
-                if(userData[1] == 1) {
+                if(authority == 1) {
                     showAdminInfoMenu();
-                } else if(userData[1] == 2) {
-                    showInfoMenu(userData[0]);
+                } else if(authority == 3) {
+                    showInfoMenu(user.getUIdx());
                 }
             }
 
@@ -199,6 +221,14 @@ public class OutboundControllerImpl implements InOutboundController{
                             Messages.ENTER_REQUEST_ID_UPDATE_OUT.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
+                    boolean accessStatus = isAccessibleRequest(requestId);
+                    if (accessStatus == false) {
+                        System.out.print(
+                                Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                        );
+                        return -1;
+                    }
+
                     status = InputRequestDataUpdate(requestId);
                     if (status == -1) {
                         return -1;
@@ -211,6 +241,14 @@ public class OutboundControllerImpl implements InOutboundController{
                             Messages.ENTER_REQUEST_ID_UPDATE_OUT.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
+                    boolean accessStatus = isAccessibleRequest(requestId);
+                    if (accessStatus == false) {
+                        System.out.print(
+                                Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                        );
+                        return -1;
+                    }
+
                     status = InputRequestItemUpdate(requestId);
                     if (status == -1) {
                         return -1;
@@ -715,5 +753,14 @@ public class OutboundControllerImpl implements InOutboundController{
                     requests.get(3), requests.get(4)
             );
         }
+    }
+    // 자신의 요청건에만 접근 가능하게 확인
+    public boolean isAccessibleRequest(int requestId) {
+        int status = 0;
+        status = outboundService.isAccessibleRequest(requestId, user.getUIdx());
+        if (status <= 0) {
+            return false;
+        }
+        return true;
     }
 }

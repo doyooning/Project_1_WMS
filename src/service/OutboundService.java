@@ -113,4 +113,10 @@ public class OutboundService implements InOutboundService {
 
         return list;
     }
+
+    public int isAccessibleRequest(int requestId, int uIdx) {
+        int status = outboundDao.isAccessibleRequest(requestId, uIdx);
+
+        return status;
+    }
 }

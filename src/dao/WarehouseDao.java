@@ -1,6 +1,6 @@
 package dao;
 
-import Util.DBUtil;
+import util.DBUtil;
 import common.Errors;
 import domain.Warehouse;
 import exception.DaoException;
