@@ -13,7 +13,9 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     private static WarehouseServiceImpl warehouseServiceImpl;
 
-    private WarehouseServiceImpl() {}
+    private WarehouseServiceImpl() {
+
+    }
 
     public static WarehouseServiceImpl getInstance() {
         if(warehouseServiceImpl == null) {
