@@ -1,7 +1,6 @@
 package view;
 
-import controller.MemberController;
-import controller.MemberControllerImpl;
+import controller.*;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -10,6 +9,8 @@ import java.util.Scanner;
 
 public class Main {
     private MemberController memberControl;
+    private FinanceController financeControl;
+    private BoardController boardControl;
     private Scanner scan;
     private String currentUserType; // 현재 로그인한 사용자 유형 저장
     private String currentUserId; // 현재 로그인한 사용자 ID 저장
@@ -17,6 +18,8 @@ public class Main {
 
     public Main() {
         memberControl = MemberControllerImpl.getInstance();
+        financeControl = FinanceControllerImpl.getInstance();
+        boardControl = BoardControllerImpl.getInstance();
         scan = new Scanner(System.in);
     }
 
@@ -39,7 +42,7 @@ public class Main {
                     handleLogin();
                     break;
                 case "3":
-                    System.out.println("고객센터는 추후 구현 예정입니다.");
+                    boardControl.showBoardMenu();
                     break;
                 case "4":
                     handleFindId();
@@ -186,6 +189,8 @@ public class Main {
             // 사용자 이름 가져오기
             try {
                 Object userInfo = memberControl.getUserInfo(loginId);
+                financeControl.setLoggedInUser(userInfo);
+                boardControl.setLoggedInUser(userInfo);
                 if (userInfo instanceof domain.User) {
                     currentUserName = ((domain.User) userInfo).getUName();
                 } else if (userInfo instanceof domain.WarehouseAdmin) {
@@ -236,6 +241,8 @@ public class Main {
             String choice = scan.nextLine().trim();
             switch (choice) {
                 case "0":
+                    financeControl.logoutUser();
+                    boardControl.logoutUser();
                     System.out.println("로그아웃합니다.");
                     currentUserType = null;
                     currentUserId = null;
@@ -255,10 +262,24 @@ public class Main {
                     System.out.println("출고관리 기능은 추후 구현 예정입니다.");
                     break;
                 case "4":
-                    System.out.println("재무관리 기능은 추후 구현 예정입니다.");
+                    // financeControl.showFinanceMenu()의 반환값에 따라 로그아웃 처리
+                    if (!financeControl.showFinanceMenu()) {
+                        currentUserType = null;
+                        currentUserId = null;
+                        currentUserName = null;
+                        boardControl.logoutUser();
+                        inDashboard = false;
+                    }
                     break;
                 case "5":
-                    System.out.println("고객센터 기능은 추후 구현 예정입니다.");
+                    // boardControl.showBoardMenu()의 반환값에 따라 로그아웃 처리
+                    if (!boardControl.showBoardMenu()) {
+                        currentUserType = null;
+                        currentUserId = null;
+                        currentUserName = null;
+                        financeControl.logoutUser();
+                        inDashboard = false;
+                    }
                     break;
                 case "6":
                     System.out.println("창고현황리스트 조회 기능은 추후 구현 예정입니다.");
@@ -302,6 +323,8 @@ public class Main {
             String choice = scan.nextLine().trim();
             switch (choice) {
                 case "0":
+                    financeControl.logoutUser();
+                    boardControl.logoutUser();
                     System.out.println("로그아웃합니다.");
                     currentUserType = null;
                     currentUserId = null;
@@ -321,10 +344,24 @@ public class Main {
                     System.out.println("재고관리 기능은 추후 구현 예정입니다.");
                     break;
                 case "4":
-                    System.out.println("재무관리 기능은 추후 구현 예정입니다.");
+                    // financeControl.showFinanceMenu()의 반환값에 따라 로그아웃 처리
+                    if (!financeControl.showFinanceMenu()) {
+                        currentUserType = null;
+                        currentUserId = null;
+                        currentUserName = null;
+                        boardControl.logoutUser();
+                        inDashboard = false;
+                    }
                     break;
                 case "5":
-                    System.out.println("고객센터 기능은 추후 구현 예정입니다.");
+                    // boardControl.showBoardMenu()의 반환값에 따라 로그아웃 처리
+                    if (!boardControl.showBoardMenu()) {
+                        currentUserType = null;
+                        currentUserId = null;
+                        currentUserName = null;
+                        financeControl.logoutUser();
+                        inDashboard = false;
+                    }
                     break;
                 default:
                     System.out.println("올바른 메뉴를 선택하세요.");
@@ -360,6 +397,8 @@ public class Main {
             String choice = scan.nextLine().trim();
             switch (choice) {
                 case "0":
+                    financeControl.logoutUser();
+                    boardControl.logoutUser();
                     System.out.println("로그아웃합니다.");
                     currentUserType = null;
                     currentUserId = null;
@@ -376,7 +415,14 @@ public class Main {
                     handleMemberManagement();
                     break;
                 case "3":
-                    System.out.println("재무관리 기능은 추후 구현 예정입니다.");
+                    // financeControl.showFinanceMenu()의 반환값에 따라 로그아웃 처리
+                    if (!financeControl.showFinanceMenu()) {
+                        currentUserType = null;
+                        currentUserId = null;
+                        currentUserName = null;
+                        boardControl.logoutUser();
+                        inDashboard = false;
+                    }
                     break;
                 case "4":
                     System.out.println("입고관리 기능은 추후 구현 예정입니다.");
@@ -391,7 +437,14 @@ public class Main {
                     System.out.println("재고관리 기능은 추후 구현 예정입니다.");
                     break;
                 case "8":
-                    System.out.println("고객센터 기능은 추후 구현 예정입니다.");
+                    // boardControl.showBoardMenu()의 반환값에 따라 로그아웃 처리
+                    if (!boardControl.showBoardMenu()) {
+                        currentUserType = null;
+                        currentUserId = null;
+                        currentUserName = null;
+                        financeControl.logoutUser();
+                        inDashboard = false;
+                    }
                     break;
                 default:
                     System.out.println("올바른 메뉴를 선택하세요.");
