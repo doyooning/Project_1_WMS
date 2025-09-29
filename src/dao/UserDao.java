@@ -97,12 +97,13 @@ public class UserDao {
     }
 
     public User getUserInfo(Connection connection, String userId) throws SQLException {
-        String sql = "SELECT uId, uEmail, uName, uPhone, createdAt FROM User WHERE uId = ? AND status = 'EXIST'";
+        String sql = "SELECT uIdx, uId, uEmail, uName, uPhone, createdAt FROM User WHERE uId = ? AND status = 'EXIST'";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     User user = new User();
+                    user.setUIdx(rs.getInt("uIdx"));
                     user.setUId(rs.getString("uId"));
                     user.setUEmail(rs.getString("uEmail"));
                     user.setUName(rs.getString("uName"));
