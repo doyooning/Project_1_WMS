@@ -19,4 +19,3 @@ public class Stock {
     private String tCategory;
     private Timestamp updatedAt;
 }
-

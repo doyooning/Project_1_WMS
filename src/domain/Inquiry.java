@@ -16,6 +16,5 @@ public class Inquiry {
     private int uIdx;
     private String iqPassword;
     private String iqWriter;
-
     private Response response;
 }
