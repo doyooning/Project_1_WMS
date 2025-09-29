@@ -1,6 +1,6 @@
 package dao;
 
-import Util.DBUtil;
+import util.DBUtil;
 import common.Errors;
 import domain.CheckLog;
 import domain.EntityStatus;
@@ -10,7 +10,6 @@ import exception.DaoException;
 
 import java.util.*;
 import java.sql.*;
-import java.util.concurrent.Callable;
 
 public class StockDao {
     private Connection conn;
