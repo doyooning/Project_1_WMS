@@ -28,7 +28,7 @@ bin/
 # 계정 정보 무시
 .util/
 util/
-*.imi
+*.iml
 
 ### Mac OS ###
 .DS_Store
