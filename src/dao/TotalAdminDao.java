@@ -103,7 +103,7 @@ public class TotalAdminDao {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     TotalAdmin admin = new TotalAdmin();
-                    admin.setTaIdx((rs.getInt("taIdx")));
+                    admin.setTaIdx(rs.getInt("taIdx"));
                     admin.setTaId(rs.getString("taId"));
                     admin.setTaEmail(rs.getString("taEmail"));
                     admin.setTaName(rs.getString("taName"));

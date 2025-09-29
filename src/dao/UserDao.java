@@ -103,7 +103,7 @@ public class UserDao {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     User user = new User();
-                    user.setUIdx((rs.getInt("uIdx")));
+                    user.setUIdx(rs.getInt("uIdx"));
                     user.setUId(rs.getString("uId"));
                     user.setUEmail(rs.getString("uEmail"));
                     user.setUName(rs.getString("uName"));

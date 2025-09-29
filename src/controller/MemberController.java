@@ -18,4 +18,16 @@ public interface MemberController {
     Object getUserInfo(String userId);
     boolean updateUserInfo(String userId, String name, String phone);
     boolean updateUserPassword(String userId, String currentPassword, String newPassword);
+
+    // Approvals
+    java.util.List<domain.PendingUserApproval> getPendingUserApprovals();
+    java.util.List<domain.PendingWarehouseAdminApproval> getPendingWarehouseAdminApprovals();
+    void updateApprovalStatus(int aIdx, String status, Integer taIdx);
+
+    // Approval checks
+    boolean isUserApproved(String userId);
+    boolean isWarehouseAdminApproved(String adminId);
+
+    String getUserApprovalStatus(String userId);
+    String getWarehouseAdminApprovalStatus(String adminId);
 }

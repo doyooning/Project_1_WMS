@@ -97,13 +97,13 @@ public class WarehouseAdminDao {
     }
 
     public WarehouseAdmin getWarehouseAdminInfo(Connection connection, String adminId) throws SQLException {
-        String sql = "SELECT wIdx, waId, waEmail, waName, waPhone, createdAt FROM WarehouseAdmin WHERE waId = ? AND status = 'EXIST'";
+        String sql = "SELECT waIdx, waId, waEmail, waName, waPhone, createdAt FROM WarehouseAdmin WHERE waId = ? AND status = 'EXIST'";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, adminId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     WarehouseAdmin admin = new WarehouseAdmin();
-                    admin.setWaIdx((rs.getInt("waIdx")));
+                    admin.setWaIdx(rs.getInt("waIdx"));
                     admin.setWaId(rs.getString("waId"));
                     admin.setWaEmail(rs.getString("waEmail"));
                     admin.setWaName(rs.getString("waName"));

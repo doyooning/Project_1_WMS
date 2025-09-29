@@ -147,8 +147,34 @@ public class Main {
         boolean success;
         if ("1".equals(loginType)) {
             success = memberControl.loginUser(loginId, loginPw);
+            if (success) {
+                String status = memberControl.getUserApprovalStatus(loginId);
+                if ("PENDING".equals(status)) {
+                    System.out.println("[회원가입 승인 대기중입니다]");
+                    return;
+                } else if ("REJECTED".equals(status)) {
+                    System.out.println("[회원가입 승인 거절되었습니다]");
+                    return;
+                } else if (!"APPROVED".equals(status)) {
+                    System.out.println("[승인 정보가 없습니다]");
+                    return;
+                }
+            }
         } else if ("2".equals(loginType)) {
             success = memberControl.loginWarehouseAdmin(loginId, loginPw);
+            if (success) {
+                String status = memberControl.getWarehouseAdminApprovalStatus(loginId);
+                if ("PENDING".equals(status)) {
+                    System.out.println("[회원가입 승인 대기중입니다]");
+                    return;
+                } else if ("REJECTED".equals(status)) {
+                    System.out.println("[회원가입 승인 거절되었습니다]");
+                    return;
+                } else if (!"APPROVED".equals(status)) {
+                    System.out.println("[승인 정보가 없습니다]");
+                    return;
+                }
+            }
         } else if ("3".equals(loginType)) {
             success = memberControl.loginTotalAdmin(loginId, loginPw);
         } else {
@@ -386,7 +412,7 @@ public class Main {
                     }
                     break;
                 case "2":
-                    System.out.println("회원관리 기능은 추후 구현 예정입니다.");
+                    handleMemberManagement();
                     break;
                 case "3":
                     // financeControl.showFinanceMenu()의 반환값에 따라 로그아웃 처리
@@ -447,6 +473,115 @@ public class Main {
         System.out.println();
         System.out.println("============================================================");
         System.out.print("선택: ");
+    }
+
+    // 총관리자: 회원관리(승인) 화면 및 처리
+    private void handleMemberManagement() {
+        System.out.println();
+        System.out.println("============================================================");
+        System.out.println("<회원가입 승인 화면>");
+        System.out.println("============================================================");
+
+        java.util.List<domain.PendingUserApproval> pendingUsers;
+        java.util.List<domain.PendingWarehouseAdminApproval> pendingAdmins;
+        try {
+            pendingUsers = memberControl.getPendingUserApprovals();
+            pendingAdmins = memberControl.getPendingWarehouseAdminApprovals();
+        } catch (RuntimeException e) {
+            util.ErrorHandler.displayAndLog("승인 대기 목록을 불러오는 중 오류가 발생했습니다.", e);
+            return;
+        }
+
+        System.out.println("============================================================");
+        System.out.println("[일반회원가입 신청자] - 총 " + (pendingUsers == null ? 0 : pendingUsers.size()) + "명");
+        System.out.println("============================================================");
+        if (pendingUsers != null && !pendingUsers.isEmpty()) {
+            int i = 1;
+            for (domain.PendingUserApproval p : pendingUsers) {
+                System.out.println(i++ + ". 회원번호: " + p.getUIdx() + ", 이름: " + p.getUName()
+                        + ", 전화번호: " + p.getUPhone() + ", 이메일: " + p.getUEmail()
+                        + ", 신청일: " + p.getCreatedAt());
+            }
+        } else {
+            System.out.println("신청자가 없습니다.");
+        }
+
+        System.out.println("============================================================");
+        System.out.println("[창고관리자 회원가입 신청자] - 총 " + (pendingAdmins == null ? 0 : pendingAdmins.size()) + "명");
+        System.out.println("============================================================");
+        if (pendingAdmins != null && !pendingAdmins.isEmpty()) {
+            int i = 1;
+            for (domain.PendingWarehouseAdminApproval p : pendingAdmins) {
+                System.out.println(i++ + ". 창고관리자번호: " + p.getWaIdx() + ", 이름: " + p.getWaName()
+                        + ", 전화번호: " + p.getWaPhone() + ", 이메일: " + p.getWaEmail()
+                        + ", 신청일: " + p.getCreatedAt());
+            }
+        } else {
+            System.out.println("신청자가 없습니다.");
+        }
+
+        System.out.println("============================================================");
+        System.out.println("A : 회원가입 승인(Approved)");
+        System.out.println("R : 회원가입 거절(Rejected)");
+        System.out.println("Q : 종료");
+        System.out.println("============================================================");
+        System.out.println("1(일반회원가입승인), 2(창고관리자가입승인) 중 선택하세요.");
+        System.out.print("선택 : ");
+        String who = scan.nextLine().trim();
+
+        if ("Q".equalsIgnoreCase(who)) return;
+
+        System.out.print("A(승인) 또는 R(거절)을 입력하세요: ");
+        String action = scan.nextLine().trim().toUpperCase();
+        if (!("A".equals(action) || "R".equals(action))) {
+            System.out.println("올바른 값을 입력하세요.");
+            return;
+        }
+
+        System.out.print("처리할 항목의 순번을 입력하세요: ");
+        String idxStr = scan.nextLine().trim();
+        int seq;
+        try {
+            seq = Integer.parseInt(idxStr);
+        } catch (NumberFormatException e) {
+            System.out.println("숫자를 입력하세요.");
+            return;
+        }
+
+        Integer aIdx = null;
+        if ("1".equals(who)) {
+            if (pendingUsers == null || seq < 1 || seq > pendingUsers.size()) {
+                System.out.println("올바른 순번이 아닙니다.");
+                return;
+            }
+            aIdx = pendingUsers.get(seq - 1).getAIdx();
+        } else if ("2".equals(who)) {
+            if (pendingAdmins == null || seq < 1 || seq > pendingAdmins.size()) {
+                System.out.println("올바른 순번이 아닙니다.");
+                return;
+            }
+            aIdx = pendingAdmins.get(seq - 1).getAIdx();
+        } else {
+            System.out.println("올바른 대상을 선택하세요.");
+            return;
+        }
+
+        Integer approverTaIdx = null;
+        try {
+            Object info = memberControl.getUserInfo(currentUserId);
+            if (info instanceof domain.TotalAdmin) {
+                approverTaIdx = ((domain.TotalAdmin) info).getTaIdx();
+            }
+        } catch (RuntimeException e) {
+            util.ErrorHandler.displayAndLog("승인자 정보를 조회하는 중 오류가 발생했습니다.", e);
+        }
+
+        try {
+            memberControl.updateApprovalStatus(aIdx, "A".equals(action) ? "APPROVED" : "REJECTED", approverTaIdx);
+            System.out.println(("A".equals(action) ? "승인" : "거절") + "이 완료되었습니다.");
+        } catch (RuntimeException e) {
+            util.ErrorHandler.displayAndLog("승인 처리 중 오류가 발생했습니다.", e);
+        }
     }
 
     // 일반회원 마이페이지
