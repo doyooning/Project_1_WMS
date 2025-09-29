@@ -380,6 +380,37 @@ public class MemberControllerImpl implements MemberController {
             throw new RuntimeException(e);
         }
     }
+
+    public java.util.List<domain.WarehouseAdmin> getNotAssignedWarehouseAdmins(){
+        try (java.sql.Connection connection = util.DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+            java.util.List<WarehouseAdmin> warehouseAdminList = warehouseAdminDao.getNotAssignedWarehouseAdmins(connection);
+            return warehouseAdminList;
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean setWIdxToWarehouseAdmin(int wIdx, int waIdx){
+        try (java.sql.Connection connection = util.DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+
+            return warehouseAdminDao.setWIdxToWarehouseAdmin(connection,wIdx, waIdx);
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getWarehouseAdminWIdx(String waId){
+        try (java.sql.Connection connection = util.DBUtil.getConnection()) {
+            if (connection == null) throw new IllegalStateException("DB connection is null");
+
+            return warehouseAdminDao.getWarehouseAdminWIdx(connection, waId);
+
+        } catch (java.sql.SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 
 

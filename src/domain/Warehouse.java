@@ -18,5 +18,7 @@ public class Warehouse {
     private int doIdx;
     private String doName;
     private int wtIdx;
+    private String wtName;
     private String wUniqueNum;
 }
+

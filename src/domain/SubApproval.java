@@ -11,7 +11,8 @@ public class SubApproval {
     private int waIdx;
     private int smIdx;
     private Date saDate;
+    private EntityStatus status;
     private Date saStartDate;
     private Date saEndDate;
-    String saPayment;
+    private String saPayment;
 }
