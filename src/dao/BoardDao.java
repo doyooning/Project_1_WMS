@@ -183,6 +183,7 @@ public class BoardDao implements Board {
                 inquiry.setUpdatedAt(rs.getTimestamp("updatedAt"));
                 inquiry.setStatus(EntityStatus.valueOf(rs.getString("status")));
                 inquiry.setUIdx(rs.getInt("uIdx"));
+                inquiry.setIqWriter(rs.getString("iqWriter"));
                 inquiry.setIqPassword(rs.getString("iqPassword"));
 
                 list.add(inquiry);
@@ -221,6 +222,7 @@ public class BoardDao implements Board {
                 inquiry.setUpdatedAt(rs.getTimestamp("updatedAt"));
                 inquiry.setStatus(EntityStatus.valueOf(rs.getString("status")));
                 inquiry.setUIdx(rs.getInt("uIdx"));
+                inquiry.setIqWriter(rs.getString("iqWriter"));
                 inquiry.setIqPassword(rs.getString("iqPassword"));
 
                 return inquiry;

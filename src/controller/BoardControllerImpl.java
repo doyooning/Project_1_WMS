@@ -657,13 +657,14 @@ public class BoardControllerImpl implements BoardController {
         } else if (inquiry.getUIdx() != 0) {
             System.out.println("접근 권한이 없습니다.");
         } else {
-            String writer = getWriter();
-            String password = getPassword();
+            String writer = getWriter().trim();
+            String password = getPassword().trim();
 
             if(writer.equals(inquiry.getIqWriter()) && password.equals(inquiry.getIqPassword())){
                 printInquiryDetail(inquiry);
                 showIqMgMenu(inquiry);
-            }
+            } else{
+                System.out.println("정보가 일치하지 않습니다.");}
         }
     }
     private void handleNonUserAddInquiry(){
@@ -870,7 +871,7 @@ public class BoardControllerImpl implements BoardController {
     private String inputNum(String msg){
         System.out.print(msg);
         try {
-            return input.readLine();
+            return input.readLine().trim();
         } catch (IOException e) {
             //throw new RuntimeException(e);
             System.out.println("입력이 잘못되었습니다.");
