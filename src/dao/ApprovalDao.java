@@ -17,11 +17,9 @@ public class ApprovalDao {
     }
 
     public List<PendingUserApproval> findPendingUsers(Connection connection) throws SQLException {
-        String sql = "SELECT a.aIdx, u.uIdx, u.uName, u.uPhone, u.uEmail, u.createdAt " +
-                "FROM Approval a JOIN User u ON a.uIdx = u.uIdx " +
-                "WHERE a.status = 'PENDING' AND a.uIdx IS NOT NULL AND a.waIdx IS NULL";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        String sql = "{CALL GetPendingUsers()}";
+        try (CallableStatement cs = connection.prepareCall(sql);
+             ResultSet rs = cs.executeQuery()) {
             List<PendingUserApproval> list = new ArrayList<>();
             while (rs.next()) {
                 PendingUserApproval p = new PendingUserApproval();
@@ -38,11 +36,9 @@ public class ApprovalDao {
     }
 
     public List<PendingWarehouseAdminApproval> findPendingWarehouseAdmins(Connection connection) throws SQLException {
-        String sql = "SELECT a.aIdx, w.waIdx, w.waName, w.waPhone, w.waEmail, w.createdAt " +
-                "FROM Approval a JOIN WarehouseAdmin w ON a.waIdx = w.waIdx " +
-                "WHERE a.status = 'PENDING' AND a.uIdx IS NULL AND a.waIdx IS NOT NULL";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        String sql = "{CALL GetPendingWarehouseAdmins()}";
+        try (CallableStatement cs = connection.prepareCall(sql);
+             ResultSet rs = cs.executeQuery()) {
             List<PendingWarehouseAdminApproval> list = new ArrayList<>();
             while (rs.next()) {
                 PendingWarehouseAdminApproval p = new PendingWarehouseAdminApproval();
@@ -59,45 +55,42 @@ public class ApprovalDao {
     }
 
     public void updateApprovalStatus(Connection connection, int aIdx, String status, Integer taIdx) throws SQLException {
-        String sql = "UPDATE Approval SET status = ?, taIdx = ? WHERE aIdx = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, status);
+        String sql = "{CALL UpdateApprovalStatus(?, ?, ?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setInt(1, aIdx);
+            cs.setString(2, status);
             if (taIdx == null) {
-                ps.setNull(2, Types.INTEGER);
+                cs.setNull(3, Types.INTEGER);
             } else {
-                ps.setInt(2, taIdx);
+                cs.setInt(3, taIdx);
             }
-            ps.setInt(3, aIdx);
-            ps.executeUpdate();
+            cs.executeUpdate();
         }
     }
     public void insertApprovalForUser(Connection connection, int userIdx, int totalAdminIdx, EntityStatus status) throws SQLException {
-        // taIdx는 승인 전까지 NULL
-        String sql = "INSERT INTO Approval (uIdx, status) VALUES (?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, userIdx);
-            ps.setString(2, status.name());
-            ps.executeUpdate();
+        String sql = "{CALL InsertApprovalForUser(?, ?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setInt(1, userIdx);
+            cs.setString(2, status.name());
+            cs.executeUpdate();
         }
     }
 
     public void insertApprovalForWarehouse(Connection connection, int warehouseAdminIdx, int totalAdminIdx, EntityStatus status) throws SQLException {
-        // taIdx는 승인 전까지 NULL
-        String sql = "INSERT INTO Approval (waIdx, status) VALUES (?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, warehouseAdminIdx);
-            ps.setString(2, status.name());
-            ps.executeUpdate();
+        String sql = "{CALL InsertApprovalForWarehouse(?, ?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setInt(1, warehouseAdminIdx);
+            cs.setString(2, status.name());
+            cs.executeUpdate();
         }
     }
 
     // Approval 체크: 일반회원 승인 여부 (userId 기반)
     public boolean isUserApproved(Connection connection, String userId) throws SQLException {
-        String sql = "SELECT 1 FROM Approval a JOIN User u ON a.uIdx = u.uIdx " +
-                "WHERE u.uId = ? AND a.status = 'APPROVED' LIMIT 1";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
+        String sql = "{CALL IsUserApproved(?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, userId);
+            try (ResultSet rs = cs.executeQuery()) {
                 return rs.next();
             }
         }
@@ -105,11 +98,10 @@ public class ApprovalDao {
 
     // Approval 체크: 창고관리자 승인 여부 (waId 기반)
     public boolean isWarehouseAdminApproved(Connection connection, String adminId) throws SQLException {
-        String sql = "SELECT 1 FROM Approval a JOIN WarehouseAdmin w ON a.waIdx = w.waIdx " +
-                "WHERE w.waId = ? AND a.status = 'APPROVED' LIMIT 1";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, adminId);
-            try (ResultSet rs = ps.executeQuery()) {
+        String sql = "{CALL IsWarehouseAdminApproved(?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, adminId);
+            try (ResultSet rs = cs.executeQuery()) {
                 return rs.next();
             }
         }
@@ -117,11 +109,10 @@ public class ApprovalDao {
 
     // 단일 상태 조회: 일반회원(userId)
     public String getUserApprovalStatus(Connection connection, String userId) throws SQLException {
-        String sql = "SELECT a.status FROM Approval a JOIN User u ON a.uIdx = u.uIdx " +
-                "WHERE u.uId = ? ORDER BY a.aIdx DESC LIMIT 1";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, userId);
-            try (ResultSet rs = ps.executeQuery()) {
+        String sql = "{CALL GetUserApprovalStatus(?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, userId);
+            try (ResultSet rs = cs.executeQuery()) {
                 if (rs.next()) return rs.getString(1);
                 return null;
             }
@@ -130,11 +121,10 @@ public class ApprovalDao {
 
     // 단일 상태 조회: 창고관리자(waId)
     public String getWarehouseAdminApprovalStatus(Connection connection, String adminId) throws SQLException {
-        String sql = "SELECT a.status FROM Approval a JOIN WarehouseAdmin w ON a.waIdx = w.waIdx " +
-                "WHERE w.waId = ? ORDER BY a.aIdx DESC LIMIT 1";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, adminId);
-            try (ResultSet rs = ps.executeQuery()) {
+        String sql = "{CALL GetWarehouseAdminApprovalStatus(?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, adminId);
+            try (ResultSet rs = cs.executeQuery()) {
                 if (rs.next()) return rs.getString(1);
                 return null;
             }
