@@ -33,3 +33,4 @@ util/
 
 ### Mac OS ###
 .DS_Store
+/src/util/
