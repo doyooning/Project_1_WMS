@@ -109,6 +109,10 @@ public class OutboundControllerImpl implements InOutboundController{
                         System.out.print(
                                 Messages.RETURN_MENU.getText()
                         );
+                    } else if (status == 0) {
+                        System.out.print(
+                                Messages.DISPLAY_ADJUST.getText()
+                        );
                     } else {
                         System.out.printf(
                                 Messages.REQUEST_APPROVED_OUT.getText(), status
@@ -121,6 +125,10 @@ public class OutboundControllerImpl implements InOutboundController{
                     if (status == -1) {
                         System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
 
+                    } else if (status == 0) {
+                        System.out.print(
+                                Messages.DISPLAY_ADJUST.getText()
+                        );
                     } else {
                         System.out.printf(
                                 Messages.REQUEST_REGISTERED_OUT.getText(), status
@@ -138,8 +146,12 @@ public class OutboundControllerImpl implements InOutboundController{
                 int status = 0;
                 // 3. 출고 요청 취소
                 status = cancelRequest();
-                if (status == -1) {
+                if (status < 0) {
                     System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
+                } else if (status == 0) {
+                    System.out.print(
+                            Messages.DISPLAY_ADJUST.getText()
+                    );
                 } else {
                     System.out.print(
                             Messages.REQUEST_CANCELED_OUT.getText()
@@ -619,9 +631,7 @@ public class OutboundControllerImpl implements InOutboundController{
             } else if (select.charAt(0) == 'Y') {
                 // 요청 정보 전송
                 int requestStatus = outboundService.cancelRequest(requestId);
-                if (requestStatus == -1) {
-                    rtn = -1;
-                }
+                rtn = requestStatus;
             } else {
                 throw new IOException();
             }
