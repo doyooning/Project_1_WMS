@@ -211,7 +211,7 @@ public class FinanceDao implements Finance {
         // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "{call getWarehouseList()}";
+            String sql = "{call getWarehouseList2()}";
             cstmt = conn.prepareCall(sql);
 
             rs = cstmt.executeQuery();
