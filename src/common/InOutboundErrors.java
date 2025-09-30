@@ -1,6 +1,6 @@
-package controller;
+package common;
 
-public enum Errors {
+public enum InOutboundErrors {
 
     DATA_INPUT_ERROR("""
             
@@ -52,7 +52,7 @@ public enum Errors {
                     """);
 
     private final String text;
-    Errors(String text) {
+    InOutboundErrors(String text) {
         this.text = text;
     }
     public String getText() {

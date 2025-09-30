@@ -1,5 +1,7 @@
 package controller;
 
+import common.InOutboundErrors;
+import common.Messages;
 import domain.TotalAdmin;
 import domain.User;
 import service.InboundService;
@@ -82,11 +84,11 @@ public class InboundControllerImpl implements InOutboundController{
             }
 
         } catch (IOException | NumberFormatException e) {
-            System.out.println(Errors.INVALID_INPUT_ERROR.getText());
+            System.out.println(InOutboundErrors.INVALID_INPUT_ERROR.getText());
             showMenu();
 
         } catch (Exception e) {
-            System.out.println(Errors.UNEXPECTED_ERROR.getText());
+            System.out.println(InOutboundErrors.UNEXPECTED_ERROR.getText());
             showMenu();
         }
     }
@@ -102,7 +104,7 @@ public class InboundControllerImpl implements InOutboundController{
 
                     status = approveRequest();
                     if (status == -1) {
-                        System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                        System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
 
                     } else if (status == -2) {
                         System.out.print(
@@ -118,7 +120,7 @@ public class InboundControllerImpl implements InOutboundController{
                     // 1. 입고 요청
                     status = InputRequestData(user.getUIdx());
                     if (status == -1) {
-                        System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                        System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
 
                     } else {
                         System.out.printf(
@@ -137,7 +139,7 @@ public class InboundControllerImpl implements InOutboundController{
                 // 3. 입고 요청 취소
                 status = cancelRequest();
                 if (status == -1) {
-                    System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                    System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
                 } else {
                     System.out.print(
                             Messages.REQUEST_CANCELED_IN.getText()
@@ -150,7 +152,7 @@ public class InboundControllerImpl implements InOutboundController{
                 // 4. 입고고지서 출력
                 status = showRequestInfo();
                 if (status == -1) {
-                    System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                    System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
                 } else {
                     System.out.print(
                             Messages.DISPLAY_ADJUST.getText()
@@ -174,7 +176,7 @@ public class InboundControllerImpl implements InOutboundController{
 
             default -> {
                 System.out.print(
-                        Errors.INVALID_INPUT_ERROR.getText()
+                        InOutboundErrors.INVALID_INPUT_ERROR.getText()
                 );
             }
         }
@@ -197,19 +199,19 @@ public class InboundControllerImpl implements InOutboundController{
                 );
                 showUpdateMenu();
             } else if (status == -1) {
-                System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
                 showUpdateMenu();
             }
 
         } catch (IOException | NumberFormatException e) {
             System.out.print(
-                    Errors.INVALID_INPUT_ERROR.getText()
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
             showUpdateMenu();
 
         } catch (Exception e) {
             System.out.print(
-                    Errors.UNEXPECTED_ERROR.getText()
+                    InOutboundErrors.UNEXPECTED_ERROR.getText()
             );
             showUpdateMenu();
         }
@@ -233,7 +235,7 @@ public class InboundControllerImpl implements InOutboundController{
                         boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
                         if (accessStatus == false) {
                             System.out.print(
-                                    Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                                    InOutboundErrors.INACCESSIBLE_REQUEST_ERROR.getText()
                             );
                             return -1;
                         }
@@ -257,7 +259,7 @@ public class InboundControllerImpl implements InOutboundController{
                         boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
                         if (accessStatus == false) {
                             System.out.print(
-                                    Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                                    InOutboundErrors.INACCESSIBLE_REQUEST_ERROR.getText()
                             );
                             return -1;
                         }
@@ -276,7 +278,7 @@ public class InboundControllerImpl implements InOutboundController{
             }
         } catch (IOException e) {
             System.out.print(
-                    Errors.INVALID_INPUT_ERROR.getText()
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
         }
         return 1;
@@ -297,19 +299,19 @@ public class InboundControllerImpl implements InOutboundController{
                 );
                 showInfoMenu(uId);
             } else if (status == -1) {
-                System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
                 showInfoMenu(uId);
             }
 
         } catch (IOException | NumberFormatException e) {
             System.out.print(
-                    Errors.INVALID_INPUT_ERROR.getText()
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
             showInfoMenu(uId);
 
         } catch (Exception e) {
             System.out.print(
-                    Errors.UNEXPECTED_ERROR.getText()
+                    InOutboundErrors.UNEXPECTED_ERROR.getText()
             );
             showInfoMenu(uId);
         }
@@ -329,19 +331,19 @@ public class InboundControllerImpl implements InOutboundController{
                 );
                 showAdminInfoMenu();
             } else if (status == -1) {
-                System.out.println(Errors.DATA_INPUT_ERROR.getText());
+                System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
                 showAdminInfoMenu();
             }
 
         } catch (IOException | NumberFormatException e) {
             System.out.print(
-                    Errors.INVALID_INPUT_ERROR.getText()
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
             showAdminInfoMenu();
 
         } catch (Exception e) {
             System.out.print(
-                    Errors.UNEXPECTED_ERROR.getText()
+                    InOutboundErrors.UNEXPECTED_ERROR.getText()
             );
             showAdminInfoMenu();
         }
@@ -383,7 +385,7 @@ public class InboundControllerImpl implements InOutboundController{
             }
         } catch (Exception e) {
             System.out.print(
-                    Errors.UNEXPECTED_ERROR.getText()
+                    InOutboundErrors.UNEXPECTED_ERROR.getText()
             );
         }
         return status;
@@ -446,11 +448,11 @@ public class InboundControllerImpl implements InOutboundController{
             }
         } catch (IOException e) {
             System.out.print(
-                    Errors.INVALID_INPUT_ERROR.getText()
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
         } catch (Exception e) {
             System.out.print(
-                    Errors.UNEXPECTED_ERROR.getText()
+                    InOutboundErrors.UNEXPECTED_ERROR.getText()
             );
         }
         return status;
@@ -515,12 +517,12 @@ public class InboundControllerImpl implements InOutboundController{
         } catch (IOException e) {
             // 입력오류
             System.out.print(
-                    Errors.INVALID_INPUT_ERROR.getText()
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
             InputRequestData(uId);
         } catch (ParseException e) {
             System.out.print(
-                    Errors.DATE_INPUT_ERROR.getText()
+                    InOutboundErrors.DATE_INPUT_ERROR.getText()
             );
             InputRequestData(uId);
         }
@@ -553,12 +555,12 @@ public class InboundControllerImpl implements InOutboundController{
 
         } catch (IOException | NumberFormatException e) {
             System.out.print(
-                    Errors.INVALID_INPUT_ERROR.getText()
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
             InputRequestDataUpdate(requestId);
         } catch (ParseException e) {
             System.out.print(
-                    Errors.DATE_INPUT_ERROR.getText()
+                    InOutboundErrors.DATE_INPUT_ERROR.getText()
             );
             InputRequestDataUpdate(requestId);
         }
@@ -591,7 +593,7 @@ public class InboundControllerImpl implements InOutboundController{
 
         } catch (IOException | NumberFormatException e) {
             System.out.print(
-                    Errors.INVALID_INPUT_ERROR.getText()
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
             InputRequestItemUpdate(requestId);
         }
@@ -609,7 +611,7 @@ public class InboundControllerImpl implements InOutboundController{
             boolean status = isAccessibleRequest(requestId, user.getUIdx());
             if (status == false) {
                 System.out.print(
-                        Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                        InOutboundErrors.INACCESSIBLE_REQUEST_ERROR.getText()
                 );
                 return -1;
             }
@@ -633,7 +635,7 @@ public class InboundControllerImpl implements InOutboundController{
 
         } catch (IOException e) {
             System.out.print(
-                    Errors.INVALID_INPUT_ERROR.getText()
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
             cancelRequest();
         }
@@ -650,7 +652,7 @@ public class InboundControllerImpl implements InOutboundController{
             boolean status = isAccessibleRequest(requestId, user.getUIdx());
             if (status == false) {
                 System.out.print(
-                        Errors.INACCESSIBLE_REQUEST_ERROR.getText()
+                        InOutboundErrors.INACCESSIBLE_REQUEST_ERROR.getText()
                 );
                 return -1;
             }
@@ -668,7 +670,7 @@ public class InboundControllerImpl implements InOutboundController{
                 List<List<String>> itemBillData = inboundService.showItemBillData(requestId);
 
                 if ((reqBillData == null) || (itemBillData == null)) {
-                    System.out.print(Errors.VO_LOAD_ERROR.getText());
+                    System.out.print(InOutboundErrors.VO_LOAD_ERROR.getText());
                     rtn = -1;
                 } else {
                     printBill(reqBillData, itemBillData);
@@ -684,7 +686,7 @@ public class InboundControllerImpl implements InOutboundController{
 
         } catch (IOException e) {
             System.out.print(
-                    Errors.INVALID_INPUT_ERROR.getText()
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
             showRequestInfo();
         }
@@ -728,11 +730,11 @@ public class InboundControllerImpl implements InOutboundController{
                 int approveStatus = inboundService.approveRequest(requestId);
 
                 if (approveStatus == -1) {
-                    System.out.print(Errors.VO_LOAD_ERROR.getText());
+                    System.out.print(InOutboundErrors.VO_LOAD_ERROR.getText());
                     rtn = -1;
                 } else if (approveStatus == -2) {
                     System.out.print(
-                            Errors.CANNOT_APPROVE_ERROR.getText()
+                            InOutboundErrors.CANNOT_APPROVE_ERROR.getText()
                     );
                     rtn = -2;
                 } else {
@@ -742,7 +744,7 @@ public class InboundControllerImpl implements InOutboundController{
 
         } catch (IOException e) {
             System.out.print(
-                    Errors.INVALID_INPUT_ERROR.getText()
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
             approveRequest();
         }
