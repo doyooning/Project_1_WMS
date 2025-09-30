@@ -211,7 +211,7 @@ public class FinanceDao implements Finance {
         // CallableStatement 사용으로 변경
         try {
             conn = DBUtil.getConnection();
-            String sql = "{call getWarehouseList()}";
+            String sql = "{call getWarehouseList2()}";
             cstmt = conn.prepareCall(sql);
 
             rs = cstmt.executeQuery();
@@ -256,7 +256,9 @@ public class FinanceDao implements Finance {
             cstmt.setInt(1, expense.getWIdx());
             cstmt.setString(2, expense.getEType());
             cstmt.setLong(3, expense.getEAmount());
-            cstmt.setDate(4, (Date)expense.getEDate());
+            java.util.Date utilDate = expense.getEDate();
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+            cstmt.setDate(4, sqlDate);
 
             return cstmt.executeUpdate();
         } catch (SQLException e) {
