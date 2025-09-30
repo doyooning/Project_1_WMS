@@ -110,6 +110,10 @@ public class InboundControllerImpl implements InOutboundController{
                         System.out.print(
                                 Messages.RETURN_MENU.getText()
                         );
+                    } else if (status == 0) {
+                        System.out.print(
+                                Messages.DISPLAY_ADJUST.getText()
+                        );
                     } else {
                         System.out.printf(
                                 Messages.REQUEST_APPROVED_IN.getText(), status
@@ -122,11 +126,16 @@ public class InboundControllerImpl implements InOutboundController{
                     if (status == -1) {
                         System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
 
+                    } else if (status == 0) {
+                        System.out.print(
+                                Messages.DISPLAY_ADJUST.getText()
+                        );
                     } else {
                         System.out.printf(
                                 Messages.REQUEST_REGISTERED_IN.getText(), status
                         );
                     }
+
                 }
             }
             case 2 -> {
@@ -138,8 +147,12 @@ public class InboundControllerImpl implements InOutboundController{
                 int status = 0;
                 // 3. 입고 요청 취소
                 status = cancelRequest();
-                if (status == -1) {
+                if (status < 0) {
                     System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
+                } else if (status == 0) {
+                    System.out.print(
+                            Messages.DISPLAY_ADJUST.getText()
+                    );
                 } else {
                     System.out.print(
                             Messages.REQUEST_CANCELED_IN.getText()
@@ -626,9 +639,7 @@ public class InboundControllerImpl implements InOutboundController{
             } else if (select.charAt(0) == 'Y') {
                 // 요청 정보 전송
                 int requestStatus = inboundService.cancelRequest(requestId);
-                if (requestStatus == -1) {
-                    rtn = -1;
-                }
+                rtn = requestStatus;
             } else {
                 throw new IOException();
             }
