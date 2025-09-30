@@ -16,17 +16,20 @@ public class WarehouseAdminDao {
     }
 
     public int insertPendingWarehouseAdmin(Connection connection, WarehouseAdmin admin) throws SQLException {
-        String sql = "INSERT INTO WarehouseAdmin (waName, waId, waPw, waPhone, waEmail, status) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, admin.getWaName());
-            ps.setString(2, admin.getWaId());
-            ps.setString(3, PasswordUtil.hash(admin.getWaPw()));
-            ps.setString(4, admin.getWaPhone());
-            ps.setString(5, admin.getWaEmail());
-            ps.setString(6, "EXIST");
-            ps.executeUpdate();
+        String sql = "{CALL InsertWarehouseAdmin(?, ?, ?, ?, ?, ?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, admin.getWaName());
+            cs.setString(2, admin.getWaId());
+            cs.setString(3, PasswordUtil.hash(admin.getWaPw()));
+            cs.setString(4, admin.getWaPhone());
+            cs.setString(5, admin.getWaEmail());
+            cs.setString(6, "EXIST");
+            cs.executeUpdate();
 
-            try (ResultSet rs = ps.getGeneratedKeys()) {
+            // 프로시저에서 생성된 키를 반환받기 위해 별도 쿼리 실행
+            String getLastIdSql = "SELECT LAST_INSERT_ID()";
+            try (PreparedStatement ps = connection.prepareStatement(getLastIdSql);
+                 ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 } else {
@@ -37,29 +40,29 @@ public class WarehouseAdminDao {
     }
 
     public boolean existsByCredentials(Connection connection, String adminId, String adminPw) throws SQLException {
-        String sql = "SELECT 1 FROM WarehouseAdmin WHERE waId = ? AND waPw = ? AND status = 'EXIST' LIMIT 1";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, adminId);
-            ps.setString(2, PasswordUtil.hash(adminPw));
-            try (ResultSet rs = ps.executeQuery()) {
+        String sql = "{CALL CheckWarehouseAdminCredentials(?, ?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, adminId);
+            cs.setString(2, PasswordUtil.hash(adminPw));
+            try (ResultSet rs = cs.executeQuery()) {
                 return rs.next();
             }
         }
     }
 
     public void deleteWarehouseAdmin(Connection connection, String adminId) throws SQLException {
-        String sql = "UPDATE WarehouseAdmin SET status = 'DELETED' WHERE waId = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, adminId);
-            ps.executeUpdate();
+        String sql = "{CALL DeleteWarehouseAdmin(?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, adminId);
+            cs.executeUpdate();
         }
     }
 
     public String findIdByEmail(Connection connection, String email) throws SQLException {
-        String sql = "SELECT waId FROM WarehouseAdmin WHERE waEmail = ? AND status = 'EXIST' LIMIT 1";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, email);
-            try (ResultSet rs = ps.executeQuery()) {
+        String sql = "{CALL FindWarehouseAdminIdByEmail(?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, email);
+            try (ResultSet rs = cs.executeQuery()) {
                 if (rs.next()) {
                     return rs.getString("waId");
                 }
@@ -69,10 +72,10 @@ public class WarehouseAdminDao {
     }
 
     public String findPasswordById(Connection connection, String adminId) throws SQLException {
-        String sql = "SELECT waPw FROM WarehouseAdmin WHERE waId = ? AND status = 'EXIST' LIMIT 1";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, adminId);
-            try (ResultSet rs = ps.executeQuery()) {
+        String sql = "{CALL FindWarehouseAdminPasswordById(?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, adminId);
+            try (ResultSet rs = cs.executeQuery()) {
                 if (rs.next()) {
                     return rs.getString("waPw");
                 }
@@ -85,11 +88,11 @@ public class WarehouseAdminDao {
         String tempPassword = util.PasswordUtil.generateTemporaryPassword();
         String hashedTempPassword = util.PasswordUtil.hash(tempPassword);
         
-        String sql = "UPDATE WarehouseAdmin SET waPw = ? WHERE waId = ? AND status = 'EXIST'";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, hashedTempPassword);
-            ps.setString(2, adminId);
-            int updated = ps.executeUpdate();
+        String sql = "{CALL ResetWarehouseAdminPassword(?, ?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, hashedTempPassword);
+            cs.setString(2, adminId);
+            int updated = cs.executeUpdate();
             if (updated > 0) {
                 return tempPassword;
             }
@@ -98,10 +101,10 @@ public class WarehouseAdminDao {
     }
 
     public WarehouseAdmin getWarehouseAdminInfo(Connection connection, String adminId) throws SQLException {
-        String sql = "SELECT waIdx, waId, waEmail, waName, waPhone, createdAt FROM WarehouseAdmin WHERE waId = ? AND status = 'EXIST'";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, adminId);
-            try (ResultSet rs = ps.executeQuery()) {
+        String sql = "{CALL GetWarehouseAdminInfo(?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, adminId);
+            try (ResultSet rs = cs.executeQuery()) {
                 if (rs.next()) {
                     WarehouseAdmin admin = new WarehouseAdmin();
                     admin.setWaIdx(rs.getInt("waIdx"));
@@ -118,22 +121,22 @@ public class WarehouseAdminDao {
     }
 
     public boolean updateWarehouseAdminInfo(Connection connection, String adminId, String name, String phone) throws SQLException {
-        String sql = "UPDATE WarehouseAdmin SET waName = ?, waPhone = ? WHERE waId = ? AND status = 'EXIST'";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, name);
-            ps.setString(2, phone);
-            ps.setString(3, adminId);
-            return ps.executeUpdate() > 0;
+        String sql = "{CALL UpdateWarehouseAdminInfo(?, ?, ?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, name);
+            cs.setString(2, phone);
+            cs.setString(3, adminId);
+            return cs.executeUpdate() > 0;
         }
     }
 
     public boolean updateWarehouseAdminPassword(Connection connection, String adminId, String newPassword) throws SQLException {
         String hashedPassword = util.PasswordUtil.hash(newPassword);
-        String sql = "UPDATE WarehouseAdmin SET waPw = ? WHERE waId = ? AND status = 'EXIST'";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, hashedPassword);
-            ps.setString(2, adminId);
-            return ps.executeUpdate() > 0;
+        String sql = "{CALL UpdateWarehouseAdminPassword(?, ?)}";
+        try (CallableStatement cs = connection.prepareCall(sql)) {
+            cs.setString(1, hashedPassword);
+            cs.setString(2, adminId);
+            return cs.executeUpdate() > 0;
         }
     }
 
