@@ -242,9 +242,7 @@ public class InboundControllerImpl implements InOutboundController{
                             Messages.ENTER_REQUEST_ID_UPDATE_IN.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
-                    if (authority == 1) {
-
-                    } else if (authority == 3) {
+                    if (authority == 3) {
                         boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
                         if (accessStatus == false) {
                             System.out.print(
@@ -257,6 +255,8 @@ public class InboundControllerImpl implements InOutboundController{
                     status = InputRequestDataUpdate(requestId);
                     if (status < 0) {
                         return -1;
+                    } else if (status == 0) {
+                        selectUpdateMenu(menuNum);
                     }
                 }
                 // 물품 정보 수정
@@ -266,9 +266,7 @@ public class InboundControllerImpl implements InOutboundController{
                             Messages.ENTER_REQUEST_ID_UPDATE_IN.getText()
                     );
                     int requestId = Integer.parseInt(br.readLine());
-                    if (authority == 1) {
-
-                    } else if (authority == 3) {
+                    if (authority == 3) {
                         boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
                         if (accessStatus == false) {
                             System.out.print(
@@ -281,6 +279,8 @@ public class InboundControllerImpl implements InOutboundController{
                     status = InputRequestItemUpdate(requestId);
                     if (status < 0) {
                         return -1;
+                    } else if (status == 0) {
+                        selectUpdateMenu(menuNum);
                     }
 
                 }
@@ -292,7 +292,9 @@ public class InboundControllerImpl implements InOutboundController{
         } catch (IOException e) {
             System.out.print(
                     InOutboundErrors.INVALID_INPUT_ERROR.getText()
+
             );
+            selectUpdateMenu(menuNum);
         }
         return 1;
     }
@@ -570,12 +572,12 @@ public class InboundControllerImpl implements InOutboundController{
             System.out.print(
                     InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
-            InputRequestDataUpdate(requestId);
+            return 0;
         } catch (ParseException e) {
             System.out.print(
                     InOutboundErrors.DATE_INPUT_ERROR.getText()
             );
-            InputRequestDataUpdate(requestId);
+            return 0;
         }
         return rtn;
     }
@@ -608,7 +610,7 @@ public class InboundControllerImpl implements InOutboundController{
             System.out.print(
                     InOutboundErrors.INVALID_INPUT_ERROR.getText()
             );
-            InputRequestItemUpdate(requestId);
+            return 0;
         }
 
         return rtn;
