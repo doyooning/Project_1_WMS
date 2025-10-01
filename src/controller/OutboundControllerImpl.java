@@ -478,7 +478,7 @@ public class OutboundControllerImpl implements InOutboundController{
         int rtn = 0;
         try {
             System.out.print(
-                    Messages.ENTER_REQUEST_ID_OUT.getText()
+                    Messages.ENTER_REQUEST_INFO_OUT.getText()
             );
             int wId = Integer.parseInt(br.readLine());
 
@@ -654,6 +654,15 @@ public class OutboundControllerImpl implements InOutboundController{
             );
             int requestId = Integer.parseInt(br.readLine());
 
+            if (authority == 3) {
+                boolean status = isAccessibleRequest(requestId, user.getUIdx());
+                if (status == false) {
+                    System.out.print(
+                            InOutboundErrors.INACCESSIBLE_REQUEST_ERROR.getText()
+                    );
+                    return -1;
+                }
+            }
             // 출력 확인
             System.out.print(
                     Messages.ENTER_PRINT_CONFIRM_OUT.getText()
