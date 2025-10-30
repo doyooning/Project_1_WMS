@@ -28,6 +28,9 @@ bin/
 # 계정 정보 무시
 .util/
 util/
+*.iml
+.idea/
 
 ### Mac OS ###
 .DS_Store
+/src/util/

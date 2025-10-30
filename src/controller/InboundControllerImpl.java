@@ -1,20 +1,35 @@
 package controller;
 
-import dao.InboundDao;
+import common.InOutboundErrors;
+import common.Messages;
+import domain.TotalAdmin;
+import domain.User;
+import service.InboundService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /*
 * 메뉴 첫 접근
 * : BoardController/showBoardMenu(), selectBoardMenu()
+* -> 유저번호(uIdx)를 파라미터로 넘겨야 요청 등록에 사용 가능
 * [입고 관리]
 * */
 
 public class InboundControllerImpl implements InOutboundController{
+    private User user;
+    private TotalAdmin totalAdmin;
+    private int authority = 0;
+
     // statics
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static SimpleDateFormat informat = new SimpleDateFormat("yyyyMMdd");
+    static SimpleDateFormat outformat = new SimpleDateFormat("yyyy-MM-dd");
 
     // 싱글턴 패턴을 위한 인스턴스 생성
     private static InboundControllerImpl inboundControllerImpl;
@@ -28,79 +43,777 @@ public class InboundControllerImpl implements InOutboundController{
         return inboundControllerImpl;
     }
 
-    private InboundDao inboundDao;
+    private InboundService inboundService = InboundService.getInstance();
+
+    public void setLoggedInUser(Object user) {
+        if (user instanceof TotalAdmin) {
+            this.totalAdmin = (TotalAdmin) user;
+            this.authority = 1;
+        } else if (user instanceof User) {
+            this.user = (User) user;
+            this.authority = 3;
+        }
+    }
+
+    public void logoutUser() {
+        this.user = null;
+        this.totalAdmin = null;
+        this.authority = 0;
+    }
 
     @Override
     public void showMenu() {
-        System.out.print(
-                """
-                ============================================================
-                1. 입고 요청 승인		  2. 입고 요청 수정		 3. 입고 요청 취소
-                4. 입고 고지서 출력	  5. 입고 현황 조회		 6. 나가기
-                ============================================================
-                메뉴를 고르세요 :\s
-                """
-        );
+        int status = 0;
+        // 권한 구분 임의 구현..
+        if (authority == 1) {
+            System.out.print(
+                    Messages.ADMIN_MAIN_MENU_IN.getText()
+            );
+
+        } else if (authority == 3) {
+            System.out.print(
+                    Messages.USER_MAIN_MENU_IN.getText()
+            );
+        }
         try {
+            // 메뉴 번호 입력받음
             int menuNum = Integer.parseInt(br.readLine());
-            selectMenu(menuNum);
-        } catch (IOException e) {
-            System.out.println("IOException");
+            status = selectMenu(menuNum);
+            if (status == 1) {
+                showMenu();
+            }
+
+        } catch (IOException | NumberFormatException e) {
+            System.out.println(InOutboundErrors.INVALID_INPUT_ERROR.getText());
             showMenu();
-        } catch (NumberFormatException e) {
-            System.out.println("NumberFormatException");
+
+        } catch (Exception e) {
+            System.out.println(InOutboundErrors.UNEXPECTED_ERROR.getText());
             showMenu();
         }
-
     }
 
     @Override
     public int selectMenu(int menuNum) {
         switch (menuNum) {
             case 1 -> {
-                System.out.println("1. 입고 요청 승인");
+                int status = 0;
+                if(authority == 1) {
+                    // 1. 입고 요청 승인
+                    // 미승인된 입고요청 목록 출력
 
+                    status = approveRequest();
+                    if (status == -1) {
+                        System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
+
+                    } else if (status == -2) {
+                        System.out.print(
+                                Messages.RETURN_MENU.getText()
+                        );
+                    } else if (status == 0) {
+                        System.out.print(
+                                Messages.DISPLAY_ADJUST.getText()
+                        );
+                    } else {
+                        System.out.printf(
+                                Messages.REQUEST_APPROVED_IN.getText(), status
+                        );
+                    }
+
+                } else if(authority == 3) {
+                    // 1. 입고 요청
+                    status = InputRequestData(user.getUIdx());
+                    if (status == -1) {
+                        System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
+
+                    } else if (status == 0) {
+                        System.out.print(
+                                Messages.DISPLAY_ADJUST.getText()
+                        );
+                    } else {
+                        System.out.printf(
+                                Messages.REQUEST_REGISTERED_IN.getText(), status
+                        );
+                    }
+
+                }
             }
             case 2 -> {
+                // 2. 입고 요청 수정
+                showUpdateMenu();
 
             }
             case 3 -> {
+                int status = 0;
+                // 3. 입고 요청 취소
+                status = cancelRequest();
+                if (status < 0) {
+                    System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
+                } else if (status == 0) {
+                    System.out.print(
+                            Messages.DISPLAY_ADJUST.getText()
+                    );
+                } else {
+                    System.out.print(
+                            Messages.REQUEST_CANCELED_IN.getText()
+                    );
+                }
 
             }
             case 4 -> {
-
+                int status = 0;
+                // 4. 입고고지서 출력
+                status = showRequestInfo();
+                if (status == -1) {
+                    System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
+                } else {
+                    System.out.print(
+                            Messages.DISPLAY_ADJUST.getText()
+                    );
+                }
             }
 
             case 5 -> {
-
+                // 5. 입고 현황 조회
+                if(authority == 1) {
+                    showAdminInfoMenu();
+                } else if(authority == 3) {
+                    showInfoMenu(user.getUIdx());
+                }
             }
 
             case 6 -> {
-
+                // 6. 나가기
+                return 0;
             }
 
+            default -> {
+                System.out.print(
+                        InOutboundErrors.INVALID_INPUT_ERROR.getText()
+                );
+            }
         }
 
-        return 0;
+        return 1;
     }
 
     @Override
     public void showUpdateMenu() {
+        int status = 0;
+        System.out.print(
+                Messages.UPDATE_MENU_IN.getText()
+        );
+        try {
+            int menuNum = Integer.parseInt(br.readLine());
+            status = selectUpdateMenu(menuNum);
+            if (status == 1) {
+                System.out.print(
+                        Messages.REQUEST_UPDATED.getText()
+                );
+                showUpdateMenu();
+            } else if (status == -1) {
+                System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
+                showUpdateMenu();
+            }
 
+        } catch (IOException | NumberFormatException e) {
+            System.out.print(
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
+            );
+            showUpdateMenu();
+
+        } catch (Exception e) {
+            System.out.print(
+                    InOutboundErrors.UNEXPECTED_ERROR.getText()
+            );
+            showUpdateMenu();
+        }
     }
 
     @Override
     public int selectUpdateMenu(int menuNum) {
-        return 0;
+        int status = 0;
+        try {
+            switch (menuNum) {
+                // 요청 정보 수정
+                case 1 -> {
+                    // 요청 번호 입력
+                    System.out.print(
+                            Messages.ENTER_REQUEST_ID_UPDATE_IN.getText()
+                    );
+                    int requestId = Integer.parseInt(br.readLine());
+                    if (authority == 3) {
+                        boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
+                        if (accessStatus == false) {
+                            System.out.print(
+                                    InOutboundErrors.INACCESSIBLE_REQUEST_ERROR.getText()
+                            );
+                            return -1;
+                        }
+                    }
+
+                    status = InputRequestDataUpdate(requestId);
+                    if (status < 0) {
+                        return -1;
+                    } else if (status == 0) {
+                        selectUpdateMenu(menuNum);
+                    }
+                }
+                // 물품 정보 수정
+                case 2 -> {
+                    // 요청 번호 입력
+                    System.out.print(
+                            Messages.ENTER_REQUEST_ID_UPDATE_IN.getText()
+                    );
+                    int requestId = Integer.parseInt(br.readLine());
+                    if (authority == 3) {
+                        boolean accessStatus = isAccessibleRequest(requestId, user.getUIdx());
+                        if (accessStatus == false) {
+                            System.out.print(
+                                    InOutboundErrors.INACCESSIBLE_REQUEST_ERROR.getText()
+                            );
+                            return -1;
+                        }
+                    }
+
+                    status = InputRequestItemUpdate(requestId);
+                    if (status < 0) {
+                        return -1;
+                    } else if (status == 0) {
+                        selectUpdateMenu(menuNum);
+                    }
+
+                }
+                case 3 -> {
+                    // 뒤로가기
+                    return 0;
+                }
+            }
+        } catch (IOException e) {
+            System.out.print(
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
+
+            );
+            selectUpdateMenu(menuNum);
+        }
+        return 1;
     }
 
     @Override
-    public void showInfoMenu() {
+    public void showInfoMenu(int uId) {
+        int status = 0;
+        System.out.print(
+                Messages.USER_INFO_MENU_IN.getText()
+        );
+        try {
+            int menuNum = Integer.parseInt(br.readLine());
+            status = selectInfoMenu(menuNum, uId);
+            if (status == 1) {
+                System.out.print(
+                        Messages.DISPLAY_ADJUST.getText()
+                );
+                showInfoMenu(uId);
+            } else if (status == -1) {
+                System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
+                showInfoMenu(uId);
+            }
 
+        } catch (IOException | NumberFormatException e) {
+            System.out.print(
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
+            );
+            showInfoMenu(uId);
+
+        } catch (Exception e) {
+            System.out.print(
+                    InOutboundErrors.UNEXPECTED_ERROR.getText()
+            );
+            showInfoMenu(uId);
+        }
+    }
+
+    public void showAdminInfoMenu() {
+        int status = 0;
+        System.out.print(
+                Messages.ADMIN_INFO_MENU_IN.getText()
+        );
+        try {
+            int menuNum = Integer.parseInt(br.readLine());
+            status = selectAdminInfoMenu(menuNum);
+            if (status == 1) {
+                System.out.print(
+                        Messages.DISPLAY_ADJUST.getText()
+                );
+                showAdminInfoMenu();
+            } else if (status == -1) {
+                System.out.println(InOutboundErrors.DATA_INPUT_ERROR.getText());
+                showAdminInfoMenu();
+            }
+
+        } catch (IOException | NumberFormatException e) {
+            System.out.print(
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
+            );
+            showAdminInfoMenu();
+
+        } catch (Exception e) {
+            System.out.print(
+                    InOutboundErrors.UNEXPECTED_ERROR.getText()
+            );
+            showAdminInfoMenu();
+        }
     }
 
     @Override
-    public int selectInfoMenu(int menuNum) {
-        return 0;
+    public int selectInfoMenu(int menuNum, int uId) {
+        int status = 1;
+        try {
+            switch (menuNum) {
+                // 입고 요청 조회
+                case 1 -> {
+                    List<List<String>> requestList = inboundService.getBoundInfo(uId);
+                    if (requestList == null) {
+                        return -1;
+                    }
+                    printRequestList(requestList);
+                    System.out.print(
+                            Messages.PRESS_ANY_KEY.getText()
+                    );
+                    String input = br.readLine();
+                }
+                // 요청 상품 리스트
+                case 2 -> {
+                    List<List<String>> requestItemList = inboundService.getBoundItemInfo(uId);
+                    if (requestItemList == null) {
+                        return -1;
+                    }
+                    printRequestItemList(requestItemList);
+                    System.out.print(
+                            Messages.PRESS_ANY_KEY.getText()
+                    );
+                    String input = br.readLine();
+                }
+                case 3 -> {
+                    // 뒤로가기
+                    return 0;
+                }
+            }
+        } catch (Exception e) {
+            System.out.print(
+                    InOutboundErrors.UNEXPECTED_ERROR.getText()
+            );
+        }
+        return status;
     }
+
+    public int selectAdminInfoMenu(int menuNum) {
+        int status = 1;
+        try {
+            switch (menuNum) {
+                // 미승인 요청 조회
+                case 1 -> {
+                    List<List<String>> pRequestList = inboundService.getPendingRequestList();
+                    if (pRequestList == null) {
+                        return -1;
+                    }
+                    printPendingRequest(pRequestList);
+                    System.out.print(
+                            Messages.PRESS_ANY_KEY.getText()
+                    );
+                    String input = br.readLine();
+
+                }
+                // 기간별 입고 현황
+                case 2 -> {
+                    System.out.print(
+                            Messages.ENTER_START_DATE_IN.getText()
+                    );
+                    String startDate = br.readLine();
+                    if (startDate.isBlank() || startDate.length() != 8) {
+                        throw new IOException();
+                    }
+                    Date date = informat.parse(startDate);
+                    String newStartDate = outformat.format(date);
+
+                    System.out.print(
+                            Messages.ENTER_END_DATE.getText()
+                    );
+                    String endDate = br.readLine();
+                    if (endDate.isBlank() || endDate.length() != 8) {
+                        throw new IOException();
+                    }
+                    date = informat.parse(endDate);
+                    String newEndDate = outformat.format(date);
+
+                    List<List<String>> requestList = inboundService.getRequestListByPeriod(newStartDate, newEndDate);
+                    if (requestList == null) {
+                        return -1;
+                    }
+                    printRequestByPeriod(requestList);
+                    System.out.print(
+                            Messages.PRESS_ANY_KEY.getText()
+                    );
+                    String input = br.readLine();
+
+                }
+                case 3 -> {
+                    // 뒤로가기
+                    return 0;
+                }
+            }
+        } catch (IOException e) {
+            System.out.print(
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
+            );
+        } catch (Exception e) {
+            System.out.print(
+                    InOutboundErrors.UNEXPECTED_ERROR.getText()
+            );
+        }
+        return status;
+    }
+
+
+    // 입고 요청 정보를 서비스에 보내기
+    // 창고번호 int, 입고기한 date -> 물품번호 , 물품개수
+    public int InputRequestData(int uId) {
+        int rtn = 0;
+        try {
+            System.out.print(
+                    Messages.ENTER_REQUEST_INFO_IN.getText()
+            );
+            int wId = Integer.parseInt(br.readLine());
+
+            System.out.print(
+                    Messages.ENTER_DUE_DATE_IN.getText()
+            );
+            String dueDate = br.readLine();
+            if (dueDate.isBlank() || dueDate.length() != 8) {
+                throw new IOException();
+            }
+            Date date = informat.parse(dueDate);
+            String newDueDate = outformat.format(date);
+            // 요청 정보 전송
+            int requestStatus = inboundService.addRequest(uId, wId, newDueDate);
+
+            // 실행 결과 오류 검증
+            if (requestStatus == -1) {
+                return -1;
+            }
+
+            while (true) {
+                System.out.print(
+                        Messages.ENTER_ITEM_ID.getText()
+                );
+                String productId = br.readLine();
+
+                System.out.print(
+                        Messages.ENTER_ITEM_QUANTITY.getText()
+                );
+                int productQuantity = Integer.parseInt(br.readLine());
+                // 물품 정보 전송
+                int itemStatus = inboundService.addRequest(uId, productId, productQuantity);
+
+                // 실행 결과 오류 검증
+                if (itemStatus == -1) {
+                    return -1;
+                }
+
+                System.out.print(
+                        Messages.ITEM_REGISTERED.getText()
+                );
+                String select = br.readLine().toUpperCase();
+                if (select.charAt(0) == 'Q') {
+                    rtn = requestStatus;
+                    break;
+                }
+            }
+
+        } catch (IOException e) {
+            // 입력오류
+            System.out.print(
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
+            );
+            InputRequestData(uId);
+        } catch (ParseException e) {
+            System.out.print(
+                    InOutboundErrors.DATE_INPUT_ERROR.getText()
+            );
+            InputRequestData(uId);
+        }
+        return rtn;
+    }
+
+    // 요청 정보 수정 입력
+    public int InputRequestDataUpdate(int requestId) {
+        int rtn = 0;
+
+        try {
+            System.out.print(
+                    Messages.ENTER_WARE_ID.getText()
+            );
+            int wId = Integer.parseInt(br.readLine());
+
+            System.out.print(
+                    Messages.ENTER_DUE_DATE_IN.getText()
+            );
+            String dueDate = br.readLine();
+            if (dueDate.isBlank() || dueDate.length() != 8) {
+                throw new IOException();
+            }
+            Date date = informat.parse(dueDate);
+            String newDueDate = outformat.format(date);
+
+            // 요청 정보 전송
+            int requestStatus = inboundService.updateRequest(requestId, wId, newDueDate);
+            rtn = requestStatus;
+
+        } catch (IOException | NumberFormatException e) {
+            System.out.print(
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
+            );
+            return 0;
+        } catch (ParseException e) {
+            System.out.print(
+                    InOutboundErrors.DATE_INPUT_ERROR.getText()
+            );
+            return 0;
+        }
+        return rtn;
+    }
+
+    // 요청 물품 수정 입력
+    public int InputRequestItemUpdate(int requestId) {
+        int rtn = 0;
+
+        try {
+            System.out.print(
+                    Messages.ENTER_ITEM_NUM.getText()
+            );
+            int itemId = Integer.parseInt(br.readLine());
+
+            System.out.print(
+                    Messages.ENTER_ITEM_ID.getText()
+            );
+            String productId = br.readLine();
+
+            System.out.print(
+                    Messages.ENTER_ITEM_QUANTITY.getText()
+            );
+            int productQuantity = Integer.parseInt(br.readLine());
+
+            // 요청 정보 전송
+            int requestStatus = inboundService.updateItem(requestId, itemId, productId, productQuantity);
+            rtn = requestStatus;
+
+        } catch (IOException | NumberFormatException e) {
+            System.out.print(
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
+            );
+            return 0;
+        }
+
+        return rtn;
+    }
+
+    public int cancelRequest() {
+        int rtn = 0;
+        try {
+            System.out.print(
+                    Messages.ENTER_CANCEL_REQUEST_ID_IN.getText()
+            );
+            int requestId = Integer.parseInt(br.readLine());
+            boolean status = isAccessibleRequest(requestId, user.getUIdx());
+            if (status == false) {
+                System.out.print(
+                        InOutboundErrors.INACCESSIBLE_REQUEST_ERROR.getText()
+                );
+                return -1;
+            }
+
+            // 취소 확인
+            System.out.print(
+                    Messages.ENTER_CANCEL_CONFIRM_IN.getText()
+            );
+            String select = br.readLine().toUpperCase();
+            if (select.charAt(0) == 'N') {
+                System.out.print(Messages.RETURN_MENU.getText());
+            } else if (select.charAt(0) == 'Y') {
+                // 요청 정보 전송
+                int requestStatus = inboundService.cancelRequest(requestId);
+                rtn = requestStatus;
+            } else {
+                throw new IOException();
+            }
+
+        } catch (IOException e) {
+            System.out.print(
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
+            );
+            cancelRequest();
+        }
+        return rtn;
+    }
+
+    public int showRequestInfo() {
+        int rtn = 0;
+        try {
+            System.out.print(
+                    Messages.ENTER_PRINT_REQUEST_ID_IN.getText()
+            );
+            int requestId = Integer.parseInt(br.readLine());
+
+            if (authority == 3) {
+                boolean status = isAccessibleRequest(requestId, user.getUIdx());
+                if (status == false) {
+                    System.out.print(
+                            InOutboundErrors.INACCESSIBLE_REQUEST_ERROR.getText()
+                    );
+                    return -1;
+                }
+            }
+
+            // 출력 확인
+            System.out.print(
+                    Messages.ENTER_PRINT_CONFIRM_IN.getText()
+            );
+            String select = br.readLine().toUpperCase();
+            if (select.charAt(0) == 'N') {
+                System.out.print(Messages.RETURN_MENU.getText());
+            } else if (select.charAt(0) == 'Y') {
+                // 요청 정보 전송
+                List<String> reqBillData = inboundService.showReqBillData(requestId);
+                List<List<String>> itemBillData = inboundService.showItemBillData(requestId);
+
+                if ((reqBillData == null) || (itemBillData == null)) {
+                    System.out.print(InOutboundErrors.VO_LOAD_ERROR.getText());
+                    rtn = -1;
+                } else {
+                    printBill(reqBillData, itemBillData);
+                    System.out.print(
+                            Messages.PRESS_ANY_KEY.getText()
+                    );
+                    String input = br.readLine();
+
+                }
+            } else {
+                throw new IOException();
+            }
+
+        } catch (IOException e) {
+            System.out.print(
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
+            );
+            showRequestInfo();
+        }
+        return rtn;
+    }
+
+    // 입고고지서 양식대로 출력
+    public void printBill(List<String> reqList, List<List<String>> itemList) {
+
+        System.out.printf(
+                Messages.PRINT_BILL_REQUEST_IN.getText(), reqList.get(0), reqList.get(1).split(" ")[0], reqList.get(2), reqList.get(3)
+        );
+        int totalPrice = 0;
+
+        for (List<String> item : itemList) {
+            System.out.printf(Messages.PRINT_BILL_ITEM.getText(), item.get(0), item.get(1), item.get(2), item.get(3)
+            );
+            totalPrice += (Integer.parseInt(item.get(2)) * Integer.parseInt(item.get(3)));
+        }
+
+        System.out.printf(Messages.PRINT_BILL_TOTAL.getText(), totalPrice);
+    }
+
+    public int approveRequest() {
+        int rtn = 0;
+        try {
+            System.out.print(
+                    Messages.ENTER_APPROVE_REQUEST_IN.getText()
+            );
+            int requestId = Integer.parseInt(br.readLine());
+
+            // 승인 확인
+            System.out.print(
+                    Messages.ENTER_APPROVE_CONFIRM_IN.getText()
+            );
+            String select = br.readLine().toUpperCase();
+            if (select.charAt(0) == 'N') {
+                System.out.print(Messages.RETURN_MENU.getText());
+            } else if (select.charAt(0) == 'Y') {
+                // 승인 정보 전송
+                int approveStatus = inboundService.approveRequest(requestId);
+
+                if (approveStatus == -1) {
+                    System.out.print(InOutboundErrors.VO_LOAD_ERROR.getText());
+                    rtn = -1;
+                } else if (approveStatus == -2) {
+                    System.out.print(
+                            InOutboundErrors.CANNOT_APPROVE_ERROR.getText()
+                    );
+                    rtn = -2;
+                } else {
+                    rtn = approveStatus;
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.print(
+                    InOutboundErrors.INVALID_INPUT_ERROR.getText()
+            );
+            approveRequest();
+        }
+        return rtn;
+    }
+
+    // 출력 메서드
+
+    public void printRequestList(List<List<String>> list) {
+        for (List<String> requests : list) {
+            System.out.printf(
+                    Messages.PRINT_REQUEST_LIST_IN.getText(),  requests.get(0), requests.get(1), requests.get(2),
+                    requests.get(3),  requests.get(4), requests.get(5)
+            );
+        }
+    }
+
+    public void printRequestItemList(List<List<String>> list) {
+        for (List<String> items : list) {
+            System.out.printf(
+                    Messages.PRINT_REQUEST_ITEM_LIST.getText(),  items.get(0), items.get(1), items.get(2),
+                    items.get(3),  items.get(4), items.get(5)
+            );
+        }
+    }
+
+    public void printPendingRequest(List<List<String>> list) {
+        for (List<String> requests : list) {
+            System.out.printf(
+                    Messages.PRINT_PENDING_LIST_IN.getText(),  requests.get(0), requests.get(2), requests.get(1),
+                    requests.get(3),  requests.get(4), requests.get(5)
+            );
+        }
+    }
+
+    public void printRequestByPeriod(List<List<String>> list) {
+        int count = 0;
+        for (List<String> requests : list) {
+            count++;
+            System.out.printf(
+                    Messages.PRINT_REQUEST_LIST_PERIOD_IN.getText(), count, requests.get(0), requests.get(2), requests.get(1),
+                    requests.get(3), requests.get(4)
+            );
+        }
+    }
+    // 자신의 요청건에만 접근 가능하게 확인
+    public boolean isAccessibleRequest(int requestId, int uIdx) {
+        int status = 0;
+        status = inboundService.isAccessibleRequest(requestId, uIdx);
+        if (status < 0) {
+            return false;
+        }
+        return true;
+    }
+
 }
