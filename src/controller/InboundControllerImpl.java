@@ -65,16 +65,19 @@ public class InboundControllerImpl implements InOutboundController{
     public void showMenu() {
         int status = 0;
         // 권한 구분 임의 구현..
-        if (authority == 1) {
-            System.out.print(
-                    Messages.ADMIN_MAIN_MENU_IN.getText()
-            );
-
-        } else if (authority == 3) {
-            System.out.print(
-                    Messages.USER_MAIN_MENU_IN.getText()
-            );
+        switch (authority) {
+            case 1 -> {
+                System.out.print(
+                        Messages.ADMIN_MAIN_MENU_IN.getText()
+                );
+            }
+            case 3 -> {
+                System.out.print(
+                        Messages.USER_MAIN_MENU_IN.getText()
+                );
+            }
         }
+
         try {
             // 메뉴 번호 입력받음
             int menuNum = Integer.parseInt(br.readLine());
