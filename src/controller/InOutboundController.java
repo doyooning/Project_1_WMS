@@ -20,5 +20,4 @@ public interface InOutboundController {
     // 현황 조회 메뉴 선택
     int selectInfoMenu(int menuNum, int uId);
 
-
 }
